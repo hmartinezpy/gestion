@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui" 
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets" 
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Gestión de Documentos ::</ui:define>
+	<ui:define name="content">
+		<h:form id="form">  
+		    <p:panel header="Cambiar password de Usuario">
+		    <p:messages id="messages" showDetail="true" autoUpdate="true"/>     
+		        <h:panelGrid columns="2" id="matchGrid"> 
+		            <h:outputLabel  value="Contraseña Actual: *" />  
+		            <p:password id="passOld" value="#{usuarioPasswordMB.oldPassword}" required="true"/>  
+		                            
+		            <h:outputLabel value="Contraseña nueva: *" />  
+		            <p:password id="pwd1" value="#{usuarioPasswordMB.passwordNew}" match="pwd2" required="true"/>  
+		  
+		            <h:outputLabel value="Confirmar contraseña: *" />  
+		            <p:password id="pwd2" value="#{usuarioPasswordMB.passwordNew2}" required="true"/>  
+		        </h:panelGrid>  
+		  
+		        <p:commandButton value="Guardar" update="matchGrid" action="#{usuarioPasswordMB.update}" ajax="false"/>  
+		    </p:panel>
+		</h:form>  
+	</ui:define>
+</ui:composition>

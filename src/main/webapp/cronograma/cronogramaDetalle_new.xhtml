@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Cronogramas ::</ui:define>
+	<ui:define name="content">
+	<h1 class="title ui-widget-header ui-corner-all" align="center" >Nuevo Detalle - #{cronogramaDetalleMB.nombreCronograma} ( #{cronogramaDetalleMB.tipoCronograma} )</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+           		 <h:form id="form2">
+            		<p:commandButton id="volver" value ="Volver"
+						action="#{cronogramaDetalleMB.getPreviousView}" ajax="false" image="ui-icon-arrowreturn-1-w" >
+						<f:param name="id" value="#{cronogramaDetalleMB.idCronograma}" />
+				</p:commandButton>
+			
+            	</h:form>
+            	
+        		<h:form id="form">       		
+        			
+                        <p:growl id="messagesNew"/>
+                        <p:panel header="Nuevo Detalle" id="cronogramaDetallesNew" >
+                            <h:panelGrid columns="2" cellpadding="5" >
+                            	
+                            	<h:outputText value="Tarea(Descripcion)" />
+                                <p:inputText value="#{cronogramaDetalleMB.tarea}" required="true"
+                                autoResize="false" style="width:100%" />
+			                    				
+			                    <h:outputText value="RolResponsable: " /> 
+			                    <p:selectOneMenu id="selectRolResponsable" value="#{cronogramaDetalleMB.idRolResponsable}" required="true">  
+			                        <f:selectItem itemLabel="Seleccione Rol-Responsable" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.roles}" var="rol" itemLabel="#{rol.descripcion}" itemValue="#{rol.rolId}" />                                  
+			                    </p:selectOneMenu>
+			                                                    
+                                <h:outputText value="AlertaInicio: " /> 
+			                    <p:selectOneMenu id="selectCritico" value="#{cronogramaDetalleMB.alertaInicio}" >
+			                    	<f:selectItem itemLabel="Si" itemValue="Si" />
+	                            	<f:selectItem itemLabel="No" itemValue="No" />	                            
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="Duracion(Días)" />
+                                <p:inputText value="#{cronogramaDetalleMB.duracionTarea}" 
+                                autoResize="false" />
+                                
+                                <h:outputText value="Alarma: " /> 
+			                    <p:selectOneMenu id="selectAlarma" value="#{cronogramaDetalleMB.idTipoAlarma}" >  
+			                        <f:selectItem itemLabel="Seleccione Alarma" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.alarmas}" var="tipoAlarma" itemLabel="#{tipoAlarma.descripcion}" itemValue="#{tipoAlarma.tipoAlarmaId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="Alerta: " /> 
+			                    <p:selectOneMenu id="selectAlerta" value="#{cronogramaDetalleMB.idAlerta}" >  
+			                        <f:selectItem itemLabel="Seleccione Alerta" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.alertas}" var="alerta" itemLabel="#{alerta.descripcion}" itemValue="#{alerta.tipoAlarmaId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="TareaSgte: " /> 
+			                    <p:selectOneMenu id="selectTareaSgte" disabled="#{cronogramaDetalleMB.checkPregunta}" value="#{cronogramaDetalleMB.idTareaSgte}" >  
+			                        <f:selectItem itemLabel="Seleccione TareaSgte" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.tareas}" var="tareaSgte" itemLabel="#{tareaSgte.tarea}" itemValue="#{tareaSgte.cronogramaDetalleId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <p:selectBooleanCheckbox id="checkPregunta" value="#{cronogramaDetalleMB.checkPregunta}"> 
+			                     	<p:ajax update="selectPregunta, selectTareaSi, selectTareaNo, selectTareaSgte "/>
+        						</p:selectBooleanCheckbox>
+			                    <br></br>
+			                    <h:outputText value="Pregunta: " /> 
+			                    <p:selectOneMenu id="selectPregunta" disabled="#{!cronogramaDetalleMB.checkPregunta}" value="#{cronogramaDetalleMB.idPregunta}" >  
+			                        <f:selectItem itemLabel="Seleccione Pregunta" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.preguntas}" var="pregunta" itemLabel="#{pregunta.descripcion}" itemValue="#{pregunta.preguntaId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="TareaSi: " /> 
+			                    <p:selectOneMenu id="selectTareaSi" disabled="#{!cronogramaDetalleMB.checkPregunta}" value="#{cronogramaDetalleMB.idTareaSi}" >  
+			                        <f:selectItem itemLabel="Seleccione TareaSi" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.tareas}" var="tareaSi" itemLabel="#{tareaSi.tarea}" itemValue="#{tareaSi.cronogramaDetalleId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="TareaNo: " /> 
+			                    <p:selectOneMenu id="selectTareaNo" disabled="#{!cronogramaDetalleMB.checkPregunta}" value="#{cronogramaDetalleMB.idTareaNo}" >  
+			                        <f:selectItem itemLabel="Seleccione TareaNo" itemValue="" />  
+			                        <f:selectItems value="#{cronogramaDetalleMB.tareas}" var="tareaNo" itemLabel="#{tareaNo.tarea}" itemValue="#{tareaNo.cronogramaDetalleId}" />                                  
+			                    </p:selectOneMenu>
+                                                                
+			                    <br></br>
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{cronogramaDetalleMB.registrarCronogramaDetalle}"
+                                                 icon="ui-icon-disk" update="messagesNew, cronogramaDetallesNew"/>
+                            </h:panelGrid>
+                        </p:panel>      
+                                    
+                    </h:form>
+
+        	
+                    			
+	  </div>
+	</ui:define>
+</ui:composition>

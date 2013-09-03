@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Preguntas ::</ui:define>
+	<ui:define name="content">
+	<h1 class="title ui-widget-header ui-corner-all" align="center" >Preguntas</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true"/>
+            <p:fieldset legend="Preguntas" toggleable="true" toggleSpeed="500">
+            <p:dataTable var="pregunta" value="#{preguntaMB.preguntas}" id="preguntas" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
+                <p:ajax event="rowEdit" listener="#{preguntaMB.onEdit}" update=":form:messages" />
+
+				        
+                <p:column headerText="Descripcion" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{pregunta.descripcion}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{pregunta.descripcion}" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+		        
+                <p:column headerText="" >
+                    <p:rowEditor /> 
+                    <b>Editar</b>
+                </p:column>
+                
+                <p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{pregunta}" target="#{preguntaMB.preguntaSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+                
+                
+            </p:dataTable>
+            </p:fieldset>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar la Pregunta?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{preguntaMB.eliminar}" update="preguntas, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+                        
+        </h:form>	
+        
+        	<p:fieldset legend="Nuevo" toggleable="true" toggleSpeed="500" collapsed="true">
+        	
+        		<h:form>
+                        <p:growl id="messagesNew"/>
+                        <p:panel header="Nueva Pregunta" id="preguntasNew" >
+                            <h:panelGrid columns="2" cellpadding="3" >
+                            		                    
+                                <h:outputText value="Descripcion: " />
+                                <p:inputText required="true" value="#{preguntaMB.descripcion}" 
+                                autoResize="false" />
+                                
+											                    
+			                    <br></br>
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{preguntaMB.registrarPregunta}"
+                                                 icon="ui-icon-disk" update="messagesNew, preguntasNew,:form:preguntas"/>
+                            </h:panelGrid>
+                        </p:panel>                        
+                    </h:form>
+                  </p:fieldset>
+                    			
+	  </div>
+	</ui:define>
+</ui:composition>

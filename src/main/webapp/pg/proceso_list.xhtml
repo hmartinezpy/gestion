@@ -1,0 +1,365 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Procesos</h1>
+		<div class="entry" style="line-height:200%;margin-left:60px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form id="form" >
+        	<p:growl id="messages"/>
+        	
+            <p:dataTable  var="proceso" value="#{procesoListMB.procesos}"  id="procesos" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				        
+                <p:column headerText="#Proceso" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{proceso.nroProceso}" />                                              
+                </p:column>
+                <p:column headerText="Responsable"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.responsable.usuario}" />
+                </p:column>
+                <p:column headerText="Cliente" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.cliente.nombre}" />
+                </p:column>
+                
+                <p:column headerText="Estado"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.estado}" />
+                </p:column>
+                <p:column headerText="Descripcion" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.descripcion}" />
+                </p:column>
+                <p:column headerText="FechIniCont"  style="font-weight:bold;">
+                <h:outputText  style="font-weight:normal;" value="#{proceso.fechaInicioContratual}">
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" /> -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechIniReal"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.fechaInicioReal}" >
+                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechFinPrev"  style="font-weight:bold;">
+                <h:outputText style="font-weight:normal;" value="#{proceso.fechaFinPrevista}" >
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechFinRepr"  style="font-weight:bold;">
+                <h:outputText style="font-weight:normal;" value="#{proceso.fechaFinReprogramada}" >
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
+                </h:outputText>
+                </p:column>
+                
+	  			<p:column headerText="Cli-Notif"  style="font-weight:bold;">
+	  			<h:outputText style="font-weight:normal;" value="#{proceso.clienteNotificado}" />                           	                  
+                </p:column>
+                <p:column style="width:30px;" >				
+					<p:commandButton action="#{procesoListMB.getNextView}" actionListener="#{procesoListMB.clear}"
+						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						<f:param name="id" value="#{proceso.procesoId}" />
+					</p:commandButton>
+				</p:column>
+				<p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+                
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:form2:actividades"  action="#{procesoListMB.elegirProceso}" >
+                        <span class="ui-icon ui-icon-calculator">  </span> 
+                        <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
+                    </p:commandLink>
+                </p:column> 
+            </p:dataTable>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Proceso?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{procesoListMB.eliminar}" update="procesos, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            <br></br>
+				<p:toolbarGroup>
+					<p:commandButton value ="Nuevo " action="#{procesoListMB.getNextView}"
+						actionListener="#{procesoListMB.clear}" ajax="false" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+        </h:form>
+			
+		<br></br>
+        <h:form id="form2" >
+        
+        	<p:dataTable  var="actividad" value="#{procesoListMB.actividades}"  id="actividades" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				        
+				<f:facet name="header">  
+		            Actividades  #{procesoListMB.procesoSeleccionado.nroProceso}
+		        </f:facet> 
+		        
+                <p:column headerText="#Activ" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{actividad.nroActividad}" />                                              
+                </p:column>
+                <p:column headerText="Respons"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.responsable.usuario}" />
+                </p:column>
+                
+                <p:column headerText="Estado"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.estado}" />
+                </p:column>
+                
+                <p:column headerText="FechaCreacion"  style="font-weight:bold;">
+                <h:outputText  style="font-weight:normal;" value="#{actividad.fechaCreacion}">
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" /> -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechaIniPrev"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.fechaInicioPrevisto}" >
+                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechFinPrev"  style="font-weight:bold;">
+                <h:outputText style="font-weight:normal;" value="#{actividad.fechaFinPrevista}" >
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
+                </h:outputText>
+                </p:column>
+                
+                <p:column headerText="ActivAnt"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.actividadAnterior.descripcion}" />
+                </p:column>
+                <p:column headerText="SuperTarea"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.superTarea.descripcion}" />
+                </p:column>
+                <p:column headerText="Alarma"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.alarma.descripcion}" />
+                </p:column>
+                <p:column headerText="Alerta"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.alerta.descripcion}" />
+                </p:column>
+                
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{procesoListMB.elegirActividad}" >
+                        <span class="ui-icon ui-icon-pencil">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
+                    </p:commandLink>
+                </p:column>
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink id="showDialogButton2" onclick="confirmation2.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>            
+            
+            <p:confirmDialog id="confirmDialog2" message="¿Desea eliminar la Actividad"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation2">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation2.hide()" 
+                                 actionListener="#{procesoListMB.eliminarActividad}" update=":form:messages,:form2:actividades" />
+                <p:commandButton id="decline" value="No" onclick="confirmation2.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            </h:form>
+            
+            
+            
+            <br></br> 
+       	 	<p:commandButton id="showDialogButton3" type="button" value="Nueva Actividad" onclick="dlg.show()" />
+          	<br></br> 
+        	         	
+			<p:dialog header="Nueva Actividad" widgetVar="dlg" resizable="false">  
+				
+				<h:form id="form3">       		
+					<p:panel id="panel3" style="width:900px;">
+                            <h:panelGrid columns="4" cellpadding="7">
+                            		                    
+                                <h:outputText value="Nroactividad " />
+                                <p:inputText required="true" value="#{procesoListMB.nroActividad}" />
+                                			                    
+			                    <h:outputText value="CronogramaDetalle " />
+                                <p:selectOneMenu id="selectCronogramaDetalle" value="#{procesoListMB.idCronogramaDetalle}"  > 
+									<f:selectItem itemLabel="select CronogramaDetalle " itemValue="" /> 
+			                        <f:selectItems value="#{procesoListMB.cronogramaDetallesporCronograma}" var="cronogramaDetalle" itemLabel="#{cronogramaDetalle.tarea}" itemValue="#{cronogramaDetalle.cronogramaDetalleId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="Estado " />
+                                <p:inputText value="#{procesoListMB.estado}" />
+                                
+                                <h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.descripcion}" />   
+                                	
+                                <h:outputText value="Responsable " />
+                                <p:selectOneMenu id="selectResponsable" value="#{procesoListMB.idResponsable}"  > 
+									<f:selectItem itemLabel="select Responsable  " itemValue="" /> 			                        
+									<f:selectItems value="#{procesoListMB.usuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>		
+			                                      
+                                <h:outputText value="fechaCreacion " />
+                                <p:calendar value="#{procesoListMB.fechaCreacion}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="fechaInicioPrevisto " />
+                                <p:calendar  value="#{procesoListMB.fechaInicioPrevisto}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="fechaInicioReprogramado " />
+                                <p:calendar value="#{procesoListMB.fechaInicioReprogramado}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="motivoReprogramacionInicio " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.motivoReprogramacionInicio}" /> 
+                                
+                                <h:outputText value="fechaFinPrevista " />
+                                <p:calendar  value="#{procesoListMB.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="fechaFinReprogramada " />
+                                <p:calendar value="#{procesoListMB.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="motivoReprogramacion " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.motivoReprogramacion}" /> 
+                                
+                                <h:outputText value="fecha_devuelta " />
+                                <p:calendar  value="#{procesoListMB.fechaDevuelta}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="fechaResuelta " />
+                                <p:calendar value="#{procesoListMB.fechaResuelta}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="fechaCancelacion " />
+                                <p:calendar  value="#{procesoListMB.fechaCancelacion}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="pregunta " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.pregunta}" /> 
+                                
+                                <h:outputText value="respuesta " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.respuesta}" /> 
+                                
+                                <h:outputText value="checklistCompleto " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.checklistCompleto}" /> 
+                            
+                            	<h:outputText value="actividadAnterior " />
+                                <p:selectOneMenu id="selectActividadAnterior" value="#{procesoListMB.idActividadAnterior}"  > 
+									<f:selectItem itemLabel="selectActividadAnterior " itemValue="" /> 
+			                        <f:selectItems value="#{procesoListMB.actividadesPorProceso}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
+			                    </p:selectOneMenu>	
+			                                            
+			                    
+			                    <h:outputText value="superTarea " />
+                                <p:selectOneMenu id="selectSuperTarea" value="#{procesoListMB.idSuperTarea}"  > 
+									<f:selectItem itemLabel="selectSuperTarea " itemValue="" />
+			                        <f:selectItems value="#{procesoListMB.actividadesPorProceso}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
+			                    </p:selectOneMenu>	
+			                    
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{procesoListMB.registrarActividad}"
+                                             oncomplete="dlg.hide()" icon="ui-icon-disk" update=":form:messages,:form2:actividades,panel3"/> 
+	
+                                                          
+                            </h:panelGrid>
+                        </p:panel> 
+            
+         		</h:form>
+			</p:dialog>
+			
+			<br></br>
+            <br></br>
+          			
+			<p:dialog header="Editar Actividad" widgetVar="dlg2" resizable="false">  
+		
+				<h:form id="form4">
+                        <p:panel style="width:900px" id="panel4" >
+                         <h:panelGrid columns="4" cellpadding="7" >
+                        		<h:outputText value="Nroactividad " />
+                                <p:inputText required="true" value="#{procesoListMB.actividadSeleccionada.nroActividad}" />
+                                			                    
+			                    <h:outputText value="CronogramaDetalle " />
+                                <p:selectOneMenu id="selectCronogramaDetalle" value="#{procesoListMB.idCronogramaDetalle}"  > 
+									<f:selectItem itemLabel="#{procesoListMB.actividadSeleccionada.cronogramaDetalle.tarea}" itemValue="#{procesoListMB.actividadSeleccionada.cronogramaDetalle.cronogramaDetalleId}" />
+			                        <f:selectItems value="#{procesoListMB.cronogramaDetallesporCronograma}" var="cronogramaDetalle" itemLabel="#{cronogramaDetalle.tarea}" itemValue="#{cronogramaDetalle.cronogramaDetalleId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="Estado " />
+                                <p:inputText value="#{procesoListMB.actividadSeleccionada.estado}" />
+                                
+                                <h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.descripcion}" />   
+                                	
+                                <h:outputText value="Responsable " />
+                                <p:selectOneMenu id="selectResponsable" value="#{procesoListMB.idResponsable}"  > 
+									<f:selectItem itemLabel="#{procesoListMB.actividadSeleccionada.responsable.usuario}" itemValue="#{procesoListMB.actividadSeleccionada.responsable.usuarioId}" /> 			                        
+									<f:selectItems value="#{procesoListMB.usuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>		
+			                                      
+                                <h:outputText value="fechaCreacion " />
+                                <p:calendar value="#{procesoListMB.actividadSeleccionada.fechaCreacion}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="fechaInicioPrevisto " />
+                                <p:calendar  value="#{procesoListMB.actividadSeleccionada.fechaInicioPrevisto}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="fechaInicioReprogramado " />
+                                <p:calendar value="#{procesoListMB.actividadSeleccionada.fechaInicioReprogramado}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="motivoReprogramacionInicio " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.motivoReprogramacionInicio}" /> 
+                                
+                                <h:outputText value="fechaFinPrevista " />
+                                <p:calendar  value="#{procesoListMB.actividadSeleccionada.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="fechaFinReprogramada " />
+                                <p:calendar value="#{procesoListMB.actividadSeleccionada.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="motivoReprogramacion " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.motivoReprogramacion}" /> 
+                                
+                                <h:outputText value="fecha_devuelta " />
+                                <p:calendar  value="#{procesoListMB.actividadSeleccionada.fechaDevuelta}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="fechaResuelta " />
+                                <p:calendar value="#{procesoListMB.actividadSeleccionada.fechaResuelta}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="fechaCancelacion " />
+                                <p:calendar  value="#{procesoListMB.actividadSeleccionada.fechaCancelacion}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="pregunta " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.pregunta}" /> 
+                                
+                                <h:outputText value="respuesta " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.respuesta}" /> 
+                                
+                                <h:outputText value="checklistCompleto " />
+                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.checklistCompleto}" /> 
+                            
+                            	<h:outputText value="actividadAnterior " />
+                                <p:selectOneMenu id="selectActividadAnterior" value="#{procesoListMB.idActividadAnterior}"  > 
+									<f:selectItem itemLabel="#{procesoListMB.actividadSeleccionada.actividadAnterior.descripcion}" itemValue="#{procesoListMB.actividadSeleccionada.actividadAnterior.actividadId}" />  
+			                        <f:selectItems value="#{procesoListMB.actividadesPorProceso}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
+			                    </p:selectOneMenu>	
+			                                            
+			                    
+			                    <h:outputText value="superTarea " />
+                                <p:selectOneMenu id="selectSuperTarea" value="#{procesoListMB.idSuperTarea}"  > 
+									<f:selectItem itemLabel="#{procesoListMB.actividadSeleccionada.superTarea.descripcion}" itemValue="#{procesoListMB.actividadSeleccionada.superTarea.actividadId}" />
+			                        <f:selectItems value="#{procesoListMB.actividadesPorProceso}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
+			                    </p:selectOneMenu>	
+			                    
+			                    <br></br>
+                                <p:commandButton value="Editar" id="editar" actionListener="#{procesoListMB.editarActividad}"
+                                              oncomplete="dlg2.hide()"  icon="ui-icon-disk" update=":form:messages,:form2:actividades"/>   
+                                             
+                         </h:panelGrid>
+                        </p:panel>  
+                        
+				</h:form>
+            </p:dialog> 
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

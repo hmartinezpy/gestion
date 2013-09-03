@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Checklist</h1>
+		<div class="entry" style="line-height:200%;margin-left:100px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form id="form" >
+        	<p:growl id="messages"/>        	
+            <p:dataTable  var="checklist" value="#{checklistListMB.checklists}"  id="checklists"  editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				        
+                <p:column headerText="Descripcion" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{checklist.descripcion}" />                                              
+                </p:column>  
+                
+                <p:column style="width:30px;" >				
+					<p:commandButton action="#{checklistListMB.getNextView}" actionListener="#{checklistListMB.clear}"
+						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						<f:param name="id" value="#{checklist.checklistId}" />
+					</p:commandButton>
+				</p:column>
+				<p:column style="width:50px;" headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{checklist}" target="#{checklistListMB.checklistSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+            
+            	<p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages, :form2:detalles,:form4:panel4"  action="#{checklistListMB.elegirChecklist}" >
+                        <span class="ui-icon ui-icon-calculator">  </span> 
+                        <f:setPropertyActionListener value="#{checklist}" target="#{checklistListMB.checklistSeleccionado}" />
+                    </p:commandLink>
+                </p:column>                
+            </p:dataTable>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Checklist?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{checklistListMB.eliminar}" update="checklists, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            <br></br>
+				<p:toolbarGroup>
+					<p:commandButton value ="Nuevo " action="#{checklistListMB.getNextView}"
+						actionListener="#{checklistListMB.clear}" ajax="false" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+        </h:form>
+        
+        <br></br>
+        <h:form id="form2" >
+        	
+            <p:dataTable  id="detalles" var="detalle" value="#{checklistListMB.detalles}"  editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				<f:facet name="header">  
+		            Detalles  #{checklistListMB.checklistSeleccionado.descripcion}
+		        </f:facet> 
+                <p:column width="90" headerText="Descrip" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{detalle.descripcion}" />                                              
+                </p:column>
+                
+                <p:column width="90" headerText="NroOrden" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{detalle.nroOrden}" />                                              
+                </p:column>
+                
+               
+         		<p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{checklistListMB.elegirDetalle}" >
+                        <span class="ui-icon ui-icon-pencil">  </span> 
+                        <f:setPropertyActionListener value="#{detalle}" target="#{checklistListMB.detalleSeleccionado}" />
+                    </p:commandLink>
+                </p:column>   
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink id="showDialogButton2" onclick="confirmation2.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{detalle}" target="#{checklistListMB.detalleSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>   
+            <p:confirmDialog id="confirmDialog2" message="¿Desea eliminar el Detalle?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation2">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation2.hide()" 
+                                 actionListener="#{checklistListMB.eliminarDetalle}" update=":form:messages,:form2:detalles" />
+                <p:commandButton id="decline" value="No" onclick="confirmation2.hide()" type="button" /> 
+            </p:confirmDialog> 
+                    	
+           </h:form>
+        
+        <br></br>          	
+        
+		<p:commandButton id="showDialogButton3" type="button" value="Nuevo Detalle" onclick="dlg.show()" />
+		  
+		<br></br>	
+			<p:dialog header="Nuevo Detalle" widgetVar="dlg" resizable="false">  
+				<h:form id="form3">       		
+        			
+                        <p:panel style="width:500px"  id="panel3" >
+                            <h:panelGrid columns="2" cellpadding="5" >
+                            	
+                            	<h:outputText value="Descripcion" />
+                                <p:inputText value="#{checklistListMB.descripcion}" required="true" />
+			                    				
+			                    
+			                    <h:outputText value="NroOrden" />
+                                <p:inputText value="#{checklistListMB.nroOrden}"/>
+			                    
+			                                
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{checklistListMB.registrarChecklistDetalle}"
+                                            oncomplete="dlg.hide()" icon="ui-icon-disk" update=":form:messages,:form2:detalles,panel3"/>                             
+			                    
+                            </h:panelGrid>
+                        </p:panel>      
+                    </h:form>
+            	</p:dialog>          
+                    <br></br>
+          			<br></br>
+			
+			<p:dialog header="Editar Detalle" widgetVar="dlg2" resizable="false">  
+			
+				<h:form id="form4">       		
+        			
+                        <p:panel style="width:500px" id="panel4" >
+                            <h:panelGrid columns="2" cellpadding="5" >
+                            	
+                            	<h:outputText value="Descripcion" />
+                                <p:inputText value="#{checklistListMB.detalleSeleccionado.descripcion}" required="true" />
+			                    				
+			                    <h:outputText value="NroOrden" />
+                                <p:inputText value="#{checklistListMB.detalleSeleccionado.nroOrden}"/>
+			                    
+			                    
+			                    <br></br>
+                                <p:commandButton value="Editar" id="editar" actionListener="#{checklistListMB.editarChecklistDetalle}"
+                                                oncomplete="dlg2.hide()" icon="ui-icon-disk" update=":form:messages,:form2:detalles"/>                             
+			                    
+                            </h:panelGrid>
+                        </p:panel>      
+                                    
+                    </h:form>
+            	</p:dialog>          
+        
+        		
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

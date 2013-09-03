@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Actividades</h1>
+		<div class="entry" style="line-height:200%;">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form id="form">
+        	<p:growl id="messages"/>
+        	
+            <p:dataTable  var="actividad" value="#{actividadListMB.actividades}"  id="actividades" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				        
+                <p:column headerText="#Activ" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{actividad.nroActividad}" />                                              
+                </p:column>
+                <p:column headerText="Respons"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.responsable.usuario}" />
+                </p:column>
+                <p:column headerText="Proceso" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.proceso.descripcion}" />
+                </p:column>
+                <p:column headerText="CronogDetalle" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.cronogramaDetalle.tarea}" />
+                </p:column>
+                <p:column headerText="Estado"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.estado}" />
+                </p:column>
+                
+                <p:column headerText="FechaCreacion"  style="font-weight:bold;">
+                <h:outputText  style="font-weight:normal;" value="#{actividad.fechaCreacion}">
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" /> -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechaIniPrev"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.fechaInicioPrevisto}" >
+                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechFinPrev"  style="font-weight:bold;">
+                <h:outputText style="font-weight:normal;" value="#{actividad.fechaFinPrevista}" >
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
+                </h:outputText>
+                </p:column>
+                
+                <p:column headerText="ActivAnt"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.actividadAnterior.descripcion}" />
+                </p:column>
+                <p:column headerText="SuperTarea"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.superTarea.descripcion}" />
+                </p:column>
+                <p:column headerText="Alarma"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.alarma.descripcion}" />
+                </p:column>
+                <p:column headerText="Alerta"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.alerta.descripcion}" />
+                </p:column>
+                
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages"  action="#{actividadListMB.elegirActividad}" >
+                        <span class="ui-icon ui-icon-suitcase">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{actividadListMB.actividadSeleccionado}" />
+                    </p:commandLink>
+                </p:column>  
+                
+                <p:column style="width:30px;" >				
+					<p:commandButton action="#{actividadListMB.getNextView}" actionListener="#{actividadListMB.clear}"
+						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						<f:param name="id" value="#{actividad.actividadId}" />
+					</p:commandButton>
+				</p:column>
+				<p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{actividadListMB.actividadSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar la actividad?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{actividadListMB.eliminar}" update="actividades, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            <br></br>
+				<p:toolbarGroup>
+					<p:commandButton value ="Nuevo " action="#{actividadListMB.getNextView}"
+						actionListener="#{actividadListMB.clear}" ajax="false" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+        </h:form>
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>
+

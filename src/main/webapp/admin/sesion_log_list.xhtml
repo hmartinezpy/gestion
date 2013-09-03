@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Gestión de Documentos ::</ui:define>
+	<ui:define name="content">
+	    <h1 class="title ui-widget-header ui-corner-all">Listado de Sesiones efectuadas en el Sistema</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+	
+		<h:form rendered="#{sesionLogListMB.ver}">
+		 	<p:dataTable id="list" var="bean" value="#{sesionLogListMB.model}" rows="#{sesionLogListMB.pageSize}" paginator="true" 
+		 	             lazy="true" dynamic="true">
+
+				<p:column sortBy="#{bean.user}" filterBy="#{bean.user}" headerText="Usuario">
+					#{bean.user}	
+				</p:column>	
+				
+			    <p:column sortBy="#{bean.ip}" filterBy="#{bean.ip}" headerText="IP">
+					#{bean.ip}	
+				</p:column>
+						
+				<p:column sortBy="#{bean.exito}" filterBy="#{bean.exito}" headerText="Exito">
+					#{bean.exito}
+				</p:column>
+					
+			    <p:column sortBy="#{bean.obsUsuario}" filterBy="#{bean.obsUsuario}" headerText="Observación">
+					#{bean.obsUsuario}
+				</p:column>	
+				
+				<p:column sortBy="#{bean.fechaIntento}" headerText="Fecha de Intento">
+					#{bean.fechaIntento}
+				</p:column>
+				
+				<p:column sortBy="#{bean.nroSesion}" headerText="Nro de Sesión">
+						#{bean.nroSesion}
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+		
+			<h:form rendered="!#{sesionLogListMB.ver}">
+				<h1 align="center">Acceso Denegado</h1>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

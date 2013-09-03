@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Clientes ::</ui:define>
+	<ui:define name="content">
+	<h1 class="title ui-widget-header ui-corner-all" align="center" >Clientes</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+         
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true"/>
+            <p:fieldset legend="Clientes" toggleable="true" toggleSpeed="500">
+            <p:dataTable var="cliente" value="#{clienteMB.clientes}" id="clientes" editable="true" paginator="true" paginatorPosition="bottom" rows="9">
+                <p:ajax event="rowEdit" listener="#{clienteMB.onEdit}" update=":form:messages" />
+
+				        
+                <p:column headerText="Nombre" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cliente.nombre}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cliente.nombre}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Direccion" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cliente.direccion}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cliente.direccion}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+				<p:column headerText="Telefono" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cliente.telefono}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cliente.telefono}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="PersonaContacto" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cliente.personaContacto}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cliente.personaContacto}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+				
+		        
+                <p:column headerText="" >
+                    <p:rowEditor /> 
+                </p:column>
+                
+                <p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{cliente}" target="#{clienteMB.clienteSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+                
+                
+            </p:dataTable>
+            </p:fieldset>
+            
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Cliente?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{clienteMB.eliminar}" update="clientes, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+                        
+        </h:form>	
+        	
+        <p:fieldset legend="Nuevo" toggleable="true" toggleSpeed="500" collapsed="true">
+        		<h:form>
+                        <p:growl id="messagesNew"/>
+                        <p:panel header="Nuevo Cliente" id="clienteNew">
+                            <h:panelGrid columns="2" cellpadding="1">
+                            		                    
+                                <h:outputText value="Nombre: " />
+                                <p:inputText required="true" value="#{clienteMB.nombre}" 
+                                autoResize="false" />
+
+                                <h:outputText value="Direccion: " />
+                                <p:inputText value="#{clienteMB.direccion}" 
+                                autoResize="false" />
+                                
+                                <h:outputText value="Telefono: " />
+                                <p:inputText value="#{clienteMB.telefono}" 
+                                autoResize="false" />
+                                
+                                <h:outputText value="PersonaContacto: " />
+                                <p:inputText value="#{clienteMB.personaContacto}" 
+                                autoResize="false" />
+                          
+											                    
+			                    <br></br>
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{clienteMB.registrarCliente}"
+                                                 icon="ui-icon-disk" update="messagesNew, clienteNew,:form:clientes"/>
+                            </h:panelGrid>
+                        </p:panel>                        
+                    </h:form>
+                </p:fieldset>
+			
+	  </div>
+	</ui:define>
+</ui:composition>

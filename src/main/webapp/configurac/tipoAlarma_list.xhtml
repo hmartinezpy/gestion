@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: TipoAlarma ::</ui:define>
+	<ui:define name="content">
+	<h1 class="title ui-widget-header ui-corner-all" align="center" >TipoAlarma</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+         
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true"/>
+            <p:fieldset legend="TipoAlarma" toggleable="true" toggleSpeed="500">
+            <p:dataTable var="tipoAlarma" value="#{tipoAlarmaMB.tipoAlarmas}" id="tipoAlarmas" editable="true" paginator="true" paginatorPosition="bottom" rows="9">
+                <p:ajax event="rowEdit" listener="#{tipoAlarmaMB.onEdit}" update=":form:messages" />
+
+				        
+                <p:column headerText="Descrip" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{tipoAlarma.descripcion}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{tipoAlarma.descripcion}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+				<p:column headerText="Tipo" >
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{tipoAlarma.tipo}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{tipoAlarma.tipo}" >
+		                        <f:selectItem itemLabel="Alerta" itemValue="Alerta" />
+	                            <f:selectItem itemLabel="Alarma" itemValue="Alarma" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+
+                <p:column headerText="Dias" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{tipoAlarma.dias}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{tipoAlarma.dias}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Horas" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{tipoAlarma.horas}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{tipoAlarma.horas}" style="width:100%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+				<p:column headerText="Resp1" >
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{tipoAlarma.responsable1.usuario}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{tipoAlarmaMB.idResponsable1}" >
+		                    	<f:selectItem itemLabel="#{tipoAlarma.responsable1.usuario}" itemValue="#{tipoAlarma.responsable1.usuarioId}" /> 
+		                        <f:selectItems value="#{tipoAlarmaMB.usuarios}"
+		                            var="inst" 
+		                            itemLabel="#{inst.usuario}"
+		                            itemValue="#{inst.usuarioId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        <p:column headerText="Resp2" >
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{tipoAlarma.responsable2.usuario}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{tipoAlarmaMB.idResponsable2}" >
+		                    	<f:selectItem itemLabel="#{tipoAlarma.responsable2.usuario}" itemValue="#{tipoAlarma.responsable2.usuarioId}" /> 
+		                        <f:selectItems value="#{tipoAlarmaMB.usuarios}"
+		                            var="inst" 
+		                            itemLabel="#{inst.usuario}"
+		                            itemValue="#{inst.usuarioId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+                <p:column headerText="" >
+                    <p:rowEditor /> 
+                </p:column>
+                
+                <p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{tipoAlarma}" target="#{tipoAlarmaMB.tipoAlarmaSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+                
+                
+            </p:dataTable>
+            </p:fieldset>
+            
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el TipoAlarma?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{tipoAlarmaMB.eliminar}" update="tipoAlarmas, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+                        
+        </h:form>	
+        	
+        <p:fieldset legend="Nuevo" toggleable="true" toggleSpeed="500" collapsed="true">
+        		<h:form>
+                        <p:growl id="messagesNew"/>
+                        <p:panel header="Nuevo TipoAlarma" id="tipoAlarmaNew">
+                            <h:panelGrid columns="3" cellpadding="3">
+                            		                    
+                                <h:outputText value="Descripcion: " />
+                                <p:inputText required="true" value="#{tipoAlarmaMB.descripcion}" 
+                                autoResize="false" />
+                                <br></br>
+                                <h:outputText value="Tipo: " /> 
+			                    <p:selectOneMenu id="selectTipo" value="#{tipoAlarmaMB.tipo}" >
+			                    	<f:selectItem itemLabel="Alarma" itemValue="Alarma" />
+	                            	<f:selectItem itemLabel="Alerta" itemValue="Alerta" />	                            
+			                    </p:selectOneMenu>
+			                    <br></br>
+                                
+                                
+                          		<h:outputText value="Dias: " />
+                                <p:inputText id="dias" disabled="#{!tipoAlarmaMB.checkAutom}" value="#{tipoAlarmaMB.dias}" 
+                                autoResize="false" />
+                                <br></br>
+                                <h:outputText value="Horas: " />
+                                <p:inputText id="horas" disabled="#{!tipoAlarmaMB.checkAutom}"  value="#{tipoAlarmaMB.horas}" 
+                                autoResize="false" />
+                                
+                                <br></br>
+								<h:outputText value="Responsable1: " /> 
+			                    <p:selectOneMenu id="selectResponsable1" value="#{tipoAlarmaMB.idResponsable1}" required="true" >  
+			                        <f:selectItem itemLabel="Seleccione Responsable1" itemValue="" />  
+			                        <f:selectItems value="#{tipoAlarmaMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>
+			                    <br></br>
+			                    <h:outputText value="Responsable2: " /> 
+			                    <p:selectOneMenu id="selectResponsable2" value="#{tipoAlarmaMB.idResponsable2}" required="true" >  
+			                        <f:selectItem itemLabel="Seleccione Responsable2" itemValue="" />  
+			                        <f:selectItems value="#{tipoAlarmaMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>
+			                    <br></br>
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{tipoAlarmaMB.registrarTipoAlarma}"
+                                                 icon="ui-icon-disk" update="messagesNew, tipoAlarmaNew,:form:tipoAlarmas"/>
+                            </h:panelGrid>
+                        </p:panel>                        
+                    </h:form>
+                </p:fieldset>
+			
+	  </div>
+	</ui:define>
+</ui:composition>

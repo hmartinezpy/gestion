@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Clientes</h1>
+		<div class="entry" style="line-height:200%;margin-left:150px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+  
+  					<h:form prependId="false">
+                        <p:growl id="messages"/>
+                        <p:panel header="Cliente" id="panel" style="width:800px;">
+                            <h:panelGrid columns="2" cellpadding="3">
+                            		                    
+                                <h:outputText value="Nombre " />
+                                <p:inputText required="true" value="#{clienteEditMB.bean.nombre}" />
+                                                            
+                                <h:outputText value="Direccion " />
+                                <p:inputText value="#{clienteEditMB.bean.direccion}" />
+                                
+                                <h:outputText value="Telefono " />
+                                <p:inputText value="#{clienteEditMB.bean.telefono}" />
+                                
+                                <h:outputText value="PersonaContacto " />
+                                <p:inputText value="#{clienteEditMB.bean.personaContacto}" />
+                                
+                            </h:panelGrid>
+                        </p:panel> 
+                        <br></br>
+							<p:toolbarGroup align="left">
+								<p:commandButton value="Crear" image="ui-icon-disk" update="messages" action="#{clienteEditMB.insert}"
+									rendered="#{!clienteEditMB.updateMode}" ajax="false" />
+								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{clienteEditMB.update}"
+									rendered="#{clienteEditMB.updateMode}" ajax="false" />
+							</p:toolbarGroup>
+                    </h:form>
+  
+  
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

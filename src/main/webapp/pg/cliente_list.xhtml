@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Clientes</h1>
+		<div class="entry" style="line-height:200%;margin-left:200px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form >
+        	<p:growl id="messages"/>
+        	
+            <p:dataTable  var="cliente" value="#{clienteListMB.clientes}"  id="clientes" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				        
+                <p:column width="100" headerText="Nombre" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{cliente.nombre}" />                                              
+                </p:column>
+                <p:column width="100" headerText="Direccion"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{cliente.direccion}" />
+                </p:column>
+                <p:column width="100" headerText="Telefono" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{cliente.telefono}" />
+                </p:column>
+                <p:column headerText="PersonaContacto"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{cliente.personaContacto}" />
+                </p:column>
+                
+                
+                
+                <p:column style="width:30px;" >				
+					<p:commandButton action="#{clienteListMB.getNextView}" actionListener="#{clienteListMB.clear}"
+						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						<f:param name="id" value="#{cliente.clienteId}" />
+					</p:commandButton>
+				</p:column>
+				<p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{cliente}" target="#{clienteListMB.clienteSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Cliente?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{clienteListMB.eliminar}" update="clientes, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            <br></br>
+				<p:toolbarGroup>
+					<p:commandButton value ="Nuevo " action="#{clienteListMB.getNextView}"
+						actionListener="#{clienteListMB.clear}" ajax="false" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+        </h:form>
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

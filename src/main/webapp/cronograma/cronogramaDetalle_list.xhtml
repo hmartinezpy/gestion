@@ -1,0 +1,220 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Cronogramas ::</ui:define>
+	<ui:define name="content">
+	<h1 class="title ui-widget-header ui-corner-all" align="center" >Detalles - #{cronogramaDetalleMB.nombreCronograma} </h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+        <h:form id="formcd">
+            <p:growl id="messages" showDetail="true"/>
+            
+            <p:dataTable var="cronogramaDetalle" value="#{cronogramaDetalleMB.cronogramaDetalles}" id="cronogramaDetalles" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
+                <p:ajax event="rowEdit" listener="#{cronogramaDetalleMB.onEdit}" update=":formcd:messages" />
+				    
+				    
+				    
+				<p:column headerText="Tarea" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;width:20%" >
+                
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cronogramaDetalle.tarea}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cronogramaDetalle.tarea}" style="width:100%" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>    
+						        
+		        <p:column headerText="RolRespons" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;width:15%">
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.rolResponsable.descripcion}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalleMB.idRolResponsable}" >
+		                    	<f:selectItem itemLabel="#{cronogramaDetalle.rolResponsable.descripcion}" itemValue="#{cronogramaDetalle.rolResponsable.rolId}" /> 
+		                        <f:selectItems value="#{cronogramaDetalleMB.roles}"
+		                            var="instRol" 
+		                            itemLabel="#{instRol.descripcion}"
+		                            itemValue="#{instRol.rolId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		       
+                <p:column headerText="AlertaInicio" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;width:10%" >
+                	<p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.alertaInicio}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalle.alertaInicio}" >
+		                        <f:selectItem itemLabel="Si" itemValue="Si" />
+	                            <f:selectItem itemLabel="No" itemValue="No" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+                    
+                </p:column>
+                <p:column headerText="Duracion"  style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px; width:10%" >
+                
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cronogramaDetalle.duracionTarea}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cronogramaDetalle.duracionTarea}" style="width:50%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Alarma" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px; width:20%">
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.alarma.descripcion}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalleMB.idTipoAlarma}" >
+		                    <f:selectItem itemLabel="#{cronogramaDetalle.alarma.descripcion}" itemValue="#{cronogramaDetalle.alarma.tipoAlarmaId}" /> 
+		                       <f:selectItem itemLabel="Ninguna" itemValue="" /> 
+		                        <f:selectItems value="#{cronogramaDetalleMB.alarmas}"
+		                            var="instTipoAlarma" 
+		                            itemLabel="#{instTipoAlarma.descripcion}"
+		                            itemValue="#{instTipoAlarma.tipoAlarmaId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        <p:column headerText="Alerta" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px; width:20%" >
+					            <p:cellEditor>
+					                <f:facet name="output">
+					                    <h:outputText value="#{cronogramaDetalle.alerta.descripcion}" />
+					                </f:facet>
+					                <f:facet name="input">
+					                    <h:selectOneMenu value="#{cronogramaDetalleMB.idAlerta}" >
+					                    	<f:selectItem itemLabel="#{cronogramaDetalle.alerta.descripcion}" itemValue="#{cronogramaDetalle.alerta.tipoAlarmaId}" /> 
+					                        <f:selectItem itemLabel="Ninguna" itemValue="" /> 
+					                        <f:selectItems value="#{cronogramaDetalleMB.alertas}"
+					                            var="instAlerta" 
+					                            itemLabel="#{instAlerta.descripcion}"
+					                            itemValue="#{instAlerta.tipoAlarmaId}" />
+					                    </h:selectOneMenu>
+					                </f:facet>
+					            </p:cellEditor>
+					        </p:column>
+		        <p:column headerText="TareaSgte" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;">
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.tareaSiguiente.tarea}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalleMB.idTareaSgte}" >
+		                    	<f:selectItem itemLabel="#{cronogramaDetalle.tareaSiguiente.tarea}" itemValue="#{cronogramaDetalle.tareaSiguiente.cronogramaDetalleId}" /> 
+		                    	<f:selectItem itemLabel="Ninguna" itemValue="" /> 
+		                        <f:selectItems value="#{cronogramaDetalleMB.tareas}"
+		                            var="instTareaSgte" 
+		                            itemLabel="#{instTareaSgte.tarea}"
+		                            itemValue="#{instTareaSgte.cronogramaDetalleId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+                <p:column headerText="Pregunta" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;">
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.pregunta.descripcion}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalleMB.idPregunta}" >
+		                    	<f:selectItem itemLabel="#{cronogramaDetalle.pregunta.descripcion}" itemValue="#{cronogramaDetalle.pregunta.preguntaId}" /> 
+		                        <f:selectItem itemLabel="Ninguna" itemValue="" /> 
+		                        <f:selectItems value="#{cronogramaDetalleMB.preguntas}"
+		                            var="instPregunta" 
+		                            itemLabel="#{instPregunta.descripcion}"
+		                            itemValue="#{instPregunta.preguntaId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+                <p:column headerText="TareaSi" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;">
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.respuestaSi.tarea}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalleMB.idTareaSi}" >
+		                    	<f:selectItem itemLabel="#{cronogramaDetalle.respuestaSi.tarea}" itemValue="#{cronogramaDetalle.respuestaSi.cronogramaDetalleId}" /> 
+		                        <f:selectItem itemLabel="Ninguna" itemValue="" /> 
+		                        <f:selectItems value="#{cronogramaDetalleMB.tareas}"
+		                            var="instTareaSi" 
+		                            itemLabel="#{instTareaSi.tarea}"
+		                            itemValue="#{instTareaSi.cronogramaDetalleId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="TareaNo" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;">
+		            <p:cellEditor>
+		                <f:facet name="output">
+		                    <h:outputText value="#{cronogramaDetalle.respuestaNo.tarea}" />
+		                </f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{cronogramaDetalleMB.idTareaNo}" >
+		                    	<f:selectItem itemLabel="#{cronogramaDetalle.respuestaNo.tarea}" itemValue="#{cronogramaDetalle.respuestaNo.cronogramaDetalleId}" /> 
+		                        <f:selectItem itemLabel="Ninguna" itemValue="" /> 
+		                        <f:selectItems value="#{cronogramaDetalleMB.tareas}"
+		                            var="instTareaNo" 
+		                            itemLabel="#{instTareaNo.tarea}"
+		                            itemValue="#{instTareaNo.cronogramaDetalleId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+                <p:column headerText="" >
+                    <p:rowEditor /> 
+                </p:column>
+                       
+                <p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{cronogramaDetalle}" target="#{cronogramaDetalleMB.cronogramaDetalleSeleccionado}" />
+                    </p:commandLink>
+                </p:column>        
+            </p:dataTable>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Cronograma?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{cronogramaDetalleMB.eliminar}" update="cronogramaDetalles, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            <p:toolbar>
+				<p:toolbarGroup >
+					<p:commandButton title="Nuevo" value ="Nuevo"  action="#{cronogramaDetalleMB.getNextView}"
+						ajax="false" image="ui-icon-document" >	
+						<f:param name="id" value="#{cronogramaDetalleMB.idCronograma}" />
+					</p:commandButton>
+				</p:toolbarGroup>
+			</p:toolbar>
+
+        </h:form>	
+
+        	
+                    			
+	  </div>
+	</ui:define>
+</ui:composition>

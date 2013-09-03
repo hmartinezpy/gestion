@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<h:form>
+		<p:menubar>
+			<p:submenu label="#{messages['menu.bookmark']}">
+				<p:menuitem value="#{messages['menu.menuitem.new']}" url="/bookmark_edit.jsf" />
+				<p:menuitem value="#{messages['menu.menuitem.list']}" url="/bookmark_list.jsf" />
+			</p:submenu>
+
+			<p:submenu label="Perfil">
+				<p:menuitem value="Cambiar contraseña" url="/perfil/usuario_cambiar_pass.jsf" style="FONT-SIZE: small; width: 350px !important;" />
+				<p:menuitem value="#{messages['menu.menuitem.quit']}" url="/index.jsp"/>
+			</p:submenu>
+			
+			<p:submenu label="#{messages['menu.administrator']}" rendered="#{rolListMB.verMenuAdmin}" >
+				<p:submenu label = "Auditoria">
+					<p:menuitem value="Control de Sesiones" url="/admin/sesion_log_list.jsf" rendered="#{rolListMB.verMenuAdmin}" />
+					<p:menuitem value="#{messages['menu.log']}" url="/admin/log_list.jsf" rendered="#{audLogMB.ver}"/>
+				</p:submenu >
+				<p:menuitem value="#{messages['menu.usuario']}" url="/admin/usuario_list.jsf" rendered="#{rolListMB.verMenuAdmin}"/>
+				<p:menuitem value="#{messages['menu.rol']}" url="/admin/rol_list.jsf" rendered="#{rolListMB.verMenuAdmin}" />
+			</p:submenu>
+
+			<p:menuitem value="#{messages['menu.menuitem.quit']}" url="/index.jsp"/>
+
+			<p:menuitem value="  -----------> Usuario actual: #{usuarioEditMB.usuarioActual}"  style="BACKGROUND-COLOR: #c1c1c1;" />
+
+		</p:menubar>
+		
+	</h:form>
+
+</ui:composition>

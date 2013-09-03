@@ -1,0 +1,98 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Cronogramas ::</ui:define>
+	<ui:define name="content">
+	<h1 class="title ui-widget-header ui-corner-all" align="center" >Cronogramas Base</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true"/>
+            <p:fieldset id="fieldset1" legend="Cronogramas" toggleable="true" toggleSpeed="500">
+		        
+		        
+            <p:dataTable var="cronograma" value="#{cronogramaMB.cronogramas}" id="cronogramas" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
+                <p:ajax event="rowEdit" listener="#{cronogramaMB.onEdit}" update=":form:messages" />
+                
+				        
+                <p:column headerText="Nombre" style="font-weight:bold;font-family: Arial, Helvetica, sans-serif;FONT-SIZE: 12px;" >
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cronograma.nombre}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{cronograma.nombre}" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+
+		        
+		        <p:column headerText="" style="width:80px;" >
+					<p:commandButton value ="Detalles"
+						action="#{cronogramaMB.getNextView}" ajax="false" image="ui-icon-calculator" >
+						<f:param name="id" value="#{cronograma.cronogramaId}" />
+					</p:commandButton>					
+				</p:column>
+				
+                <p:column headerText="" >
+                    <p:rowEditor /> 
+                    <b>Editar</b>
+                </p:column>
+                
+                <p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{cronograma}" target="#{cronogramaMB.cronogramaSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+                
+                
+                       
+            </p:dataTable>
+            </p:fieldset>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Cronograma?"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{cronogramaMB.eliminar}" update="cronogramas, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+                        
+        </h:form>	
+        
+        	<p:fieldset id="fieldset2"  legend="Nuevo" toggleable="true" toggleSpeed="500" collapsed="true">
+        		<h:form id="form2">
+                        <p:growl id="messagesNew"/>
+                        <p:panel header="Nuevo Cronograma" id="cronogramasNew" >
+                            <h:panelGrid columns="2" cellpadding="3" >
+                            		                    
+                                <h:outputText value="Nombre: " />
+                                <p:inputText required="true" value="#{cronogramaMB.nombre}" 
+                                autoResize="false" />
+			                    
+			                    <br></br>
+			                    <br></br>
+                                <p:commandButton value="Agregar" id="agregar" actionListener="#{cronogramaMB.registrarCronograma}"
+                                                 icon="ui-icon-disk" update="messagesNew, cronogramasNew,:form:cronogramas"/>
+                            </h:panelGrid>
+                        </p:panel>                        
+                    </h:form>
+                  </p:fieldset>
+                    			
+	  </div>
+	</ui:define>
+</ui:composition>

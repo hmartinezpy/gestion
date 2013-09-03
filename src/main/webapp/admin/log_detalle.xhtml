@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Gestión de Documentos ::</ui:define>
+	<ui:define name="content">
+		<h:form prependId="false" rendered="#{audLogDetalleMB.ver}">
+		<p:fieldset legend="Cambios" toggleable="false" toggleSpeed="500">
+				<h:outputText value="Tabla modificada: " style="FONT-WEIGHT: bold;"/>
+				<h:outputText value="#{audLogDetalleMB.log}" style="FONT-STYLE: italic; FONT-WEIGHT: bold;"/>
+				<h:panelGrid id="fields"  columns="2" style="height : 354px; width : 1036px;">
+					
+					<h:inputTextarea value="#{audLogDetalleMB.valorAnterior}" style="height : 382px; width : 766px;" disabled="true" readonly="true"/>
+					 <h:panelGrid id="user" columns="2" style="height : 84px; width : 340px;">
+					 <h:outputLabel value="Fecha Cambio:" /> 
+					 <h:inputText value="#{audLogDetalleMB.audLog.fecha}" disabled="true" readonly="true" style=" width : 220px;"/>
+					 <h:outputLabel value="Usuario:" />
+					 <h:inputText value="#{audLogDetalleMB.audLog.usuario.usuario}" disabled="true" readonly="true"  style=" width : 220px;"/>
+
+				<p:commandButton title="Ver" action="#{audLogMB.getPreviousView}" actionListener="#{audLogMB.clear}" value ="Ir Atras" ajax="false"  >
+						<f:param name="id" value="#{bean.audLogId}" />
+			    </p:commandButton>
+					 </h:panelGrid>
+				</h:panelGrid>
+			</p:fieldset>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Procesos</h1>
+		<div class="entry" style="line-height:200%;margin-left:150px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+  
+  					<h:form prependId="false">
+                        <p:growl id="messages"/>
+                        <p:panel header="Proceso" id="panel" style="width:800px;">
+                            <h:panelGrid columns="2" cellpadding="3">
+                            		                    
+                                <h:outputText value="NroProceso " />
+                                <p:inputText required="true" value="#{procesoEditMB.bean.nroProceso}" />
+                                
+                                <h:outputText value="Responsable " />
+                                <p:selectOneMenu id="selectResponsable" value="#{procesoEditMB.idResponsable}"  > 
+                                 	<f:selectItem itemLabel="#{procesoEditMB.bean.responsable.usuario}" itemValue="#{procesoEditMB.bean.responsable.usuarioId}" /> 
+			                        <f:selectItems value="#{procesoEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>		
+			                    
+                                <h:outputText value="Cliente " />
+                                <p:selectOneMenu id="selectCliente" value="#{procesoEditMB.idCliente}"  >
+                                	<f:selectItem itemLabel="#{procesoEditMB.bean.cliente.nombre}" itemValue="#{procesoEditMB.bean.cliente.clienteId}" /> 
+                                	<f:selectItems value="#{procesoEditMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente.clienteId}" />                                  
+			                    </p:selectOneMenu>
+                                
+                                <h:outputText value="Cronograma " />
+                                <p:selectOneMenu id="selectCronograma" value="#{procesoEditMB.idCronograma}"  >
+                                	<f:selectItem itemLabel="#{procesoEditMB.bean.cronograma.nombre}"  itemValue="#{procesoEditMB.bean.cronograma.cronogramaId}" />  
+			                        <f:selectItems value="#{procesoEditMB.cronogramas}" var="cronograma" itemLabel="#{cronograma.nombre}" itemValue="#{cronograma.cronogramaId}" />                                  
+			                    </p:selectOneMenu> 
+                                
+                                <h:outputText value="Estado " />
+                                <p:selectOneMenu id="selectEstado" value="#{procesoEditMB.bean.estado}" >
+			                    	<f:selectItem itemLabel="En-Proceso" itemValue="P" />
+	                            	<f:selectItem itemLabel="Resuelto" itemValue="R" />	 
+	                            	<f:selectItem itemLabel="Cancelado" itemValue="C" />	                           
+			                    </p:selectOneMenu>
+                                
+                                <h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="3" cols="20" value="#{procesoEditMB.bean.descripcion}" />   
+                                
+                                <h:outputText value="FechaInicioContratual " />
+                                <p:calendar value="#{procesoEditMB.bean.fechaInicioContratual}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="FechaInicioReal " />
+                                <p:calendar  value="#{procesoEditMB.bean.fechaInicioReal}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="FechaFinPrevista " />
+                                <p:calendar value="#{procesoEditMB.bean.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="FechaFinReprogramada " />
+                                <p:calendar  value="#{procesoEditMB.bean.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="MotivoReprogramacion " />
+                                <p:inputTextarea rows="3" cols="20" value="#{procesoEditMB.bean.motivoReprogramacion}" /> 
+                                
+                                <h:outputText value="ClienteNotificado" />
+                                <p:selectOneMenu id="selectClienteNotificado" value="#{procesoEditMB.bean.clienteNotificado}" >
+			                    	<f:selectItem itemLabel="SI" itemValue="Si" />
+	                            	<f:selectItem itemLabel="NO" itemValue="No" />	 
+	                            	<f:selectItem itemLabel="NULO" itemValue="" />	                           
+			                    </p:selectOneMenu>
+	
+                          
+                                
+                            </h:panelGrid>
+                        </p:panel> 
+                        <br></br>
+							<p:toolbarGroup align="left">
+								<p:commandButton value="Crear" image="ui-icon-disk" update="messages" action="#{procesoEditMB.insert}"
+									rendered="#{!procesoEditMB.updateMode}" ajax="false" />
+								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{procesoEditMB.update}"
+									rendered="#{procesoEditMB.updateMode}" ajax="false" />
+							</p:toolbarGroup>
+                    </h:form>
+  
+  
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

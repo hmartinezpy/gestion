@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:f="http://java.sun.com/jsf/core"
+	            xmlns:p="http://primefaces.org/ui"
+	            xmlns:h="http://java.sun.com/jsf/html"
+	            xmlns:ui="http://java.sun.com/jsf/facelets"
+	            template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Gestión de Documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all">Listado Logs del Sistema</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+		<h:form rendered="#{audLogMB.ver}">
+		 	<p:dataTable id="list" var="bean" value="#{audLogMB.model}" rows="#{audLogMB.pagesize}" paginator="true"
+		 	             lazy="true" dynamic="true">
+	
+				<p:column sortBy="#{bean.usuario.usuario}" filterBy="#{bean.usuario.usuario}" headerText="Usuario">
+					#{bean.usuario.usuario}
+				</p:column>	
+				
+			    <p:column sortBy="#{bean.ip}" filterBy="#{bean.ip}" headerText="IP">
+					#{bean.ip}	
+				</p:column>
+						
+				<p:column sortBy="#{bean.audTabla.nombre}" filterBy="#{bean.audTabla.nombre}" headerText="Nombre Tabla">
+					#{bean.audTabla.nombre}
+				</p:column>
+					
+			    <p:column sortBy="#{bean.fecha}" headerText="Fecha Modificacion">
+					#{bean.fecha}
+				</p:column>	
+				
+				<p:column sortBy="#{bean.registroId}" headerText="Registro Id">
+					#{bean.registroId}
+				</p:column>
+
+				<p:column style="width:30px;" rendered="#{audLogDetalleMB.ver}">				
+					<p:commandButton title="Ver" action="#{audLogMB.getNextView}" actionListener="#{audLogMB.clear}"
+						value ="Ver" ajax="false" image="ui-icon-search" >
+						<f:param name="id" value="#{bean.audLogId}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+			<h:form rendered="!#{sesionLogListMB.ver}">
+				<h1 align="center">Acceso Denegado</h1>
+			</h:form>
+		</div>
+	</ui:define>	
+</ui:composition>

@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Actividades</h1>
+		<div class="entry" style="line-height:200%;margin-left:150px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+  
+  					<h:form prependId="false">
+                        <p:growl id="messages"/>
+                        <p:panel header="Actividad" id="panel" style="width:800px;">
+                            <h:panelGrid columns="2" cellpadding="3">
+                            		                    
+                                <h:outputText value="Nroactividad " />
+                                <p:inputText required="true" value="#{actividadEditMB.bean.nroActividad}" />
+                                
+                                <h:outputText value="Proceso " />
+                                <p:selectOneMenu id="selectProceso" value="#{actividadEditMB.idProceso}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.proceso.descripcion}" itemValue="#{actividadEditMB.bean.proceso.procesoId}" /> 
+			                        <f:selectItems value="#{actividadEditMB.procesos}" var="proceso" itemLabel="#{proceso.descripcion}" itemValue="#{proceso.procesoId}" />                                  
+			                    </p:selectOneMenu>	
+			                    
+			                    <h:outputText value="CronogramaDetalle " />
+                                <p:selectOneMenu id="selectCronogramaDetalle" value="#{actividadEditMB.idCronogramaDetalle}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.cronogramaDetalle.tarea}" itemValue="#{actividadEditMB.bean.cronogramaDetalle.cronogramaDetalleId}" /> 
+			                        <f:selectItems value="#{actividadEditMB.cronogramaDetalles}" var="cronogramaDetalle" itemLabel="#{cronogramaDetalle.tarea}" itemValue="#{cronogramaDetalle.cronogramaDetalleId}" />                                  
+			                    </p:selectOneMenu>
+			                    
+			                    <h:outputText value="Estado " />
+                                <p:inputText value="#{actividadEditMB.bean.estado}" />
+                                
+                                <h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.descripcion}" />   
+                                	
+                                <h:outputText value="Responsable " />
+                                <p:selectOneMenu id="selectResponsable" value="#{actividadEditMB.idResponsable}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.responsable.usuario}" itemValue="#{actividadEditMB.bean.responsable.usuarioId}" /> 
+			                        <f:selectItems value="#{actividadEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>		
+			                                      
+                                <h:outputText value="fechaCreacion " />
+                                <p:calendar value="#{actividadEditMB.bean.fechaCreacion}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="fechaInicioPrevisto " />
+                                <p:calendar  value="#{actividadEditMB.bean.fechaInicioPrevisto}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="fechaInicioReprogramado " />
+                                <p:calendar value="#{actividadEditMB.bean.fechaInicioReprogramado}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="motivoReprogramacionInicio " />
+                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.motivoReprogramacionInicio}" /> 
+                                
+                                <h:outputText value="fechaFinPrevista " />
+                                <p:calendar  value="#{actividadEditMB.bean.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="fechaFinReprogramada " />
+                                <p:calendar value="#{actividadEditMB.bean.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm" /> 
+                                
+                                <h:outputText value="motivoReprogramacion " />
+                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.motivoReprogramacion}" /> 
+                                
+                                <h:outputText value="fecha_devuelta " />
+                                <p:calendar  value="#{actividadEditMB.bean.fechaDevuelta}" pattern="dd/MM/yyyy HH:mm"/>  
+                                
+                                <h:outputText value="fechaResuelta " />
+                                <p:calendar value="#{actividadEditMB.bean.fechaResuelta}" pattern="dd/MM/yyyy HH:mm"/>
+                                
+                                <h:outputText value="fechaCancelacion " />
+                                <p:calendar  value="#{actividadEditMB.bean.fechaCancelacion}" pattern="dd/MM/yyyy HH:mm"/> 
+                                
+                                <h:outputText value="pregunta " />
+                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.pregunta}" /> 
+                                
+                                <h:outputText value="respuesta " />
+                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.respuesta}" /> 
+                                
+                                <h:outputText value="checklistCompleto " />
+                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.checklistCompleto}" /> 
+                            
+                            	<h:outputText value="actividadAnterior " />
+                                <p:selectOneMenu id="selectActividadAnterior" value="#{actividadEditMB.idActividadAnterior}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.actividadAnterior.descripcion}" itemValue="#{actividadEditMB.bean.actividadAnterior.actividadId}" /> 
+			                        <f:selectItems value="#{actividadEditMB.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
+			                    </p:selectOneMenu>	
+			                    
+			                    <h:outputText value="alerta " />
+                                <p:selectOneMenu id="selectAlerta" value="#{actividadEditMB.idAlerta}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.alerta.descripcion}" itemValue="#{actividadEditMB.bean.alerta.tipoAlarmaId}" /> 
+			                        <f:selectItems value="#{actividadEditMB.alertas}" var="alerta" itemLabel="#{alerta.descripcion}" itemValue="#{alerta.tipoAlarmaId}" />                                  
+			                    </p:selectOneMenu>	
+			                    
+			                    <h:outputText value="alarma " />
+                                <p:selectOneMenu id="selectAlarma" value="#{actividadEditMB.idAlarma}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.alarma.descripcion}" itemValue="#{actividadEditMB.bean.alarma.tipoAlarmaId}" /> 
+			                        <f:selectItems value="#{actividadEditMB.alarmas}" var="alarma" itemLabel="#{alarma.descripcion}" itemValue="#{alarma.tipoAlarmaId}" />                                  
+			                    </p:selectOneMenu>	
+			                    
+			                    <h:outputText value="superTarea " />
+                                <p:selectOneMenu id="selectSuperTarea" value="#{actividadEditMB.idSuperTarea}"  > 
+                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.superTarea.descripcion}" itemValue="#{actividadEditMB.bean.superTarea.actividad.Id}" /> 
+			                        <f:selectItems value="#{actividadEditMB.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
+			                    </p:selectOneMenu>	
+	
+                                                          
+                            </h:panelGrid>
+                        </p:panel> 
+                        <br></br>
+							<p:toolbarGroup align="left">
+								<p:commandButton value="Crear" image="ui-icon-disk" update="messages" action="#{actividadEditMB.insert}"
+									rendered="#{!actividadEditMB.updateMode}" ajax="false" />
+								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{actividadEditMB.update}"
+									rendered="#{actividadEditMB.updateMode}" ajax="false" />
+							</p:toolbarGroup>
+                    </h:form>
+  
+  
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

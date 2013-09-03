@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:h="http://java.sun.com/jsf/html"
+			    xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui"
+				template="../template/plantilla.xhtml">
+    <ui:define name="head">:: Gestión de Documentos ::</ui:define>
+	<ui:define name="content">
+	
+	    <h1 class="title ui-widget-header ui-corner-all" align="center">Listado de Usuarios del Sistema</h1>
+        <div class="entry" style="line-height:200%;width:925px;">
+            <p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+        
+		<h:form rendered="#{usuarioListMB.ver}">
+		
+			<p:dataTable id="list" var="bean" value="#{usuarioListMB.model}" rows="#{usuarioListMB.pageSize}" paginator="true" 
+			             lazy="true" dynamic="true" paginatorPosition="bottom">
+							
+				<p:column sortBy="#{bean.usuario}" headerText="#{messages['usuario.label.username']}">
+					#{bean.usuario}
+				</p:column>
+				
+				<p:column sortBy="#{bean.nombre}" headerText="#{messages['usuario.label.nombre']}">
+					#{bean.nombre}
+				</p:column>
+				
+				<p:column sortBy="#{bean.apellido}" headerText="#{messages['usuario.label.apellido']}">
+					#{bean.apellido}
+				</p:column>
+				
+				<p:column sortBy="#{bean.estado}" headerText="#{messages['usuario.label.estado']}">
+					#{bean.estado}	
+				</p:column>
+						
+				<p:column sortBy="#{bean.email}" headerText="#{messages['usuario.label.email']}">
+					#{bean.email}
+				</p:column>
+				<p:column sortBy="#{bean.ultimoLogin}" headerText="#{messages['usuario.label.ultimoLogin']}">
+					#{bean.ultimoLogin}
+				</p:column>
+				<p:column sortBy="#{bean.nroSesion}" headerText="#{messages['usuario.label.nroSesion']}">
+					#{bean.nroSesion}
+				</p:column>
+				<p:column style="width:30px;" rendered="#{usuarioListMB.editar}">				
+					<p:commandButton title="#{messages['boton.editar']}" action="#{usuarioListMB.getNextView}" actionListener="#{usuarioListMB.clear}"
+						value ="#{messages['boton.editar']}" ajax="false" image="ui-icon-pencil" >
+						<f:param name="id" value="#{bean.usuarioId}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<br></br>
+			<p:toolbar>
+				<p:toolbarGroup align="left">
+					<p:commandButton title="#{messages['boton.nuevo']}" value ="#{messages['boton.agregar']} " action="#{usuarioListMB.getNextView}"
+						actionListener="#{usuarioListMB.clear}" ajax="false" rendered="#{usuarioListMB.crear}" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+			</p:toolbar>
+		</h:form>
+		<h:form rendered="#{!usuarioListMB.ver}">
+			<h1 align="center">Acceso Denegado</h1>
+		</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

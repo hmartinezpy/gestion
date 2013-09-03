@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >TipoAlarma</h1>
+		<div class="entry" style="line-height:200%;margin-left:200px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+
+        <h:form >
+        	<p:growl id="messages"/>
+        	
+            <p:dataTable  var="tipoAlarma" value="#{tipoAlarmaListMB.tipoAlarmas}"  id="tipoAlarmas" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+				        
+                <p:column width="140" headerText="Descripcion" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{tipoAlarma.descripcion}" />                                              
+                </p:column>
+                <p:column headerText="Tipo" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{tipoAlarma.tipo}" />                                              
+                </p:column>
+                <p:column headerText="Dias" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{tipoAlarma.dias}" />                                              
+                </p:column>
+                <p:column headerText="Horas" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{tipoAlarma.horas}" />                                              
+                </p:column>
+                <p:column headerText="Responsable1"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{tipoAlarma.responsable1.usuario}" />
+                </p:column>
+                <p:column headerText="Responsable2"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{tipoAlarma.responsable2.usuario}" />
+                </p:column>
+
+                <p:column style="width:30px;" >				
+					<p:commandButton action="#{tipoAlarmaListMB.getNextView}" actionListener="#{tipoAlarmaListMB.clear}"
+						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						<f:param name="id" value="#{tipoAlarma.tipoAlarmaId}" />
+					</p:commandButton>
+				</p:column>
+				<p:column headerText="" >
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{tipoAlarma}" target="#{tipoAlarmaListMB.tipoAlarmaSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+            
+            <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el TipoAlarma"
+                             header="Eliminar?" severity="alert" widgetVar="confirmation">
+                <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
+                                 actionListener="#{tipoAlarmaListMB.eliminar}" update="tipoAlarmas, messages" />
+                <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
+            </p:confirmDialog>
+            
+            <br></br>
+				<p:toolbarGroup>
+					<p:commandButton value ="Nuevo " action="#{tipoAlarmaListMB.getNextView}"
+						actionListener="#{tipoAlarmaListMB.clear}" ajax="false" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+        </h:form>
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>

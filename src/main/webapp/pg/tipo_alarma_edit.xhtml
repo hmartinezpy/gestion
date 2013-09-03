@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >TipoAlarma</h1>
+		<div class="entry" style="line-height:200%;margin-left:150px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+  
+  					<h:form prependId="false">
+                        <p:growl id="messages"/>
+                        <p:panel header="TipoAlarma" id="panel" style="width:800px;">
+                            <h:panelGrid columns="2" cellpadding="3">
+                            		                    
+                                <h:outputText value="Descripcion " />
+                                <p:inputText value="#{tipoAlarmaEditMB.bean.descripcion}" />
+                                
+                                <h:outputText value="Tipo " />
+                                  <p:selectOneMenu id="selecTipo" value="#{tipoAlarmaEditMB.bean.tipo}" >
+			                    	<f:selectItem itemLabel="Alarma" itemValue="Ala" />
+	                            	<f:selectItem itemLabel="Alerta" itemValue="Ale" />	 
+			                    </p:selectOneMenu>
+
+                                <h:outputText value="Dias " />
+                                <p:inputText value="#{tipoAlarmaEditMB.bean.dias}" />
+
+                                <h:outputText value="Horas " />
+                                <p:inputText value="#{tipoAlarmaEditMB.bean.horas}" />                                                                   
+                                
+                                <h:outputText value="Responsable1 " />
+                                <p:selectOneMenu id="selectResponsable1" value="#{tipoAlarmaEditMB.idResponsable1}"  > 
+                                 	<f:selectItem itemLabel="#{tipoAlarmaEditMB.bean.responsable1.usuario}" itemValue="#{tipoAlarmaEditMB.bean.responsable1.usuarioId}" /> 
+			                        <f:selectItems value="#{tipoAlarmaEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>		
+			                    
+			                    <h:outputText value="Responsable2 " />
+                                <p:selectOneMenu id="selectResponsable2" value="#{tipoAlarmaEditMB.idResponsable2}"  > 
+                                 	<f:selectItem itemLabel="#{tipoAlarmaEditMB.bean.responsable2.usuario}" itemValue="#{tipoAlarmaEditMB.bean.responsable2.usuarioId}" /> 
+			                        <f:selectItems value="#{tipoAlarmaEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+			                    </p:selectOneMenu>
+                                                            
+                            </h:panelGrid>
+                        </p:panel> 
+                        <br></br>
+							<p:toolbarGroup align="left">
+								<p:commandButton value="Crear" image="ui-icon-disk" update="messages" action="#{tipoAlarmaEditMB.insert}"
+									rendered="#{!tipoAlarmaEditMB.updateMode}" ajax="false" />
+								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{tipoAlarmaEditMB.update}"
+									rendered="#{tipoAlarmaEditMB.updateMode}" ajax="false" />
+							</p:toolbarGroup>
+                    </h:form>
+  
+  
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>
