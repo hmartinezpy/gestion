@@ -25,13 +25,7 @@
                             <h:panelGrid columns="2" cellpadding="3">
                             		                    
                                 <h:outputText value="Nroactividad " />
-                                <p:inputText required="true" value="#{actividadEditMB.bean.nroActividad}" />
-                                
-                                <h:outputText value="Proceso " />
-                                <p:selectOneMenu id="selectProceso" value="#{actividadEditMB.idProceso}"  > 
-                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.proceso.descripcion}" itemValue="#{actividadEditMB.bean.proceso.procesoId}" /> 
-			                        <f:selectItems value="#{actividadEditMB.procesos}" var="proceso" itemLabel="#{proceso.descripcion}" itemValue="#{proceso.procesoId}" />                                  
-			                    </p:selectOneMenu>	
+                                <p:inputText required="true" value="#{actividadEditMB.bean.nroActividad}" />                                
 			                    
 			                    <h:outputText value="CronogramaDetalle " />
                                 <p:selectOneMenu id="selectCronogramaDetalle" value="#{actividadEditMB.idCronogramaDetalle}"  > 
@@ -56,46 +50,10 @@
                                 
                                 <h:outputText value="fechaInicioPrevisto " />
                                 <p:calendar  value="#{actividadEditMB.bean.fechaInicioPrevisto}" pattern="dd/MM/yyyy HH:mm"/>  
-                                
-                                <h:outputText value="fechaInicioReprogramado " />
-                                <p:calendar value="#{actividadEditMB.bean.fechaInicioReprogramado}" pattern="dd/MM/yyyy HH:mm"/>
-                                
-                                <h:outputText value="motivoReprogramacionInicio " />
-                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.motivoReprogramacionInicio}" /> 
-                                
-                                <h:outputText value="fechaFinPrevista " />
-                                <p:calendar  value="#{actividadEditMB.bean.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/> 
-                                
-                                <h:outputText value="fechaFinReprogramada " />
-                                <p:calendar value="#{actividadEditMB.bean.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm" /> 
-                                
-                                <h:outputText value="motivoReprogramacion " />
-                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.motivoReprogramacion}" /> 
-                                
-                                <h:outputText value="fecha_devuelta " />
-                                <p:calendar  value="#{actividadEditMB.bean.fechaDevuelta}" pattern="dd/MM/yyyy HH:mm"/>  
-                                
-                                <h:outputText value="fechaResuelta " />
-                                <p:calendar value="#{actividadEditMB.bean.fechaResuelta}" pattern="dd/MM/yyyy HH:mm"/>
-                                
-                                <h:outputText value="fechaCancelacion " />
-                                <p:calendar  value="#{actividadEditMB.bean.fechaCancelacion}" pattern="dd/MM/yyyy HH:mm"/> 
-                                
+
                                 <h:outputText value="pregunta " />
                                 <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.pregunta}" /> 
-                                
-                                <h:outputText value="respuesta " />
-                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.respuesta}" /> 
-                                
-                                <h:outputText value="checklistCompleto " />
-                                <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.checklistCompleto}" /> 
-                            
-                            	<h:outputText value="actividadAnterior " />
-                                <p:selectOneMenu id="selectActividadAnterior" value="#{actividadEditMB.idActividadAnterior}"  > 
-                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.actividadAnterior.descripcion}" itemValue="#{actividadEditMB.bean.actividadAnterior.actividadId}" /> 
-			                        <f:selectItems value="#{actividadEditMB.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
-			                    </p:selectOneMenu>	
-			                    
+
 			                    <h:outputText value="alerta " />
                                 <p:selectOneMenu id="selectAlerta" value="#{actividadEditMB.idAlerta}"  > 
                                  	<f:selectItem itemLabel="#{actividadEditMB.bean.alerta.descripcion}" itemValue="#{actividadEditMB.bean.alerta.tipoAlarmaId}" /> 
@@ -107,13 +65,6 @@
                                  	<f:selectItem itemLabel="#{actividadEditMB.bean.alarma.descripcion}" itemValue="#{actividadEditMB.bean.alarma.tipoAlarmaId}" /> 
 			                        <f:selectItems value="#{actividadEditMB.alarmas}" var="alarma" itemLabel="#{alarma.descripcion}" itemValue="#{alarma.tipoAlarmaId}" />                                  
 			                    </p:selectOneMenu>	
-			                    
-			                    <h:outputText value="superTarea " />
-                                <p:selectOneMenu id="selectSuperTarea" value="#{actividadEditMB.idSuperTarea}"  > 
-                                 	<f:selectItem itemLabel="#{actividadEditMB.bean.superTarea.descripcion}" itemValue="#{actividadEditMB.bean.superTarea.actividad.Id}" /> 
-			                        <f:selectItems value="#{actividadEditMB.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
-			                    </p:selectOneMenu>	
-	
                                                           
                             </h:panelGrid>
                         </p:panel> 

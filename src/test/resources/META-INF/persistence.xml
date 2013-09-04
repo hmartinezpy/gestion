@@ -10,7 +10,6 @@
 
 		<class>py.com.ait.gestion.domain.AudLog</class>
 		<class>py.com.ait.gestion.domain.AudTabla</class>
-		<class>py.com.ait.gestion.domain.Base</class>
 		<class>py.com.ait.gestion.domain.LogSesion</class>
 		<class>py.com.ait.gestion.domain.Permiso</class>
 		<class>py.com.ait.gestion.domain.Rol</class>
@@ -32,15 +31,13 @@
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
 			<property name="javax.persistence.jdbc.user" value="gestion" />
 			<property name="javax.persistence.jdbc.password" value="gestion" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://127.0.0.1:5432/gestion2" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/gestion" />
 
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 
 			<property name="eclipselink.logging.level" value="FINE" />
-			<property name="eclipselink.ddl-generation" value="create-tables" />
-			<property name="eclipselink.ddl-generation.output-mode" value="database" />
 		</properties>
 	</persistence-unit>
 

@@ -201,7 +201,7 @@
                                 	
                                 <h:outputText value="Responsable " />
                                 <p:selectOneMenu id="selectResponsable" value="#{procesoListMB.idResponsable}"  > 
-									<f:selectItem itemLabel="select Responsable  " itemValue="" /> 			                        
+									<f:selectItem itemLabel="---Elija el responsable---" itemValue="" /> 			                        
 									<f:selectItems value="#{procesoListMB.usuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
 			                    </p:selectOneMenu>		
 			                                      
@@ -211,52 +211,9 @@
                                 <h:outputText value="fechaInicioPrevisto " />
                                 <p:calendar  value="#{procesoListMB.fechaInicioPrevisto}" pattern="dd/MM/yyyy HH:mm"/>  
                                 
-                                <h:outputText value="fechaInicioReprogramado " />
-                                <p:calendar value="#{procesoListMB.fechaInicioReprogramado}" pattern="dd/MM/yyyy HH:mm"/>
-                                
-                                <h:outputText value="motivoReprogramacionInicio " />
-                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.motivoReprogramacionInicio}" /> 
-                                
-                                <h:outputText value="fechaFinPrevista " />
-                                <p:calendar  value="#{procesoListMB.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/> 
-                                
-                                <h:outputText value="fechaFinReprogramada " />
-                                <p:calendar value="#{procesoListMB.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm" /> 
-                                
-                                <h:outputText value="motivoReprogramacion " />
-                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.motivoReprogramacion}" /> 
-                                
-                                <h:outputText value="fecha_devuelta " />
-                                <p:calendar  value="#{procesoListMB.fechaDevuelta}" pattern="dd/MM/yyyy HH:mm"/>  
-                                
-                                <h:outputText value="fechaResuelta " />
-                                <p:calendar value="#{procesoListMB.fechaResuelta}" pattern="dd/MM/yyyy HH:mm"/>
-                                
-                                <h:outputText value="fechaCancelacion " />
-                                <p:calendar  value="#{procesoListMB.fechaCancelacion}" pattern="dd/MM/yyyy HH:mm"/> 
-                                
                                 <h:outputText value="pregunta " />
                                 <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.pregunta}" /> 
-                                
-                                <h:outputText value="respuesta " />
-                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.respuesta}" /> 
-                                
-                                <h:outputText value="checklistCompleto " />
-                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.checklistCompleto}" /> 
-                            
-                            	<h:outputText value="actividadAnterior " />
-                                <p:selectOneMenu id="selectActividadAnterior" value="#{procesoListMB.idActividadAnterior}"  > 
-									<f:selectItem itemLabel="selectActividadAnterior " itemValue="" /> 
-			                        <f:selectItems value="#{procesoListMB.actividadesPorProceso}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
-			                    </p:selectOneMenu>	
-			                                            
-			                    
-			                    <h:outputText value="superTarea " />
-                                <p:selectOneMenu id="selectSuperTarea" value="#{procesoListMB.idSuperTarea}"  > 
-									<f:selectItem itemLabel="selectSuperTarea " itemValue="" />
-			                        <f:selectItems value="#{procesoListMB.actividadesPorProceso}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.actividadId}" />                                  
-			                    </p:selectOneMenu>	
-			                    
+                                			                    
 			                    <br></br>
                                 <p:commandButton value="Agregar" id="agregar" actionListener="#{procesoListMB.registrarActividad}"
                                              oncomplete="dlg.hide()" icon="ui-icon-disk" update=":form:messages,:form2:actividades,panel3"/> 

@@ -6,8 +6,12 @@ import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
 import py.com.ait.gestion.constant.Definiciones;
+import py.com.ait.gestion.domain.Actividad;
+import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
+import py.com.ait.gestion.persistence.ActividadDAO;
 import py.com.ait.gestion.persistence.AudLogDAO;
+import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 import py.com.ait.gestion.persistence.ProcesoDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
 import py.com.ait.gestion.persistence.UsuarioDAO;
@@ -28,7 +32,12 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO>{
 	
 	@Inject 
 	SesionLogDAO sesionLogDAO;
+	
+	@Inject
+	private ActividadBC actividadBC;
 
+	@Inject
+	private CronogramaDetalleDAO cronogramaDetalleDAO;
 
 	public List<Proceso> listar() {
 		return procesoDAO.findAll();	
@@ -43,6 +52,11 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO>{
 	public void registrar(Proceso proceso) {
 		
 		super.insert(proceso);
+		
+		//crear primera actividad
+		CronogramaDetalle cd = cronogramaDetalleDAO.getFirstCronogramaDetalleByCronograma(
+									proceso.getCronograma());
+		actividadBC.insertActividadFromCronogramaDetalle(cd, null, proceso);
 		
 		try {
 			audLogDAO.log(null, proceso,usuarioDAO.getUsuarioActual(),
