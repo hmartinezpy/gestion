@@ -1,4 +1,5 @@
 package py.com.ait.gestion.persistence;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,5 +62,11 @@ public class CronogramaDetalleDAO extends JPACrud<CronogramaDetalle, Long> {
 		}
 		
 		return detalle;
+	}
+
+	public Long getMaxId() {
+
+		Query q = em.createQuery("select max(c.id) from CronogramaDetalle c");
+		return ((Long) q.getSingleResult());
 	}
 }

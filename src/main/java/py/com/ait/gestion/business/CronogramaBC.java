@@ -90,7 +90,8 @@ public class CronogramaBC extends DelegateCrud<Cronograma, Long, CronogramaDAO>{
 		}
 	}
 
+	public long getMaxId() {
+		return cronogramaDAO.getMaxId();
+	}
 
 }
-	
-	

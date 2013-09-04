@@ -20,7 +20,6 @@ public class UsuarioDAO extends JPACrud<Usuario, Long>{
 	private static final long serialVersionUID = 5280096243687530380L;
 
 	@Inject
-	@SuppressWarnings("unused")
 	private Logger logger;
 	
 	@Inject
@@ -70,4 +69,11 @@ public class UsuarioDAO extends JPACrud<Usuario, Long>{
 		
 		return FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName();
 	}
+	
+	public Long getMaxId() {
+
+		Query q = em.createQuery("select max(u.id) from Usuario u");
+		return ((Long) q.getSingleResult());
+	}
+
 }

@@ -87,7 +87,8 @@ public class ClienteBC extends DelegateCrud<Cliente, Long, ClienteDAO>{
 		}
 	}
 
+	public long getMaxId() {
+		return clienteDAO.getMaxId();
+	}
 
 }
-	
-	

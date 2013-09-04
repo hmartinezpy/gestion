@@ -103,4 +103,9 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 			logger.error("Error Log Audit...", ex);
 		}
 	}
+
+	public long getMaxId() {
+		return usuarioDAO.getMaxId();
+	}
+
 }
