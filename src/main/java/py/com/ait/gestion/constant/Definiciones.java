@@ -22,6 +22,23 @@ public final class Definiciones {
 	public static final String CadenaVacia = "";
 	public static final String Separador = "#";
 
+	public static class EstadoProceso
+	{
+		public static final String EnProceso="PRO";
+		public static final String Resuelto="RES";
+		public static final String Cancelado="CAN";
+		
+		public static List<Estado> getEstadosList() {
+			
+			List<Estado> list = new ArrayList<Estado>();			
+			list.add(new Estado(EnProceso, "En Proceso"));
+			list.add(new Estado(Resuelto, "Resuelto"));
+			list.add(new Estado(Cancelado, "Cancelado"));
+			
+			return list;
+		}
+	}
+	
 	public static class EstadoActividad
 	{
 		public static final String Nueva="NUE";

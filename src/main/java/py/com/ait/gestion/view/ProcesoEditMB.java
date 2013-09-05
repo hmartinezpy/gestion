@@ -14,6 +14,8 @@ import py.com.ait.gestion.business.ClienteBC;
 import py.com.ait.gestion.business.CronogramaBC;
 import py.com.ait.gestion.business.ProcesoBC;
 import py.com.ait.gestion.business.UsuarioBC;
+import py.com.ait.gestion.constant.Definiciones;
+import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Cliente;
 import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.Proceso;
@@ -41,7 +43,7 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 	private CronogramaBC cronogramaBC;
 	
 	private Long idResponsable;
-	private Long idCliente;
+	private Long idCliente = null;
 	private Long idCronograma;
 	
 	private List<Usuario> usuarios;
@@ -145,9 +147,7 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 	@Override
 	public String update() {
 		Proceso proceso = getBean();
-		proceso.setResponsable(getResponsable());
 		proceso.setCliente(getCliente());
-		proceso.setCronograma(getCronograma());
 		
 		procesoBC.editar(proceso);
 		
@@ -162,10 +162,16 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 	
 	@Override
 	public Proceso getBean() {
-		Proceso bean = super.getBean();
+		
+		Proceso bean = super.getBean();		
+		if(idCliente == null && bean.getCliente() != null)
+			idCliente = bean.getCliente().getClienteId();
 		return bean;
 	}
 
-
+	public List<Estado> getEstadosProceso() {
+		
+		return Definiciones.EstadoProceso.getEstadosList();
+	}
 
 }

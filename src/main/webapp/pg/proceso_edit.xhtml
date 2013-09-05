@@ -28,57 +28,43 @@
                                 <p:inputText required="true" value="#{procesoEditMB.bean.nroProceso}" />
                                 
                                 <h:outputText value="Responsable " />
-                                <p:selectOneMenu id="selectResponsable" value="#{procesoEditMB.idResponsable}"  > 
-                                 	<f:selectItem itemLabel="#{procesoEditMB.bean.responsable.usuario}" itemValue="#{procesoEditMB.bean.responsable.usuarioId}" /> 
-			                        <f:selectItems value="#{procesoEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
+                                <p:selectOneMenu id="selectResponsable" value="#{procesoEditMB.bean.responsable}"  converter="usuarioConverter" > 
+                                 	<f:selectItem itemLabel="---Seleccione---" itemValue="" />
+			                        <f:selectItems value="#{procesoEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />                                  
 			                    </p:selectOneMenu>		
 			                    
                                 <h:outputText value="Cliente " />
-                                <p:selectOneMenu id="selectCliente" value="#{procesoEditMB.idCliente}"  >
-                                	<f:selectItem itemLabel="#{procesoEditMB.bean.cliente.nombre}" itemValue="#{procesoEditMB.bean.cliente.clienteId}" /> 
+                                <p:selectOneMenu id="selectCliente" value="#{procesoEditMB.idCliente}"  >                                	
+                                	<f:selectItem itemLabel="---Seleccione---" itemValue="" /> 
                                 	<f:selectItems value="#{procesoEditMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente.clienteId}" />                                  
 			                    </p:selectOneMenu>
                                 
                                 <h:outputText value="Cronograma " />
-                                <p:selectOneMenu id="selectCronograma" value="#{procesoEditMB.idCronograma}"  >
-                                	<f:selectItem itemLabel="#{procesoEditMB.bean.cronograma.nombre}"  itemValue="#{procesoEditMB.bean.cronograma.cronogramaId}" />  
-			                        <f:selectItems value="#{procesoEditMB.cronogramas}" var="cronograma" itemLabel="#{cronograma.nombre}" itemValue="#{cronograma.cronogramaId}" />                                  
-			                    </p:selectOneMenu> 
+                                <p:inputText value="#{procesoEditMB.bean.cronograma.nombre}" disabled="true" rendered="#{procesoEditMB.updateMode}" />                                
                                 
                                 <h:outputText value="Estado " />
                                 <p:selectOneMenu id="selectEstado" value="#{procesoEditMB.bean.estado}" >
-			                    	<f:selectItem itemLabel="En-Proceso" itemValue="P" />
-	                            	<f:selectItem itemLabel="Resuelto" itemValue="R" />	 
-	                            	<f:selectItem itemLabel="Cancelado" itemValue="C" />	                           
+			                    	<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
+									<f:selectItems value="#{procesoEditMB.estadosProceso}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
 			                    </p:selectOneMenu>
                                 
-                                <h:outputText value="Descripcion " />
+                                <h:outputText value="Descripción " />
                                 <p:inputTextarea rows="3" cols="20" value="#{procesoEditMB.bean.descripcion}" />   
                                 
-                                <h:outputText value="FechaInicioContratual " />
+                                <h:outputText value="Fecha Inicio Contratual " />
                                 <p:calendar value="#{procesoEditMB.bean.fechaInicioContratual}" pattern="dd/MM/yyyy HH:mm" /> 
                                 
-                                <h:outputText value="FechaInicioReal " />
+                                <h:outputText value="Fecha Inicio Real " />
                                 <p:calendar  value="#{procesoEditMB.bean.fechaInicioReal}" pattern="dd/MM/yyyy HH:mm"/>  
                                 
-                                <h:outputText value="FechaFinPrevista " />
+                                <h:outputText value="Fecha Fin Prevista " />
                                 <p:calendar value="#{procesoEditMB.bean.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm"/>
                                 
-                                <h:outputText value="FechaFinReprogramada " />
+                                <h:outputText value="Fecha Fin Reprogramada " />
                                 <p:calendar  value="#{procesoEditMB.bean.fechaFinReprogramada}" pattern="dd/MM/yyyy HH:mm"/> 
                                 
-                                <h:outputText value="MotivoReprogramacion " />
-                                <p:inputTextarea rows="3" cols="20" value="#{procesoEditMB.bean.motivoReprogramacion}" /> 
-                                
-                                <h:outputText value="ClienteNotificado" />
-                                <p:selectOneMenu id="selectClienteNotificado" value="#{procesoEditMB.bean.clienteNotificado}" >
-			                    	<f:selectItem itemLabel="SI" itemValue="Si" />
-	                            	<f:selectItem itemLabel="NO" itemValue="No" />	 
-	                            	<f:selectItem itemLabel="NULO" itemValue="" />	                           
-			                    </p:selectOneMenu>
-	
-                          
-                                
+                                <h:outputText value="Motivo Reprogramación " />
+                                <p:inputTextarea rows="3" cols="20" value="#{procesoEditMB.bean.motivoReprogramacion}" />                             
                             </h:panelGrid>
                         </p:panel> 
                         <br></br>
