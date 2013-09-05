@@ -1,6 +1,8 @@
 package py.com.ait.gestion.view;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -8,6 +10,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
+import org.primefaces.event.DateSelectEvent;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
@@ -18,12 +21,13 @@ import py.com.ait.gestion.business.CronogramaDetalleBC;
 import py.com.ait.gestion.business.ProcesoBC;
 import py.com.ait.gestion.business.TipoAlarmaBC;
 import py.com.ait.gestion.business.UsuarioBC;
+import py.com.ait.gestion.constant.Definiciones;
+import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
-import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
-import py.com.ait.gestion.domain.TipoAlarma;
 import py.com.ait.gestion.domain.Usuario;
+import py.com.ait.gestion.persistence.UsuarioDAO;
 
 
 @ViewController
@@ -43,7 +47,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso,Long> {
 	private List<Proceso> procesos;
 	private Proceso procesoSeleccionado;
 	
-	private List<Actividad> actividades;
+	private List<Actividad> actividades;	
 	
 	
 	public Proceso getProcesoSeleccionado() {
@@ -377,7 +381,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso,Long> {
 
 	public List<Usuario> getUsuariosPorRol() {
 		
-		usuariosPorRol = usuarioBC.findAll();
+		if(actividadSeleccionada != null)
+			usuariosPorRol = usuarioBC.getUsuariosByRol(
+				actividadSeleccionada.getCronogramaDetalle().getRolResponsable().getRolId());
 	
 		return usuariosPorRol;
 	}
@@ -519,16 +525,62 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso,Long> {
 		}
 		else{
 			Actividad actividad = actividadSeleccionada;
-			actividad.setResponsable(getResponsable());
-			actividad.setCronogramaDetalle(getCronogramaDetalle());
-			actividad.setActividadAnterior(getActividadAnterior());
-			actividad.setSuperTarea(getSuperTarea());						
-			
+			actividad.setResponsable(usuarioBC.load(actividad.getResponsable().getUsuarioId()));
 			actividadBC.editar(actividad);
-			//detalleSeleccionado = new CronogramaDetalle();
 			agregarMensaje("Actividad editada");
 		}
 	}
 	
-
+	public List<Estado> getEstadosActividad() {
+	
+		return Definiciones.EstadoActividad.getEstadosActividad();
+	}
+	
+	public List<Estado> getSiNoList() {
+		
+		return Definiciones.getSiNoList();
+	}
+	
+	public Long getActividadSeleccionadaResponsable() {
+		
+		Long usuario = null;
+		if(actividadSeleccionada != null && actividadSeleccionada.getResponsable() != null)
+			usuario = actividadSeleccionada.getResponsable().getUsuarioId();
+		
+		return usuario;
+	}
+	
+	public Date calculoFechaFin(DateSelectEvent event) {
+		
+		Calendar cal = new GregorianCalendar();
+		cal.setTime((Date) event.getDate());
+		cal.add(Calendar.DATE, actividadSeleccionada.getCronogramaDetalle().getDuracionTarea().intValue());
+		actividadSeleccionada.setFechaFinPrevista(cal.getTime());
+		return cal.getTime();
+	}
+	
+	public void resolverActividad(){
+		if (actividadSeleccionada==null){
+			agregarMensaje("Actividad no seleccionada");
+		}
+		else{
+			Actividad actividad = actividadSeleccionada;
+			actividadBC.editar(actividad);
+			agregarMensaje("Actividad editada");
+		}
+	}
+	
+	public boolean getMostrarCampoRespuesta() {
+		
+		boolean show = false;
+		if(actividadSeleccionada != null) {
+			
+			if(actividadSeleccionada.getPregunta() != null && 
+					!actividadSeleccionada.getPregunta().equals("")) { 
+				
+				show = true;
+			}
+		}
+		return show;
+	}
 }

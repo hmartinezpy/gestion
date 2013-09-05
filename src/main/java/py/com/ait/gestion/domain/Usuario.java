@@ -193,6 +193,18 @@ public class Usuario  extends Base implements Serializable {
 	public void setUsuarioRolPermisos(List<UsuarioRolPermiso> usuarioRolPermisos) {
 		this.usuarioRolPermisos = usuarioRolPermisos;
 	}
+
+	@Override
+	public boolean equals(Object other) {
+		
+		boolean comparacion = false;
+		if(other != null && other instanceof Usuario) {
+			
+			if(this.usuarioId == ((Usuario) other).getUsuarioId())
+				comparacion = true;
+		}
+		return comparacion;
+	}
 	
 	/*public List<Cliente> getClientes() {
 		

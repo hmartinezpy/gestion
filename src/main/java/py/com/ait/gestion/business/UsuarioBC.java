@@ -107,5 +107,10 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 	public long getMaxId() {
 		return usuarioDAO.getMaxId();
 	}
+	
+	public List<Usuario> getUsuariosByRol(Long rolId) {
+		
+		return usuarioDAO.getUsuariosByRol(rolId);
+	}
 
 }

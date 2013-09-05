@@ -295,7 +295,10 @@ public class Actividad  extends Base implements Serializable {
 
 
 	public void setRespuesta(String respuesta) {
-		this.respuesta = respuesta;
+		if(respuesta != null && respuesta.equals(""))
+			this.respuesta = null;
+		else
+			this.respuesta = respuesta;
 	}
 
 
@@ -305,7 +308,10 @@ public class Actividad  extends Base implements Serializable {
 
 
 	public void setEstado(String estado) {
-		this.estado = estado;
+		if(estado != null && estado.equals(""))
+			this.estado = null;
+		else
+			this.estado = estado;
 	}
 
 

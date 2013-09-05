@@ -76,4 +76,15 @@ public class UsuarioDAO extends JPACrud<Usuario, Long>{
 		return ((Long) q.getSingleResult());
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Usuario> getUsuariosByRol(Long rolId) {
+		
+		Query q = em.createQuery("select u from Usuario u where u.usuarioId in "+
+					"(select urp.usuario.usuarioId from UsuarioRolPermiso urp where urp.rol.rolId = :rolId)");
+		
+		q.setParameter("rolId", rolId);
+				
+		return ((List<Usuario>) q.getResultList());
+	}
+
 }

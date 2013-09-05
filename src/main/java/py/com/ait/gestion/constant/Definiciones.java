@@ -1,5 +1,8 @@
 package py.com.ait.gestion.constant;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Definiciones {
 
 	public static class Operacion
@@ -27,5 +30,65 @@ public final class Definiciones {
 		public static final String Devuelta="DEV";
 		public static final String Cancelada="CAN";
 		
+		public static List<Estado> getList() {
+			
+			List<Estado> list = new ArrayList<Estado>();
+			list.add(new Estado(Nueva, "Nueva"));
+			list.add(new Estado(EnProceso, "En Proceso"));
+			list.add(new Estado(Resuelta, "Resuelta"));
+			list.add(new Estado(Devuelta, "Devuelta"));
+			list.add(new Estado(Cancelada, "Cancelada"));
+			
+			return list;
+		}
+		
+		public static List<Estado> getEstadosActividad() {
+			
+			List<Estado> list = new ArrayList<Estado>();
+			list.add(new Estado(Nueva, "Nueva"));
+			list.add(new Estado(EnProceso, "En Proceso"));
+			list.add(new Estado(Cancelada, "Cancelada"));
+			
+			return list;
+		}
+	}
+	
+	public static class Estado {
+		
+		private String codigo;
+		private String descripcion;
+		
+		public Estado() { }
+		
+		public Estado(String codigo, String descripcion) {
+			
+			this.codigo = codigo;
+			this.descripcion = descripcion;
+		}
+		
+		public String getCodigo() {
+			return this.codigo;
+		}
+		
+		public String getDescripcion() {
+			return this.descripcion;
+		}
+		
+		public void setCodigo(String codigo) {
+			this.codigo = codigo;
+		}
+		
+		public void setDescripcion(String descripcion) {
+			this.descripcion = descripcion;
+		}
+	}
+	
+	public static List<Estado> getSiNoList() {
+		
+		List<Estado> list = new ArrayList<Estado>();
+		list.add(new Estado("SI", "SI"));
+		list.add(new Estado("NO", "NO"));
+		
+		return list;
 	}
 }
