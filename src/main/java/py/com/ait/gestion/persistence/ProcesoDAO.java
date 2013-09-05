@@ -1,6 +1,7 @@
 package py.com.ait.gestion.persistence;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.ticpy.tekoporu.stereotype.PersistenceController;
 import org.ticpy.tekoporu.template.JPACrud;
 
+import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.Proceso;
 
 @PersistenceController
@@ -44,5 +46,13 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 			result = "0";
 		logger.info("ProcesoDAO.getLastSequence() result: " + result);
 		return result;
+	}
+
+	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado) {
+
+		Query q = em.createQuery("select a from Actividad a where a.master.procesoId = :proceso order by a.fechaCreacion");
+		q.setParameter("proceso", procesoSeleccionado.getProcesoId());
+		
+		return ((List<Actividad>) q.getResultList());
 	}
 }

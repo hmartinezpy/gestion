@@ -2,9 +2,6 @@ package py.com.ait.gestion.business;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -13,8 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ticpy.tekoporu.junit.DemoiselleRunner;
 
+import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
-import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
@@ -38,7 +35,7 @@ public class ActividadBCTest {
 		
 	}
 
-	@Test
+	//@Test
 	public void testInsertActividadFromCronogramaDetalle() {
 		
 		Long procesoId = 1L;
@@ -50,5 +47,23 @@ public class ActividadBCTest {
 		assertEquals(actividad.getMaster().getProcesoId(), p.getProcesoId());
 		assertEquals(actividad.getCronogramaDetalle().getCronogramaDetalleId(), cd.getCronogramaDetalleId());
 	}
+
+	@Test
+	public void testResolveActividadAndInsertNext() {
+		Long actividadId=actividadBC.getMaxId();
+		if (actividadId == null)
+			return;
+		Actividad a = actividadBC.load(actividadId);
+		a.setEstado(Definiciones.EstadoActividad.Resuelta);
+		if (a.getPregunta() != null)
+			a.setRespuesta("SI");
+		actividadBC.resolveActividad(a);
+		Actividad actividad = actividadBC.load(actividadBC.getMaxId());
+
+		assertNotNull(actividad);
+		assertEquals(actividad.getMaster().getProcesoId(), a.getMaster().getProcesoId());
+	}
+	
+	
 	
 }

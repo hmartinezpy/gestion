@@ -10,6 +10,7 @@ import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
 
 import py.com.ait.gestion.constant.Definiciones;
+import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.persistence.AudLogDAO;
@@ -125,6 +126,10 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 	public String getNumeroProcesoAnual() {
 		return procesoDAO.getLastSequence();
+	}
+
+	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado) {
+		return procesoDAO.getActividadesByProceso(procesoSeleccionado);
 	}
 
 }

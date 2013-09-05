@@ -66,6 +66,8 @@ public class Base {
 
 							Object obj2 = f.get(this);
 
+							if (obj2 == null)
+								continue;
 							Class clase2 = obj2.getClass();
 
 							Field[] fields2 = clase2.getDeclaredFields();

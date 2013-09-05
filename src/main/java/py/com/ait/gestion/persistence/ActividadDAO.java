@@ -18,12 +18,12 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 
 	@Inject
 	private EntityManager em;
-	
+
 	@Inject
 	private Logger logger;
-	
+
 	public Long getMaxId() {
-		
+
 		Query q = em.createQuery("select max(a.id) from Actividad a");
 		return ((Long) q.getSingleResult());
 	}
@@ -45,4 +45,5 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 		logger.info("ActividadDAO.getLastSequence() result: " + result);
 		return result;
 	}
+
 }

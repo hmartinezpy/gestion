@@ -6,18 +6,18 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.ticpy.tekoporu.message.MessageContext;
 import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
 
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
-import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.persistence.ActividadDAO;
 import py.com.ait.gestion.persistence.AudLogDAO;
-import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
 import py.com.ait.gestion.persistence.UsuarioDAO;
 
@@ -39,7 +39,13 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	SesionLogDAO sesionLogDAO;
 
 	@Inject
-	private CronogramaDetalleDAO cronogramaDetalleDAO;
+	private MessageContext messageContext;
+
+	@Inject
+	private CronogramaDetalleBC cronogramaDetalleBC;
+
+	@Inject
+	private Logger logger;
 
 	public List<Actividad> listar() {
 		return actividadDAO.findAll();
@@ -74,16 +80,61 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		StringBuilder sb = new StringBuilder();
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		String nroActividad = sb
-				.append((Integer.parseInt(nroActividadActual) + 1))
-				.append("/").append(year).toString();
+				.append((Integer.parseInt(nroActividadActual) + 1)).append("/")
+				.append(year).toString();
 		return nroActividad;
+	}
+
+	@Transactional
+	public void resolveActividad(Actividad actividad) {
+
+		// Si se modifica el estado a Resuelta, validar la respuesta a la
+		// pregunta (SI o NO)
+		logger.info("ActividadBC.editar() Se está resolviendo la actividad");
+
+		if (actividad.getPregunta() != null
+				&& !actividad.getPregunta().equals("")
+				&& (actividad.getRespuesta() == null || actividad
+						.getRespuesta().equals(""))) {
+
+			String mensaje = "No se puede resolver una actividad con pregunta y sin respuesta.";
+//			mensaje += "pregunta: " + actividad.getPregunta() + " respuesta: "
+//					+ actividad.getRespuesta();
+			// messageContext.add(mensaje);
+			System.out.println("ActividadBC.editar() "+mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+
+		} else if (actividad.getRespuesta() != null
+				&& !actividad.getRespuesta().equals("SI")
+				&& !actividad.getRespuesta().equals("NO")) {
+
+			String mensaje = "La respuesta debe ser SI o NO.";
+			// messageContext.add(mensaje);
+			System.out.println("ActividadBC.editar() "+mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+
+		} else {
+			logger.info("ActividadBC.editar() Resolver la actividad! pregunta: "
+					+ actividad.getPregunta()
+					+ " respuesta: "
+					+ actividad.getRespuesta());
+			resolveActividadAndInsertNext(actividad);
+		}
+		System.out.println("ActividadBC.resolveActividad() Marcando actividad como resuelta <<<<<<<");
+		actividad.setEstado(Definiciones.EstadoActividad.Resuelta);
+		update(actividad);
+		
 	}
 
 	@Transactional
 	public void editar(Actividad actividad) {
 
-		Actividad viejo = this.recuperar(actividad.getActividadId());
+		Actividad viejo = this.load(actividad.getActividadId());
+
 		super.update(actividad);
+
 		try {
 			audLogDAO.log(viejo, actividad, usuarioDAO.getUsuarioActual(),
 					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
@@ -92,7 +143,6 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// actividadProductivaDAO.update(actividadProductiva);
 	}
 
 	@Transactional
@@ -110,11 +160,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Transactional
-	public void insertActividadFromCronogramaDetalle(CronogramaDetalle cd, 
-							Long actividadAnterior, Proceso proceso) {
-		
+	public void insertActividadFromCronogramaDetalle(CronogramaDetalle cd,
+			Long actividadAnterior, Proceso proceso) {
+
 		Actividad actividad = new Actividad();
 		actividad.setMaster(proceso);
 		actividad.setNroActividad(getSiguienteNroActividad());
@@ -125,18 +175,18 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setFechaInicioPrevisto(cal.getTime());
 		cal.add(Calendar.DATE, cd.getDuracionTarea().intValue());
 		actividad.setFechaFinPrevista(cal.getTime());
-		if(cd.getPregunta() != null)
-			actividad.setPregunta(cd.getPregunta().getDescripcion());	
+		if (cd.getPregunta() != null)
+			actividad.setPregunta(cd.getPregunta().getDescripcion());
 		actividad.setEstado(Definiciones.EstadoActividad.Nueva);
 		Actividad actAnterior = null;
-		if(actividadAnterior != null) {
+		if (actividadAnterior != null) {
 			actAnterior = new Actividad();
 			actAnterior.setActividadId(actividadAnterior);
 		}
 		actividad.setActividadAnterior(actAnterior);
 		actividad.setAlerta(cd.getAlerta());
 		actividad.setAlarma(cd.getAlarma());
-		
+
 		insert(actividad);
 	}
 
@@ -144,8 +194,21 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		return actividadDAO.getMaxId();
 	}
 
-
 	public String getNumeroActividadActual() {
 		return actividadDAO.getLastSequence();
+	}
+
+	@Transactional
+	private void resolveActividadAndInsertNext(Actividad a) {
+
+		CronogramaDetalle cd = cronogramaDetalleBC.getNextCronogramaDetalle(
+				a.getCronogramaDetalle(), a.getRespuesta());
+
+		if (cd == null) { // ya no hay siguiente cronograma detalle
+			return;
+		} else {
+			insertActividadFromCronogramaDetalle(cd, a.getActividadId(),
+					a.getMaster());
+		}
 	}
 }

@@ -150,14 +150,8 @@
                 </p:column>
                 
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{procesoListMB.elegirActividad}" >
+                    <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{procesoListMB.elegirActividad}" rendered="#{actividad.estado != 'RES'}">
                         <span class="ui-icon ui-icon-pencil">  </span> 
-                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
-                    </p:commandLink>
-                </p:column>
-                <p:column style="width:50px;" headerText="" >
-                    <p:commandLink id="showDialogButton2" onclick="confirmation2.show();">
-                        <span class="ui-icon ui-icon-trash">  </span> 
                         <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
                     </p:commandLink>
                 </p:column>

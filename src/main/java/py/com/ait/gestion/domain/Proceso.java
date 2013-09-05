@@ -180,4 +180,5 @@ public class Proceso  extends Base implements Serializable {
 		this.actividades = actividades;
 	}
 
+
 }

@@ -20,47 +20,48 @@ public class CronogramaDetalleDAO extends JPACrud<CronogramaDetalle, Long> {
 
 	@Inject
 	private EntityManager em;
-	
+
 	@SuppressWarnings("unchecked")
 	public List<CronogramaDetalle> findByCronograma(Cronograma c) {
-		
-		Query q = em.createQuery("select cd from CronogramaDetalle cd where cd.master = :c");
+
+		Query q = em
+				.createQuery("select cd from CronogramaDetalle cd where cd.master = :c");
 		q.setParameter("c", c);
 		return (List<CronogramaDetalle>) q.getResultList();
 	}
-	
+
 	public CronogramaDetalle getFirstCronogramaDetalleByCronograma(Cronograma c) {
-		
+
 		List<CronogramaDetalle> list = findByCronograma(c);
 		Map<Long, Long> map = new HashMap<Long, Long>();
 		CronogramaDetalle detalle = null;
-		for(CronogramaDetalle cd : list){
-			
-			if(cd.getTareaSiguiente() != null) {
-				map.put(cd.getTareaSiguiente().getCronogramaDetalleId(), 
-							cd.getTareaSiguiente().getCronogramaDetalleId());
+		for (CronogramaDetalle cd : list) {
+
+			if (cd.getTareaSiguiente() != null) {
+				map.put(cd.getTareaSiguiente().getCronogramaDetalleId(), cd
+						.getTareaSiguiente().getCronogramaDetalleId());
 			}
-			
-			if(cd.getRespuestaNo() != null) {
-				map.put(cd.getRespuestaNo().getCronogramaDetalleId(), 
-							cd.getRespuestaNo().getCronogramaDetalleId());
+
+			if (cd.getRespuestaNo() != null) {
+				map.put(cd.getRespuestaNo().getCronogramaDetalleId(), cd
+						.getRespuestaNo().getCronogramaDetalleId());
 			}
-			
-			if(cd.getRespuestaSi() != null) {
-				map.put(cd.getRespuestaSi().getCronogramaDetalleId(), 
-							cd.getRespuestaSi().getCronogramaDetalleId());
+
+			if (cd.getRespuestaSi() != null) {
+				map.put(cd.getRespuestaSi().getCronogramaDetalleId(), cd
+						.getRespuestaSi().getCronogramaDetalleId());
 			}
 		}
-		
-		for(CronogramaDetalle cd : list){
-		
-			if(!map.containsKey(cd.getCronogramaDetalleId())) {
-				
+
+		for (CronogramaDetalle cd : list) {
+
+			if (!map.containsKey(cd.getCronogramaDetalleId())) {
+
 				detalle = cd;
 				break;
 			}
 		}
-		
+
 		return detalle;
 	}
 
@@ -68,5 +69,36 @@ public class CronogramaDetalleDAO extends JPACrud<CronogramaDetalle, Long> {
 
 		Query q = em.createQuery("select max(c.id) from CronogramaDetalle c");
 		return ((Long) q.getSingleResult());
+	}
+
+	public CronogramaDetalle getNextCronogramaDetalle(
+			CronogramaDetalle cronogramaDetalle, String respuesta) {
+		Long nextCronogramaDetalleId = null;
+		CronogramaDetalle nextCronogramaDetalle = null;
+
+		if (cronogramaDetalle.getTareaSiguiente() == null
+				&& cronogramaDetalle.getRespuestaSi() == null
+				&& cronogramaDetalle.getRespuestaNo() == null) {
+			// Soy el ultimo cronograma detalle, no hay siguiente
+			return null;
+		}
+
+		System.out
+				.println("CronogramaDetalleDAO.getNextCronogramaDetalle() respuesta: "
+						+ respuesta);
+
+		if (respuesta == null || respuesta.equals("")) {
+			nextCronogramaDetalleId = cronogramaDetalle.getTareaSiguiente()
+					.getCronogramaDetalleId();
+		} else if ("SI".equals(respuesta)) {
+			nextCronogramaDetalleId = cronogramaDetalle.getRespuestaSi()
+					.getCronogramaDetalleId();
+		} else if ("NO".equals(respuesta)) {
+			nextCronogramaDetalleId = cronogramaDetalle.getRespuestaNo()
+					.getCronogramaDetalleId();
+		}
+
+		nextCronogramaDetalle = load(nextCronogramaDetalleId);
+		return nextCronogramaDetalle;
 	}
 }
