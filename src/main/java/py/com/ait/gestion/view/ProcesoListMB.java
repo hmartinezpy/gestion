@@ -519,6 +519,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				elegirProceso();
 				agregarMensaje("Actividad editada");
 			} catch (RuntimeException ex) {
+				ex.printStackTrace();
 				agregarMensajeError(ex.getMessage());
 			}
 		}

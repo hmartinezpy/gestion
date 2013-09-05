@@ -134,10 +134,18 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 		proceso.setFechaFinPrevista(getBean().getFechaFinPrevista());
 		proceso.setFechaFinReprogramada(getBean().getFechaFinReprogramada());
 		proceso.setMotivoReprogramacion(getBean().getMotivoReprogramacion());
-		proceso.setClienteNotificado(getBean().getClienteNotificado());
-		proceso.setResponsable(getResponsable());
-		proceso.setCliente(getCliente());
-		proceso.setCronograma(getCronograma());
+		if(getBean().getResponsable() != null)
+			proceso.setResponsable(usuarioBC.load(getBean().getResponsable().getUsuarioId()));
+		else
+			proceso.setResponsable(null);
+		if(getBean().getCliente() != null)
+			proceso.setCliente(clienteBC.load(getBean().getCliente().getClienteId()));
+		else
+			proceso.setCliente(null);
+		if(getBean().getCronograma() != null)
+			proceso.setCronograma(cronogramaBC.load(getBean().getCronograma().getCronogramaId()));
+		else
+			proceso.setCronograma(null);
 		
 		procesoBC.registrar(proceso);
 		return getPreviousView();
@@ -147,8 +155,14 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 	@Override
 	public String update() {
 		Proceso proceso = getBean();
-		proceso.setCliente(getCliente());
-		
+		if(proceso.getResponsable() != null)
+			proceso.setResponsable(usuarioBC.load(proceso.getResponsable().getUsuarioId()));
+		else
+			proceso.setResponsable(null);
+		if(proceso.getCliente() != null)
+			proceso.setCliente(clienteBC.load(proceso.getCliente().getClienteId()));
+		else
+			proceso.setCliente(null);		
 		procesoBC.editar(proceso);
 		
 		return getPreviousView();
@@ -164,14 +178,17 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 	public Proceso getBean() {
 		
 		Proceso bean = super.getBean();		
-		if(idCliente == null && bean.getCliente() != null)
-			idCliente = bean.getCliente().getClienteId();
 		return bean;
 	}
 
 	public List<Estado> getEstadosProceso() {
 		
 		return Definiciones.EstadoProceso.getEstadosList();
+	}
+	
+	public String volver() {
+		
+		return getPreviousView();
 	}
 
 }

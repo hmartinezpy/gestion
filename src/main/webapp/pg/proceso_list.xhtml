@@ -62,9 +62,6 @@
                 </h:outputText>
                 </p:column>
                 
-	  			<p:column headerText="Cli-Notif"  style="font-weight:bold;">
-	  			<h:outputText style="font-weight:normal;" value="#{proceso.clienteNotificado}" />                           	                  
-                </p:column>
                 <p:column style="width:30px;" >				
 					<p:commandButton action="#{procesoListMB.getNextView}" actionListener="#{procesoListMB.clear}"
 						value ="Editar" ajax="false" image="ui-icon-pencil" >
@@ -109,10 +106,15 @@
 		            Actividades  #{procesoListMB.procesoSeleccionado.nroProceso}
 		        </f:facet> 
 		        
-                <p:column headerText="#Activ" style="font-weight:bold;" >
+                <p:column headerText="#Actividad" style="font-weight:bold;" >
                      <h:outputText style="font-weight:normal;" value="#{actividad.nroActividad}" />                                              
                 </p:column>
-                <p:column headerText="Respons"  style="font-weight:bold;" >
+                
+                <p:column headerText="Descripción"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Responsable"  style="font-weight:bold;" >
                 <h:outputText style="font-weight:normal;" value="#{actividad.responsable.usuario}" />
                 </p:column>
                 
@@ -120,35 +122,22 @@
                 <h:outputText style="font-weight:normal;" value="#{actividad.estado}" />
                 </p:column>
                 
-                <p:column headerText="FechaCreacion"  style="font-weight:bold;">
+                <p:column headerText="Fecha Creación"  style="font-weight:bold;">
                 <h:outputText  style="font-weight:normal;" value="#{actividad.fechaCreacion}">
                 	<!--<f:convertDateTime pattern="dd/MM/yyyy" /> -->
                 </h:outputText>
                 </p:column>
-                <p:column headerText="FechaIniPrev"  style="font-weight:bold;" >
+                <p:column headerText="Fecha Ini. Prevista"  style="font-weight:bold;" >
                 <h:outputText style="font-weight:normal;" value="#{actividad.fechaInicioPrevisto}" >
                 	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
                 </h:outputText>
                 </p:column>
-                <p:column headerText="FechFinPrev"  style="font-weight:bold;">
+                <p:column headerText="Fech Fin Prevista"  style="font-weight:bold;">
                 <h:outputText style="font-weight:normal;" value="#{actividad.fechaFinPrevista}" >
                 	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
                 </h:outputText>
                 </p:column>
-                
-                <p:column headerText="ActivAnt"  style="font-weight:bold;" >
-                <h:outputText style="font-weight:normal;" value="#{actividad.actividadAnterior.descripcion}" />
-                </p:column>
-                <p:column headerText="SuperTarea"  style="font-weight:bold;" >
-                <h:outputText style="font-weight:normal;" value="#{actividad.superTarea.descripcion}" />
-                </p:column>
-                <p:column headerText="Alarma"  style="font-weight:bold;" >
-                <h:outputText style="font-weight:normal;" value="#{actividad.alarma.descripcion}" />
-                </p:column>
-                <p:column headerText="Alerta"  style="font-weight:bold;" >
-                <h:outputText style="font-weight:normal;" value="#{actividad.alerta.descripcion}" />
-                </p:column>
-                
+                                
                 <p:column style="width:50px;" headerText="" >
                     <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{procesoListMB.elegirActividad}" rendered="#{actividad.estado != 'RES'}">
                         <span class="ui-icon ui-icon-pencil">  </span> 

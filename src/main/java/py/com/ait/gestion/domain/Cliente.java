@@ -88,4 +88,16 @@ public class Cliente  extends Base implements Serializable {
 		this.personaContacto = personaContacto;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		
+		boolean comparacion = false;
+		if(other != null && other instanceof Cliente) {
+			
+			if(this.clienteId == ((Cliente) other).getClienteId())
+				comparacion = true;
+		}
+		return comparacion;
+	}
+	
 }

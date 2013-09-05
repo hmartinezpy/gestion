@@ -34,13 +34,17 @@
 			                    </p:selectOneMenu>		
 			                    
                                 <h:outputText value="Cliente " />
-                                <p:selectOneMenu id="selectCliente" value="#{procesoEditMB.idCliente}"  >                                	
+                                <p:selectOneMenu id="selectCliente" value="#{procesoEditMB.bean.cliente}"  converter="clienteConverter" >                                	
                                 	<f:selectItem itemLabel="---Seleccione---" itemValue="" /> 
-                                	<f:selectItems value="#{procesoEditMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente.clienteId}" />                                  
+                                	<f:selectItems value="#{procesoEditMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente}" />                                  
 			                    </p:selectOneMenu>
                                 
                                 <h:outputText value="Cronograma " />
                                 <p:inputText value="#{procesoEditMB.bean.cronograma.nombre}" disabled="true" rendered="#{procesoEditMB.updateMode}" />                                
+                                <p:selectOneMenu id="selectCronograma" value="#{procesoEditMB.bean.cronograma}" rendered="#{!procesoEditMB.updateMode}" converter="cronogramaConverter" >                                	
+                                	<f:selectItem itemLabel="---Seleccione---" itemValue="" /> 
+                                	<f:selectItems value="#{procesoEditMB.cronogramas}" var="cronograma" itemLabel="#{cronograma.nombre}" itemValue="#{cronograma}" />                                  
+			                    </p:selectOneMenu>
                                 
                                 <h:outputText value="Estado " />
                                 <p:selectOneMenu id="selectEstado" value="#{procesoEditMB.bean.estado}" >
@@ -73,6 +77,8 @@
 									rendered="#{!procesoEditMB.updateMode}" ajax="false" />
 								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{procesoEditMB.update}"
 									rendered="#{procesoEditMB.updateMode}" ajax="false" />
+								<p:button value="Volver" image="ui-icon-arrowreturnthick-1-w" 
+									outcome="#{procesoEditMB.previousView}" />
 							</p:toolbarGroup>
                     </h:form>
   

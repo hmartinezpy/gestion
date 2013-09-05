@@ -70,4 +70,16 @@ public class Cronograma extends Base implements Serializable  {
 		this.cronogramaDetalles = cronogramaDetalles;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		
+		boolean comparacion = false;
+		if(other != null && other instanceof Cronograma) {
+			
+			if(this.cronogramaId == ((Cronograma) other).getCronogramaId())
+				comparacion = true;
+		}
+		return comparacion;
+	}
+	
 }
