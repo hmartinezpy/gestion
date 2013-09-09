@@ -80,7 +80,20 @@
                         <span class="ui-icon ui-icon-calculator">  </span> 
                         <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
                     </p:commandLink>
+                </p:column>
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:formobsP:obsP" onclick="dlgObsP.show()" action="#{procesoListMB.mostrarObsProceso}" >
+                        <span class="ui-icon ui-icon-bookmark">  </span> 
+                        <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
+                    </p:commandLink>
                 </p:column> 
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:formfileP:fileP" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
+                        <span class="ui-icon ui-icon-clipboard">  </span> 
+                        <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
+                    </p:commandLink>
+                </p:column> 
+                 
             </p:dataTable>
             
             <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Proceso?"
@@ -144,7 +157,26 @@
                         <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
                     </p:commandLink>
                 </p:column>
-            </p:dataTable>            
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:formobsA:obsA" onclick="dlgObsA.show()" action="#{procesoListMB.mostrarObsActividad}" >
+                        <span class="ui-icon ui-icon-bookmark">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
+                    </p:commandLink>
+                </p:column> 
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink id="showDialogButton2" onclick="confirmation2.show();">
+                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
+                    </p:commandLink>
+                </p:column>
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:formfileA:fileA" onclick="dlgFileA.show()" action="#{procesoListMB.mostrarFileActividad}" >
+                        <span class="ui-icon ui-icon-clipboard">  </span> 
+                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
+                    </p:commandLink>
+                </p:column>
+                
+            </p:dataTable>
             
             <p:confirmDialog id="confirmDialog2" message="¿Desea eliminar la Actividad"
                              header="Eliminar?" severity="alert" widgetVar="confirmation2">
@@ -215,8 +247,274 @@
                         
 				</h:form>
             </p:dialog> 
-		</div>
-			
 
+           <p:dialog header="Observaciones" widgetVar="dlgObsP"  resizable="false">  
+		
+				<h:form id="formobsP">
+                         <p:dataTable  var="observacion" value="#{procesoListMB.observaciones}"  id="obsP" editable="true" paginator="true" paginatorPosition="bottom" rows="6">
+				        
+			                <p:column headerText="Descripcion" style="font-weight:bold;width:300px" >
+			                     <h:outputText style="font-weight:normal;" value="#{observacion.descripcion}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FechaCreacion/Modif"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{observacion.fechaHora}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
+			                                                
+                             <p:column headerText="Usuario" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{observacion.usuario.usuario}" />                                              
+			                </p:column>   
+			                
+			                <p:column style="width:50px;" headerText=""  >
+			                    <p:commandLink  update=":form:messages,:formObsPE:panelObsPE" onclick="dlgObsPE.show()" action="#{procesoListMB.elegirObservacion}">
+			                        <span class="ui-icon ui-icon-pencil">  </span> 
+									<f:setPropertyActionListener value="#{observacion}" target="#{procesoListMB.observacionSeleccionada}" />
+			                    </p:commandLink>
+			                </p:column>
+			                <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink id="showDialogButtonOP" onclick="confirmationOP.show()" >
+			                        <span class="ui-icon ui-icon-trash">  </span> 
+			                        <f:setPropertyActionListener value="#{observacion}" target="#{procesoListMB.observacionSeleccionada}" />
+			                    </p:commandLink>
+			                </p:column>
+		                </p:dataTable>
+		                <p:confirmDialog id="confirmDialogOP" message="¿Desea eliminar la Observacion"
+		                             header="Eliminar?" severity="alert" widgetVar="confirmationOP">
+		                <p:commandButton id="confirm" value="Si" oncomplete="confirmationOP.hide()" 
+		                                 actionListener="#{procesoListMB.eliminarObservacion}" update=":form:messages,:formobsP:obsP" />
+		                <p:commandButton id="decline" value="No" onclick="confirmationOP.hide()" type="button" /> 
+		            </p:confirmDialog>
+		                <br></br>
+		                <p:toolbarGroup>
+							<p:commandButton value ="Nuevo " onclick="dlgObsPN.show()"
+								  image="ui-icon-document" />
+		 				</p:toolbarGroup>
+                        
+				</h:form>
+            </p:dialog> 
+            
+             <p:dialog header="Nueva Observacion" widgetVar="dlgObsPN"  resizable="false">
+             <h:form id="formObsPN">
+                        <p:panel style="width:400px" id="panelObsPN" >
+                         <h:panelGrid columns="2" cellpadding="5" >
+                         
+                         		<h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="3" cols="40" value="#{procesoListMB.descripcionObsP}" />   
+                          
+                         <p:commandButton value="Agregar"  actionListener="#{procesoListMB.registrarObsP}"
+                                             oncomplete="dlgObsPN.hide()" icon="ui-icon-disk" update=":form:messages,:formobsP:obsP,panelObsPN"/> 
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+                         
+               
+             </p:dialog> 
+             
+             <p:dialog header="Editar Observacion" widgetVar="dlgObsPE"  resizable="false">
+             <h:form id="formObsPE">
+                        <p:panel style="width:400px" id="panelObsPE" >
+                         <h:panelGrid columns="2" cellpadding="5" >
+                         
+                         		<h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="3" cols="40" value="#{procesoListMB.observacionSeleccionada.descripcion}" />   
+                          
+                         <p:commandButton value="Guargar" actionListener="#{procesoListMB.editarObservacion}"
+                                             oncomplete="dlgObsPE.hide()" icon="ui-icon-disk" update=":form:messages,:formobsP:obsP"/> 
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+             </p:dialog> 
+             
+             <p:dialog header="Observaciones" widgetVar="dlgObsA"  resizable="false">  
+		
+				<h:form id="formobsA">
+                         <p:dataTable  var="observacion" value="#{procesoListMB.observaciones}"  id="obsA" editable="true" paginator="true" paginatorPosition="bottom" rows="6">
+				        
+			                <p:column headerText="Descripcion" style="font-weight:bold;width:300px" >
+			                     <h:outputText style="font-weight:normal;" value="#{observacion.descripcion}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FechaCreacion/Modif"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{observacion.fechaHora}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
+			                                                
+                             <p:column headerText="Usuario" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{observacion.usuario.usuario}" />                                              
+			                </p:column>   
+			                
+			                <p:column style="width:50px;" headerText=""  >
+			                    <p:commandLink  update=":form:messages,:formObsAE:panelObsAE" onclick="dlgObsAE.show()" action="#{procesoListMB.elegirObservacion}">
+			                        <span class="ui-icon ui-icon-pencil">  </span> 
+									<f:setPropertyActionListener value="#{observacion}" target="#{procesoListMB.observacionSeleccionada}" />
+			                    </p:commandLink>
+			                </p:column>
+			                <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink id="showDialogButtonOP" onclick="confirmationOA.show()" >
+			                        <span class="ui-icon ui-icon-trash">  </span> 
+			                        <f:setPropertyActionListener value="#{observacion}" target="#{procesoListMB.observacionSeleccionada}" />
+			                    </p:commandLink>
+			                </p:column>
+		                </p:dataTable>
+		                <p:confirmDialog id="confirmDialogOP" message="¿Desea eliminar la Observacion"
+		                             header="Eliminar?" severity="alert" widgetVar="confirmationOA">
+		                <p:commandButton id="confirm" value="Si" oncomplete="confirmationOA.hide()" 
+		                                 actionListener="#{procesoListMB.eliminarObservacion}" update=":form:messages,:formobsA:obsA" />
+		                <p:commandButton id="decline" value="No" onclick="confirmationOA.hide()" type="button" /> 
+		            </p:confirmDialog>
+		                <br></br>
+		                <p:toolbarGroup>
+							<p:commandButton value ="Nuevo " onclick="dlgObsAN.show()"
+								  image="ui-icon-document" />
+		 				</p:toolbarGroup>
+                        
+				</h:form>
+            </p:dialog> 
+            
+             <p:dialog header="Nueva Observacion" widgetVar="dlgObsAN"  resizable="false">
+             <h:form id="formObsAN">
+                        <p:panel style="width:400px" id="panelObsAN" >
+                         <h:panelGrid columns="2" cellpadding="5" >
+                         
+                         		<h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="3" cols="40" value="#{procesoListMB.descripcionObsA}" />   
+                          
+                         <p:commandButton value="Agregar"  actionListener="#{procesoListMB.registrarObsA}"
+                                             oncomplete="dlgObsAN.hide()" icon="ui-icon-disk" update=":form:messages,:formobsA:obsA,panelObsAN"/> 
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+                         
+             </p:dialog> 
+             
+             <p:dialog header="Editar Observacion" widgetVar="dlgObsAE"  resizable="false">
+             <h:form id="formObsAE">
+                        <p:panel style="width:400px" id="panelObsAE" >
+                         <h:panelGrid columns="2" cellpadding="5" >
+                         
+                         		<h:outputText value="Descripcion " />
+                                <p:inputTextarea rows="3" cols="40" value="#{procesoListMB.observacionSeleccionada.descripcion}" />   
+                          
+                         <p:commandButton value="Guargar" actionListener="#{procesoListMB.editarObservacion}"
+                                             oncomplete="dlgObsAE.hide()" icon="ui-icon-disk" update=":form:messages,:formobsA:obsA"/> 
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+             </p:dialog> 
+             
+             
+             <p:dialog header="Documentos" widgetVar="dlgFileP"  resizable="false">  
+		
+				<h:form id="formfileP">
+                         <p:dataTable  var="documento" value="#{procesoListMB.documentos}"  id="fileP" editable="true" paginator="true" paginatorPosition="bottom" rows="6">
+				        
+			                <p:column headerText="Filename" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.filename}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FileExtension" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.fileExtension}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FilePath" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.filepath}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="Bloqueado" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.bloqueado}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FechaBloqueo"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{documento.fechaBloqueo}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
+			                                                
+                             <p:column headerText="UsuarioBloqueo" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioBloqueo.usuario}" />                                              
+			                </p:column>   
+			                
+			               <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink id="showDialogButtonFP" onclick="confirmationFP.show()" >
+			                        <span class="ui-icon ui-icon-trash">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                </p:column>
+			                
+		                </p:dataTable>
+		                <p:confirmDialog id="confirmDialogFP" message="¿Desea eliminar el Archivo"
+		                             header="Eliminar?" severity="alert" widgetVar="confirmationFP">
+			                <p:commandButton id="confirm" value="Si" oncomplete="confirmationFP.hide()" 
+			                                 actionListener="#{procesoListMB.eliminarDocumento}" update=":form:messages,:formfileP:fileP" />
+			                <p:commandButton id="decline" value="No" onclick="confirmationFP.hide()" type="button" /> 
+		            	</p:confirmDialog>
+		              	<br></br>
+		                <p:toolbarGroup>
+							<p:fileUpload update=":form:messages,:formfileP:fileP" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}"
+						  />
+		 				</p:toolbarGroup> 
+                        
+				</h:form>
+            </p:dialog> 
+             
+             
+             <p:dialog header="Documentos" widgetVar="dlgFileA"  resizable="false">  
+		
+				<h:form id="formfileA">
+                         <p:dataTable  var="documento" value="#{procesoListMB.documentos}"  id="fileA" editable="true" paginator="true" paginatorPosition="bottom" rows="6">
+				        
+			                <p:column headerText="Filename" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.filename}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FileExtension" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.fileExtension}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FilePath" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.filepath}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="Bloqueado" style="font-weight:bold" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.bloqueado}" />                                              
+			                </p:column>
+			                
+			                <p:column headerText="FechaBloqueo"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{documento.fechaBloqueo}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
+			                                                
+                             <p:column headerText="UsuarioBloqueo" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioBloqueo.usuario}" />                                              
+			                </p:column>   
+			                
+			               <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink id="showDialogButtonFA" onclick="confirmationFA.show()" >
+			                        <span class="ui-icon ui-icon-trash">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                </p:column>
+			                
+		                </p:dataTable>
+		                <p:confirmDialog id="confirmDialogFA" message="¿Desea eliminar el Archivo"
+		                             header="Eliminar?" severity="alert" widgetVar="confirmationFP">
+			                <p:commandButton id="confirm" value="Si" oncomplete="confirmationFA.hide()" 
+			                                 actionListener="#{procesoListMB.eliminarDocumento}" update=":form:messages,:formfileA:fileA" />
+			                <p:commandButton id="decline" value="No" onclick="confirmationFA.hide()" type="button" /> 
+		            	</p:confirmDialog>
+		              	<br></br>
+		                <p:toolbarGroup>
+							<p:fileUpload update=":form:messages,:formfileA:fileA" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUploadA}"
+						  />
+		 				</p:toolbarGroup> 
+                        
+				</h:form>
+            </p:dialog> 
+            
+		</div>
 	</ui:define>
 </ui:composition>

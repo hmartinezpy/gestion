@@ -1,5 +1,10 @@
 package py.com.ait.gestion.view;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,6 +16,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
 import org.primefaces.event.DateSelectEvent;
+import org.primefaces.event.FileUploadEvent;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
@@ -18,6 +24,8 @@ import org.ticpy.tekoporu.template.AbstractListPageBean;
 
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
+import py.com.ait.gestion.business.DocumentoBC;
+import py.com.ait.gestion.business.ObservacionBC;
 import py.com.ait.gestion.business.ProcesoBC;
 import py.com.ait.gestion.business.TipoAlarmaBC;
 import py.com.ait.gestion.business.UsuarioBC;
@@ -25,9 +33,10 @@ import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.CronogramaDetalle;
+import py.com.ait.gestion.domain.Documento;
+import py.com.ait.gestion.domain.Observacion;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Usuario;
-import py.com.ait.gestion.persistence.UsuarioDAO;
 
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
@@ -42,10 +51,18 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	@Inject
 	private ProcesoBC procesoBC;
 
+	@Inject
+	private ObservacionBC observacionBC;
+
+	@Inject
+	private DocumentoBC documentoBC;
+
 	private List<Proceso> procesos;
 	private Proceso procesoSeleccionado;
 
 	private List<Actividad> actividades;
+	private List<Observacion> observaciones;
+	private List<Documento> documentos;
 
 	public Proceso getProcesoSeleccionado() {
 		return procesoSeleccionado;
@@ -55,11 +72,54 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		this.procesoSeleccionado = procesoSeleccionado;
 	}
 
+	public List<Observacion> getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservacion(List<Observacion> observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public List<Documento> getDocumentos() {
+		return documentos;
+	}
+
+	public void setDocumentos(List<Documento> documentos) {
+		this.documentos = documentos;
+	}
+
 	public void elegirProceso() {
 		setActividades(procesoBC.getActividadesByProceso(procesoSeleccionado));
 		// setCronogramaDetallesporCronograma(procesoSeleccionado.getCronograma().getCronogramaDetalles());
 		String numeroProceso = procesoSeleccionado.getNroProceso();
 		agregarMensaje("Proceso seleccionado: " + numeroProceso);
+	}
+
+	public void mostrarObsProceso() {
+
+		this.setObservacion(observacionBC.getObsProceso(procesoSeleccionado
+				.getProcesoId()));
+
+		String numeroProceso = procesoSeleccionado.getNroProceso();
+		agregarMensaje("Proceso seleccionado: " + numeroProceso);
+	}
+
+	public void mostrarFileProceso() {
+
+		this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
+				.getProcesoId()));
+
+		String numeroProceso = procesoSeleccionado.getNroProceso();
+		agregarMensaje("Proceso seleccionado: " + numeroProceso);
+	}
+
+	public void mostrarFileActividad() {
+
+		this.setDocumentos(documentoBC.getFileActividad(actividadSeleccionada
+				.getActividadId()));
+
+		String numeroActividad = actividadSeleccionada.getNroActividad();
+		agregarMensaje("Actividad seleccionada: " + numeroActividad);
 	}
 
 	public List<Actividad> getActividades() {
@@ -97,7 +157,8 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void agregarMensajeError(String mensaje) {
-		facesContext.addMessage("error", new FacesMessage(FacesMessage.SEVERITY_ERROR, mensaje, null));
+		facesContext.addMessage("error", new FacesMessage(
+				FacesMessage.SEVERITY_ERROR, mensaje, null));
 	}
 
 	// Actividades
@@ -143,6 +204,15 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private List<Actividad> actividadesPorProceso;
 
 	private Actividad actividadSeleccionada;
+
+	public void mostrarObsActividad() {
+
+		this.setObservacion(observacionBC.getObsActividad(actividadSeleccionada
+				.getActividadId()));
+
+		String numeroActividad = actividadSeleccionada.getNroActividad();
+		agregarMensaje("Actividad seleccionada: " + numeroActividad);
+	}
 
 	public Actividad getActividadSeleccionada() {
 		return actividadSeleccionada;
@@ -538,4 +608,308 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		}
 		return show;
 	}
+
+	// Observaciones
+
+	private String descripcionObsP;
+	private String descripcionObsA;
+
+	public String getDescripcionObsA() {
+		return descripcionObsA;
+	}
+
+	public void setDescripcionObsA(String descripcionObsA) {
+		this.descripcionObsA = descripcionObsA;
+	}
+
+	private Observacion observacionSeleccionada;
+
+	private Documento documentoSeleccionado;
+
+	public Documento getDocumentoSeleccionado() {
+		return documentoSeleccionado;
+	}
+
+	public void setDocumentoSeleccionado(Documento documentoSeleccionado) {
+		this.documentoSeleccionado = documentoSeleccionado;
+	}
+
+	public String getDescripcionObsP() {
+		return descripcionObsP;
+	}
+
+	public Observacion getObservacionSeleccionada() {
+		return observacionSeleccionada;
+	}
+
+	public void setObservacionSeleccionada(Observacion observacionSeleccionada) {
+		this.observacionSeleccionada = observacionSeleccionada;
+	}
+
+	public void setDescripcionObsP(String descripcion) {
+		this.descripcionObsP = descripcion;
+	}
+
+	public void registrarObsP() {
+		if (procesoSeleccionado == null) {
+			agregarMensaje("ERROR: Proceso NO seleccionado");
+			this.setDescripcionObsP("");
+		} else {
+			Proceso procesoSelec = procesoSeleccionado;
+
+			Observacion obs = new Observacion();
+
+			obs.setDescripcion(getDescripcionObsP());
+
+			String nombreUsu = usuarioBC.getUsuarioActual();
+			Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+
+			obs.setUsuario(actual);
+			obs.setFechaHora(new Date());
+			obs.setEntidad("Proceso");
+			obs.setIdEntidad(procesoSelec.getProcesoId());
+
+			observacionBC.registrar(obs);
+			observaciones.add(obs);
+			agregarMensaje("Observacion creada");
+			this.setDescripcionObsP("");
+
+		}
+	}
+
+	public void registrarObsA() {
+		if (actividadSeleccionada == null) {
+			agregarMensaje("ERROR: Actividad NO seleccionada");
+			this.setDescripcionObsP("");
+		} else {
+			Actividad actividadSelec = actividadSeleccionada;
+
+			Observacion obs = new Observacion();
+
+			obs.setDescripcion(getDescripcionObsA());
+
+			String nombreUsu = usuarioBC.getUsuarioActual();
+			Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+
+			obs.setUsuario(actual);
+			obs.setFechaHora(new Date());
+			obs.setEntidad("Actividad");
+			obs.setIdEntidad(actividadSelec.getActividadId());
+
+			observacionBC.registrar(obs);
+			observaciones.add(obs);
+			agregarMensaje("Observacion creada");
+			this.setDescripcionObsA("");
+
+		}
+	}
+
+	public void elegirObservacion() {
+		Observacion obs = observacionSeleccionada;
+
+		agregarMensaje("Observacion seleccionada: " + obs.getDescripcion());
+
+	}
+
+	public void editarObservacion() {
+		if (observacionSeleccionada == null) {
+			agregarMensaje("Observacion no seleccionada");
+		} else {
+			String actual = usuarioBC.getUsuarioActual();
+			String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
+			// if( obsUsu.equals(actual)){
+			Observacion obs = observacionSeleccionada;
+			obs.setFechaHora(new Date());
+			observacionBC.editar(obs);
+			agregarMensaje("Observacion editada");
+
+			// }else{
+			// agregarMensaje("No tiene permisos para realizar esta operación");
+			// }
+		}
+	}
+
+	public void eliminarObservacion(ActionEvent actionEvent) {
+
+		if (observacionSeleccionada == null) {
+			agregarMensaje("Observacion no seleccionada");
+		} else {
+			// if(observacionSeleccionada.getUsuario().getUsuario() ==
+			// usuarioBC.getUsuarioActual()){
+			observacionBC.eliminar(observacionSeleccionada.getObservacionId());
+			int index = observaciones.indexOf(observacionSeleccionada);
+			observaciones.remove(index);
+
+			agregarMensaje("Observacion eliminada");
+
+			// }else{
+			// agregarMensaje("No tiene permisos para realizar esta operación");
+			// }
+		}
+
+	}
+
+	// Archivos
+
+	private String destination = "/tmp/jboss";
+
+	public void handleFileUpload(FileUploadEvent event) {
+
+		// agregarMensaje("Success! " + event.getFile().getFileName() +
+		// " is uploaded.");
+		// Do what you want with the file
+		try {
+			copyFile(event.getFile().getFileName(), event.getFile()
+					.getInputstream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void copyFile(String fileName, InputStream in) {
+		if (procesoSeleccionado == null) {
+			agregarMensaje("ERROR: Proceso NO seleccionado");
+		} else {
+
+			try {
+
+				// write the inputStream to a FileOutputStream
+				OutputStream out = new FileOutputStream(new File(destination
+						+ fileName));
+
+				int read = 0;
+				byte[] bytes = new byte[1024];
+
+				while ((read = in.read(bytes)) != -1) {
+					out.write(bytes, 0, read);
+				}
+
+				in.close();
+				out.flush();
+				out.close();
+
+				String extension = "";
+				String nombreArchivo = "";
+
+				int i = fileName.lastIndexOf('.');
+				if (i > 0) {
+					extension = fileName.substring(i + 1);
+					nombreArchivo = fileName.substring(0, i);
+				}
+
+				Proceso procesoSelec = procesoSeleccionado;
+
+				Documento doc = new Documento();
+
+				doc.setFilename(nombreArchivo);
+				doc.setFileExtension(extension);
+				doc.setBloqueado("Si");
+				doc.setFechaBloqueo(new Date());
+				doc.setFilepath(destination);
+
+				String nombreUsu = usuarioBC.getUsuarioActual();
+				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+				doc.setUsuarioBloqueo(actual);
+
+				doc.setEntidad("Proceso");
+				doc.setIdEntidad(procesoSelec.getProcesoId());
+
+				documentoBC.registrar(doc);
+				documentos.add(doc);
+				agregarMensaje("Archivo subido");
+
+			} catch (IOException e) {
+				agregarMensaje("Error subiendo el archivo");
+				// System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	public void handleFileUploadA(FileUploadEvent event) {
+
+		// agregarMensaje("Success! " + event.getFile().getFileName() +
+		// " is uploaded.");
+		// Do what you want with the file
+		try {
+			copyFileA(event.getFile().getFileName(), event.getFile()
+					.getInputstream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void copyFileA(String fileName, InputStream in) {
+		if (actividadSeleccionada == null) {
+			agregarMensaje("ERROR: Actividad NO seleccionada");
+		} else {
+
+			try {
+
+				// write the inputStream to a FileOutputStream
+				OutputStream out = new FileOutputStream(new File(destination
+						+ fileName));
+
+				int read = 0;
+				byte[] bytes = new byte[1024];
+
+				while ((read = in.read(bytes)) != -1) {
+					out.write(bytes, 0, read);
+				}
+
+				in.close();
+				out.flush();
+				out.close();
+
+				String extension = "";
+				String nombreArchivo = "";
+
+				int i = fileName.lastIndexOf('.');
+				if (i > 0) {
+					extension = fileName.substring(i + 1);
+					nombreArchivo = fileName.substring(0, i);
+				}
+
+				Actividad actividadSelec = actividadSeleccionada;
+
+				Documento doc = new Documento();
+
+				doc.setFilename(nombreArchivo);
+				doc.setFileExtension(extension);
+				doc.setBloqueado("Si");
+				doc.setFechaBloqueo(new Date());
+				doc.setFilepath(destination);
+
+				String nombreUsu = usuarioBC.getUsuarioActual();
+				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+				doc.setUsuarioBloqueo(actual);
+
+				doc.setEntidad("Actividad");
+				doc.setIdEntidad(actividadSelec.getActividadId());
+
+				documentoBC.registrar(doc);
+				documentos.add(doc);
+				agregarMensaje("Archivo subido");
+
+			} catch (IOException e) {
+				agregarMensaje("Error subiendo el archivo");
+				// System.out.println(e.getMessage());
+			}
+		}
+	}
+
+	public void eliminarDocumento(ActionEvent actionEvent) {
+
+		if (documentoSeleccionado == null) {
+			agregarMensaje("Documento no seleccionado");
+		} else {
+			documentoBC.eliminar(documentoSeleccionado.getDocumentoId());
+			int index = documentos.indexOf(documentoSeleccionado);
+			documentos.remove(index);
+
+			agregarMensaje("Documento eliminado");
+
+		}
+
+	}
+
 }

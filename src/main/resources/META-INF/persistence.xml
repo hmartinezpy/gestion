@@ -27,6 +27,8 @@
 		<class>py.com.ait.gestion.domain.Checklist</class>
 		<class>py.com.ait.gestion.domain.ChecklistDetalle</class>
 		<class>py.com.ait.gestion.domain.Actividad</class>
+		<class>py.com.ait.gestion.domain.Documento</class>
+		<class>py.com.ait.gestion.domain.Observacion</class>
 		
 		
 
