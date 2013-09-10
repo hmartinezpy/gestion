@@ -39,12 +39,13 @@ public class Observacion  extends Base implements Serializable {
 		super();
     }
 
-	public Observacion(Long observacionId, String descripcion, Date fechaHora, String entidad, Long idEntidad ) {
+	public Observacion(Long observacionId, String descripcion, Date fechaHora, String entidad, Long idEntidad, Usuario usuario ) {
 		this.observacionId = observacionId;
 		this.descripcion = descripcion;
 		this.fechaHora = fechaHora;
 		this.entidad = entidad;
 		this.idEntidad = idEntidad;
+		this.usuario = usuario;
     }
 
 	public Long getObservacionId() {

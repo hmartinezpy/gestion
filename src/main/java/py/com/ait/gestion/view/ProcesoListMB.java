@@ -1,6 +1,8 @@
 package py.com.ait.gestion.view;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,8 @@ import javax.inject.Inject;
 
 import org.primefaces.event.DateSelectEvent;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
@@ -717,15 +721,15 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		} else {
 			String actual = usuarioBC.getUsuarioActual();
 			String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
-			// if( obsUsu.equals(actual)){
-			Observacion obs = observacionSeleccionada;
-			obs.setFechaHora(new Date());
-			observacionBC.editar(obs);
-			agregarMensaje("Observacion editada");
+			if (obsUsu.equals(actual)) {
+				Observacion obs = observacionSeleccionada;
+				obs.setFechaHora(new Date());
+				observacionBC.editar(obs);
+				agregarMensaje("Observacion editada");
 
-			// }else{
-			// agregarMensaje("No tiene permisos para realizar esta operación");
-			// }
+			} else {
+				agregarMensaje("No tiene permisos para realizar esta operación");
+			}
 		}
 	}
 
@@ -734,24 +738,27 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		if (observacionSeleccionada == null) {
 			agregarMensaje("Observacion no seleccionada");
 		} else {
-			// if(observacionSeleccionada.getUsuario().getUsuario() ==
-			// usuarioBC.getUsuarioActual()){
-			observacionBC.eliminar(observacionSeleccionada.getObservacionId());
-			int index = observaciones.indexOf(observacionSeleccionada);
-			observaciones.remove(index);
+			String actual = usuarioBC.getUsuarioActual();
+			String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
+			if (obsUsu.equals(actual)) {
 
-			agregarMensaje("Observacion eliminada");
+				observacionBC.eliminar(observacionSeleccionada
+						.getObservacionId());
+				int index = observaciones.indexOf(observacionSeleccionada);
+				observaciones.remove(index);
 
-			// }else{
-			// agregarMensaje("No tiene permisos para realizar esta operación");
-			// }
+				agregarMensaje("Observacion eliminada");
+
+			} else {
+				agregarMensaje("No tiene permisos para realizar esta operación");
+			}
 		}
 
 	}
 
 	// Archivos
 
-	private String destination = "/tmp/jboss";
+	private String destination = "/tmp/jboss/";
 
 	public void handleFileUpload(FileUploadEvent event) {
 
@@ -773,9 +780,51 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 			try {
 
+				String nombreCliente = procesoSeleccionado.getCliente()
+						.getNombre();
+				String descCronog = procesoSeleccionado.getCronograma()
+						.getNombre();
+				String nroProceso = procesoSeleccionado.getNroProceso();
+				String anho = "";
+
+				int k = nroProceso.lastIndexOf('/');
+				if (k > 0) {
+					anho = nroProceso.substring(k + 1);
+					nroProceso = nroProceso.substring(0, k);
+				}
+
+				File rootFolder = new File(destination);
+				if (!rootFolder.exists()) {
+					rootFolder.mkdir();
+				}
+
+				File clienteFolder = new File(destination + nombreCliente + '/');
+				if (!clienteFolder.exists()) {
+					clienteFolder.mkdir();
+				}
+
+				File anhoFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/');
+				if (!anhoFolder.exists()) {
+					anhoFolder.mkdir();
+				}
+
+				File cronogFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/' + descCronog + '/');
+				if (!cronogFolder.exists()) {
+					cronogFolder.mkdir();
+				}
+
+				File procesoFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/' + descCronog + '/' + nroProceso + '/');
+				if (!procesoFolder.exists()) {
+					procesoFolder.mkdir();
+				}
+
 				// write the inputStream to a FileOutputStream
 				OutputStream out = new FileOutputStream(new File(destination
-						+ fileName));
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/' + fileName));
 
 				int read = 0;
 				byte[] bytes = new byte[1024];
@@ -803,13 +852,16 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 				doc.setFilename(nombreArchivo);
 				doc.setFileExtension(extension);
-				doc.setBloqueado("Si");
+				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
-				doc.setFilepath(destination);
+				doc.setFechaDesbloqueo(new Date());
+				doc.setFilepath(destination + nombreCliente + '/' + anho + '/'
+						+ descCronog + '/' + nroProceso + '/');
 
 				String nombreUsu = usuarioBC.getUsuarioActual();
 				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
 				doc.setUsuarioBloqueo(actual);
+				doc.setUsuarioDesbloqueo(actual);
 
 				doc.setEntidad("Proceso");
 				doc.setIdEntidad(procesoSelec.getProcesoId());
@@ -823,6 +875,48 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				// System.out.println(e.getMessage());
 			}
 		}
+	}
+
+	public void elegirDocumento() {
+		Documento doc = documentoSeleccionado;
+
+		try {
+			String downloadPath = doc.getFilepath();
+			String downloadName = doc.getFilename();
+			String downloadExt = doc.getFileExtension();
+
+			InputStream stream = new FileInputStream(downloadPath
+					+ downloadName + "." + downloadExt);
+			StreamedContent archivo = new DefaultStreamedContent(stream,
+					"application/octet-stream", downloadName + "."
+							+ downloadExt);
+			setFile(archivo);
+			doc.setBloqueado("Si");
+			doc.setFechaBloqueo(new Date());
+			String nombreUsu = usuarioBC.getUsuarioActual();
+			Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+			doc.setUsuarioBloqueo(actual);
+			documentoBC.editar(doc);
+
+			agregarMensaje("Archivo seleccionado :" + downloadName + "."
+					+ downloadExt);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			agregarMensaje("Error seleccionando el archivo");
+		}
+
+	}
+
+	private StreamedContent file;
+
+	public void setFile(StreamedContent file) {
+
+		this.file = file;
+	}
+
+	public StreamedContent getFile() {
+
+		return file;
 	}
 
 	public void handleFileUploadA(FileUploadEvent event) {
@@ -845,9 +939,64 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 			try {
 
+				String nombreCliente = procesoSeleccionado.getCliente()
+						.getNombre();
+				String descCronog = procesoSeleccionado.getCronograma()
+						.getNombre();
+				String nroProceso = procesoSeleccionado.getNroProceso();
+				String anho = "";
+				String nroActiv = actividadSeleccionada.getNroActividad();
+
+				int k = nroProceso.lastIndexOf('/');
+				if (k > 0) {
+					anho = nroProceso.substring(k + 1);
+					nroProceso = nroProceso.substring(0, k);
+				}
+
+				int h = nroActiv.lastIndexOf('/');
+				if (h > 0) {
+					nroActiv = nroActiv.substring(0, h);
+				}
+
+				File rootFolder = new File(destination);
+				if (!rootFolder.exists()) {
+					rootFolder.mkdir();
+				}
+
+				File clienteFolder = new File(destination + nombreCliente + '/');
+				if (!clienteFolder.exists()) {
+					clienteFolder.mkdir();
+				}
+
+				File anhoFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/');
+				if (!anhoFolder.exists()) {
+					anhoFolder.mkdir();
+				}
+
+				File cronogFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/' + descCronog + '/');
+				if (!cronogFolder.exists()) {
+					cronogFolder.mkdir();
+				}
+
+				File procesoFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/' + descCronog + '/' + nroProceso + '/');
+				if (!procesoFolder.exists()) {
+					procesoFolder.mkdir();
+				}
+
+				File activFolder = new File(destination + nombreCliente + '/'
+						+ anho + '/' + descCronog + '/' + nroProceso + '/'
+						+ nroActiv + '/');
+				if (!activFolder.exists()) {
+					activFolder.mkdir();
+				}
+
 				// write the inputStream to a FileOutputStream
 				OutputStream out = new FileOutputStream(new File(destination
-						+ fileName));
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/' + nroActiv + '/' + fileName));
 
 				int read = 0;
 				byte[] bytes = new byte[1024];
@@ -869,22 +1018,25 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					nombreArchivo = fileName.substring(0, i);
 				}
 
-				Actividad actividadSelec = actividadSeleccionada;
+				Actividad activSelec = actividadSeleccionada;
 
 				Documento doc = new Documento();
 
 				doc.setFilename(nombreArchivo);
 				doc.setFileExtension(extension);
-				doc.setBloqueado("Si");
+				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
-				doc.setFilepath(destination);
+				doc.setFechaDesbloqueo(new Date());
+				doc.setFilepath(destination + nombreCliente + '/' + anho + '/'
+						+ descCronog + '/' + nroProceso + '/' + nroActiv + '/');
 
 				String nombreUsu = usuarioBC.getUsuarioActual();
 				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
 				doc.setUsuarioBloqueo(actual);
+				doc.setUsuarioDesbloqueo(actual);
 
 				doc.setEntidad("Actividad");
-				doc.setIdEntidad(actividadSelec.getActividadId());
+				doc.setIdEntidad(activSelec.getActividadId());
 
 				documentoBC.registrar(doc);
 				documentos.add(doc);

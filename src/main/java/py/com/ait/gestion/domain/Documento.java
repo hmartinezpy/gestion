@@ -58,15 +58,17 @@ public class Documento  extends Base implements Serializable {
 		super();
     }
 
-	public Documento(Long documentoId, String filename,String filepath,String filetype, String fileExtension, String bloqueado, Date fechaBloqueo,Date fechaDesbloqueo, String entidad, Long idEntidad ) {
+	public Documento(Long documentoId, String filename,String filepath, String filetype, String fileExtension, String bloqueado, Date fechaBloqueo,Usuario usuarioBloqueo, Date fechaDesbloqueo,Usuario usuarioDesbloqueo, String entidad, Long idEntidad ) {
 		this.documentoId = documentoId;
 		this.filename = filename;
 		this.filepath = filepath;
-		this.fileExtension = fileExtension;
 		this.filetype = filetype;
+		this.fileExtension = fileExtension;
 		this.bloqueado = bloqueado;
 		this.fechaBloqueo = fechaBloqueo;
+		this.usuarioBloqueo = usuarioBloqueo;
 		this.fechaDesbloqueo = fechaDesbloqueo;
+		this.usuarioDesbloqueo = usuarioDesbloqueo;
 		this.entidad = entidad;
 		this.idEntidad = idEntidad;
     }

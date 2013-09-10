@@ -18,7 +18,7 @@ public class DocumentoDAO extends JPACrud<Documento, Long> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Documento> getFileProceso(Long idProceso) {
-		Query q = em.createQuery("select new Documento(d.documentoId, d.filename, d.filepath, d.fileExtension, d.filetype, d.bloqueado, d.fechaBloqueo, d.fechaDesbloqueo, d.entidad, d.idEntidad)" +
+		Query q = em.createQuery("select new Documento(d.documentoId, d.filename, d.filepath, d.filetype, d.fileExtension, d.bloqueado, d.fechaBloqueo, d.usuarioBloqueo, d.fechaDesbloqueo, d.usuarioDesbloqueo, d.entidad, d.idEntidad)" +
 		" from py.com.ait.gestion.domain.Documento d where d.entidad = :entidad and d.idEntidad =:idEntidad ");
 		
 		q.setParameter("entidad", "Proceso");
@@ -29,7 +29,7 @@ public class DocumentoDAO extends JPACrud<Documento, Long> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Documento> getFileActividad(Long idActividad) {
-		Query q = em.createQuery("select new Documento(d.documentoId, d.filename, d.filepath, d.fileExtension, d.filetype, d.bloqueado, d.fechaBloqueo, d.fechaDesbloqueo, d.entidad, d.idEntidad)" +
+		Query q = em.createQuery("select new Documento(d.documentoId, d.filename, d.filepath, d.filetype, d.fileExtension, d.bloqueado, d.fechaBloqueo, d.usuarioBloqueo, d.fechaDesbloqueo, d.usuarioDesbloqueo, d.entidad, d.idEntidad)" +
 		" from py.com.ait.gestion.domain.Documento d where d.entidad = :entidad and d.idEntidad =:idEntidad ");
 		
 		q.setParameter("entidad", "Actividad");

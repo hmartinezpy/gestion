@@ -419,7 +419,7 @@
 			                     <h:outputText style="font-weight:normal;" value="#{documento.fileExtension}" />                                              
 			                </p:column>
 			                
-			                <p:column headerText="FilePath" style="font-weight:bold" >
+			                <p:column headerText="FilePath" style="font-weight:bold; width:200px" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.filepath}" />                                              
 			                </p:column>
 			                
@@ -435,11 +435,28 @@
 			                                                
                              <p:column headerText="UsuarioBloqueo" style="font-weight:bold;" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioBloqueo.usuario}" />                                              
-			                </p:column>   
+			                </p:column> 
 			                
+			                <p:column headerText="FechaDesbloqueo"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{documento.fechaDesbloqueo}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
+			                                                
+                             <p:column headerText="UsuarioDesbloqueo" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioDesbloqueo.usuario}" />  
+			                 </p:column>
+			                  
 			               <p:column style="width:50px;" headerText="" >
 			                    <p:commandLink id="showDialogButtonFP" onclick="confirmationFP.show()" >
 			                        <span class="ui-icon ui-icon-trash">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                </p:column>
+			                
+			                <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink update=":form:messages,:formDownload:panelDownload" onclick="dlgDownloadP.show()" action="#{procesoListMB.elegirDocumento}" >
+			                        <span class="ui-icon ui-icon-triangle-1-s">  </span> 
 			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
 			                    </p:commandLink>
 			                </p:column>
@@ -474,7 +491,7 @@
 			                     <h:outputText style="font-weight:normal;" value="#{documento.fileExtension}" />                                              
 			                </p:column>
 			                
-			                <p:column headerText="FilePath" style="font-weight:bold" >
+			                <p:column headerText="FilePath" style="font-weight:bold; width:200px" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.filepath}" />                                              
 			                </p:column>
 			                
@@ -490,18 +507,35 @@
 			                                                
                              <p:column headerText="UsuarioBloqueo" style="font-weight:bold;" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioBloqueo.usuario}" />                                              
-			                </p:column>   
+			                </p:column> 
 			                
+			                <p:column headerText="FechaDesbloqueo"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{documento.fechaDesbloqueo}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
+			                                                
+                             <p:column headerText="UsuarioDesbloqueo" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioDesbloqueo.usuario}" />  
+			                 </p:column>
+			                  
 			               <p:column style="width:50px;" headerText="" >
-			                    <p:commandLink id="showDialogButtonFA" onclick="confirmationFA.show()" >
+			                    <p:commandLink id="showDialogButtonFP" onclick="confirmationFA.show()" >
 			                        <span class="ui-icon ui-icon-trash">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                </p:column>
+			                
+			                <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink update=":form:messages,:formDownloadA:panelDownloadA" onclick="dlgDownloadA.show()" action="#{procesoListMB.elegirDocumento}" >
+			                        <span class="ui-icon ui-icon-triangle-1-s">  </span> 
 			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
 			                    </p:commandLink>
 			                </p:column>
 			                
 		                </p:dataTable>
 		                <p:confirmDialog id="confirmDialogFA" message="¿Desea eliminar el Archivo"
-		                             header="Eliminar?" severity="alert" widgetVar="confirmationFP">
+		                             header="Eliminar?" severity="alert" widgetVar="confirmationFA">
 			                <p:commandButton id="confirm" value="Si" oncomplete="confirmationFA.hide()" 
 			                                 actionListener="#{procesoListMB.eliminarDocumento}" update=":form:messages,:formfileA:fileA" />
 			                <p:commandButton id="decline" value="No" onclick="confirmationFA.hide()" type="button" /> 
@@ -515,6 +549,40 @@
 				</h:form>
             </p:dialog> 
             
+            <p:dialog header="Descargar Archivo" widgetVar="dlgDownloadP"  resizable="false">
+             <h:form id="formDownload">
+                        <p:panel style="width:200px"  >
+                         <h:panelGrid columns="2" id="panelDownload" cellpadding="5" > 
+                           
+                         <h:outputText style="font-weight:normal;" value="#{procesoListMB.documentoSeleccionado.filename}" />
+                         <br></br>
+                         <p:commandButton onclick="dlgDownloadP.hide(), dlgFileP.hide()" value="Download" ajax="false"   
+					        icon="ui-icon-arrowthick-1-s">  
+					    <p:fileDownload value="#{procesoListMB.file}" />  
+					</p:commandButton>
+
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+             </p:dialog> 
+             
+             <p:dialog header="Descargar Archivo" widgetVar="dlgDownloadA"  resizable="false">
+             <h:form id="formDownloadA">
+                        <p:panel style="width:200px"  >
+                         <h:panelGrid columns="2" id="panelDownloadA" cellpadding="5" > 
+                           
+                         <h:outputText style="font-weight:normal;" value="#{procesoListMB.documentoSeleccionado.filename}" />
+                         <br></br>
+                         <p:commandButton onclick="dlgDownloadA.hide(), dlgFileA.hide()" value="Download" ajax="false"   
+					        icon="ui-icon-arrowthick-1-s">  
+					    <p:fileDownload value="#{procesoListMB.file}" />  
+					</p:commandButton>
+
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+             </p:dialog> 
+             
 		</div>
 	</ui:define>
 </ui:composition>

@@ -19,7 +19,7 @@ public class ObservacionDAO extends JPACrud<Observacion, Long> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Observacion> getObsProceso(Long idProceso) {
-		Query q = em.createQuery("select new Observacion(o.observacionId, o.descripcion, o.fechaHora, o.entidad, o.idEntidad)" +
+		Query q = em.createQuery("select new Observacion(o.observacionId, o.descripcion, o.fechaHora, o.entidad, o.idEntidad, o.usuario)" +
 		" from py.com.ait.gestion.domain.Observacion o where o.entidad = :entidad and o.idEntidad =:idEntidad ");
 		
 		q.setParameter("entidad", "Proceso");
@@ -30,7 +30,7 @@ public class ObservacionDAO extends JPACrud<Observacion, Long> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Observacion> getObsActividad(Long idActividad) {
-		Query q = em.createQuery("select new Observacion(o.observacionId, o.descripcion, o.fechaHora, o.entidad, o.idEntidad)" +
+		Query q = em.createQuery("select new Observacion(o.observacionId, o.descripcion, o.fechaHora, o.entidad, o.idEntidad, o.usuario)" +
 		" from py.com.ait.gestion.domain.Observacion o where o.entidad = :entidad and o.idEntidad =:idEntidad ");
 		
 		q.setParameter("entidad", "Actividad");
