@@ -1,5 +1,6 @@
 package py.com.ait.gestion.business;
 
+import java.io.File;
 import java.util.List;
 import javax.inject.Inject;
 import org.ticpy.tekoporu.stereotype.BusinessController;
@@ -82,8 +83,18 @@ public class DocumentoBC extends DelegateCrud<Documento, Long, DocumentoDAO>{
 	@Transactional
 	public void eliminar(Long id) {
 		
-		Documento documento = this.recuperar(id);
-		super.delete(id);
+		Documento documento = this.recuperar(id);		
+		String filePath = documento.getFilepath() + documento.getFilename() + "." + documento.getFileExtension();
+		super.delete(id);		
+		
+		try{
+			
+			File file = new File(filePath);
+			if(!file.delete()) //lanzar excepcion para no commitear transaccion
+				throw new RuntimeException("Error al eliminar el documento! Intente de nuevo");
+		} catch(Exception ex) { //lanzar excepcion para no commitear transaccion
+			throw new RuntimeException("Error al eliminar el documento! Intente de nuevo");
+		}
 		
 		try {
 			audLogDAO.log(documento, null,usuarioDAO.getUsuarioActual(), 

@@ -30,17 +30,28 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		return ((Long) q.getSingleResult());
 	}
 
-	public String getLastSequence() {
+	public String getLastSequence(Long cronogramaId) {
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		String nroProceso = "substring(p.nroProceso,1,locate('/',p.nroProceso)-1)";
+		/*
+		String nroProceso = "substring(p.nroProceso,1,locate('/',p.nroProceso)-1)";		
 		String query = "select cast(max(cast("
 				+ nroProceso
 				+ " as int)) as string)"
 				+ " from Proceso p "
 				+ "where substring(p.nroProceso,locate('/',p.nroProceso)+1) = '"
 				+ year + "'";
+		*/		
+		String query = "select cast(max(cast( " +
+				"substring(p.nroProceso,locate('/', p.nroProceso)+1) " + 
+				"as int)) as string) " +
+				"from Proceso p  " +
+				"where substring(p.nroProceso,locate('_', p.nroProceso)+1,4) = :year " +
+				"and p.cronograma.cronogramaId = :cronogramaId";
+		
 		logger.info("ProcesoDAO.getLastSequence() query: " + query);
 		Query q = em.createQuery(query);
+		q.setParameter("year", year+"");
+		q.setParameter("cronogramaId", cronogramaId);
 		String result = ((String) q.getSingleResult());
 		if (result == null)
 			result = "0";
@@ -48,6 +59,7 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado) {
 
 		Query q = em.createQuery("select a from Actividad a where a.master.procesoId = :proceso order by a.fechaCreacion");

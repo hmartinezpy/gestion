@@ -11,9 +11,11 @@ import org.ticpy.tekoporu.transaction.Transactional;
 
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
+import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.persistence.AudLogDAO;
+import py.com.ait.gestion.persistence.CronogramaDAO;
 import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 import py.com.ait.gestion.persistence.ProcesoDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
@@ -44,6 +46,9 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 	@Inject
 	private ActividadBC actividadDAO;
+	
+	@Inject
+	private CronogramaDAO cronogramaDAO;
 
 	public List<Proceso> listar() {
 		return procesoDAO.findAll();
@@ -56,11 +61,11 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	/***************** Auditoria **************************/
 	@Transactional
 	public void registrar(Proceso proceso) {
-		if (proceso.getNroProceso() == null
+		/*if (proceso.getNroProceso() == null
 				|| proceso.getNroProceso().equals("")) {
 			
 			proceso.setNroProceso(getSiguienteNroProceso());
-		}
+		}*/
 		super.insert(proceso);
 
 		//crear primera actividad
@@ -78,14 +83,34 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		}
 	}
 
-	public String getSiguienteNroProceso() {
-		String nroProcesoActual = getNumeroProcesoAnual();
+	public String getSiguienteNroProceso(Long cronogramaId) {
+		String nroProcesoActual = getNumeroProcesoAnual(cronogramaId);
+		String nroProcesoSgte = (Integer.parseInt(nroProcesoActual) + 1) + "";
+		Cronograma cronograma = cronogramaDAO.load(cronogramaId);
 		StringBuilder sb = new StringBuilder();
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		String nroProceso = sb
-				.append((Integer.parseInt(nroProcesoActual) + 1))
-				.append("/").append(year).toString();
+				.append(cronograma.getSigla())
+				.append("_")
+				.append(year)
+				.append("/")
+				.append(rellenarCerosIzquierda(nroProcesoSgte, 3))
+				.toString();				
 		return nroProceso;
+	}
+	
+	public String rellenarCerosIzquierda(String num, int tamanhoTotal){
+		
+		String result = num;
+		if(result.length() < tamanhoTotal) {
+			
+			do{
+				
+				result = "0" + result;
+			}while (result.length() < tamanhoTotal);
+		}
+		
+		return result;
 	}
 
 	@Transactional
@@ -124,8 +149,8 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return procesoDAO.getMaxId();
 	}
 
-	public String getNumeroProcesoAnual() {
-		return procesoDAO.getLastSequence();
+	public String getNumeroProcesoAnual(Long cronogramaId) {
+		return procesoDAO.getLastSequence(cronogramaId);
 	}
 
 	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado) {

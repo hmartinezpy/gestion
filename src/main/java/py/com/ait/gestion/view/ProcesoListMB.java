@@ -33,6 +33,7 @@ import py.com.ait.gestion.business.ObservacionBC;
 import py.com.ait.gestion.business.ProcesoBC;
 import py.com.ait.gestion.business.TipoAlarmaBC;
 import py.com.ait.gestion.business.UsuarioBC;
+import py.com.ait.gestion.constant.AppProperties;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
@@ -49,6 +50,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	private static final long serialVersionUID = 1L;
 
+	@Inject
+	private AppProperties appProperties;
+	
 	@Inject
 	private FacesContext facesContext;
 
@@ -758,8 +762,6 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	// Archivos
 
-	private String destination = "/tmp/jboss/";
-
 	public void handleFileUpload(FileUploadEvent event) {
 
 		// agregarMensaje("Success! " + event.getFile().getFileName() +
@@ -793,36 +795,36 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					nroProceso = nroProceso.substring(0, k);
 				}
 
-				File rootFolder = new File(destination);
+				File rootFolder = new File(appProperties.getDocumentPath());
 				if (!rootFolder.exists()) {
 					rootFolder.mkdir();
 				}
 
-				File clienteFolder = new File(destination + nombreCliente + '/');
+				File clienteFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/');
 				if (!clienteFolder.exists()) {
 					clienteFolder.mkdir();
 				}
 
-				File anhoFolder = new File(destination + nombreCliente + '/'
+				File anhoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/');
 				if (!anhoFolder.exists()) {
 					anhoFolder.mkdir();
 				}
 
-				File cronogFolder = new File(destination + nombreCliente + '/'
+				File cronogFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/' + descCronog + '/');
 				if (!cronogFolder.exists()) {
 					cronogFolder.mkdir();
 				}
 
-				File procesoFolder = new File(destination + nombreCliente + '/'
+				File procesoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/' + descCronog + '/' + nroProceso + '/');
 				if (!procesoFolder.exists()) {
 					procesoFolder.mkdir();
 				}
 
 				// write the inputStream to a FileOutputStream
-				OutputStream out = new FileOutputStream(new File(destination
+				OutputStream out = new FileOutputStream(new File(appProperties.getDocumentPath()
 						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
 						+ nroProceso + '/' + fileName));
 
@@ -855,7 +857,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
 				doc.setFechaDesbloqueo(new Date());
-				doc.setFilepath(destination + nombreCliente + '/' + anho + '/'
+				doc.setFilepath(appProperties.getDocumentPath() + nombreCliente + '/' + anho + '/'
 						+ descCronog + '/' + nroProceso + '/');
 
 				String nombreUsu = usuarioBC.getUsuarioActual();
@@ -958,35 +960,35 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					nroActiv = nroActiv.substring(0, h);
 				}
 
-				File rootFolder = new File(destination);
+				File rootFolder = new File(appProperties.getDocumentPath());
 				if (!rootFolder.exists()) {
 					rootFolder.mkdir();
 				}
 
-				File clienteFolder = new File(destination + nombreCliente + '/');
+				File clienteFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/');
 				if (!clienteFolder.exists()) {
 					clienteFolder.mkdir();
 				}
 
-				File anhoFolder = new File(destination + nombreCliente + '/'
+				File anhoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/');
 				if (!anhoFolder.exists()) {
 					anhoFolder.mkdir();
 				}
 
-				File cronogFolder = new File(destination + nombreCliente + '/'
+				File cronogFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/' + descCronog + '/');
 				if (!cronogFolder.exists()) {
 					cronogFolder.mkdir();
 				}
 
-				File procesoFolder = new File(destination + nombreCliente + '/'
+				File procesoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/' + descCronog + '/' + nroProceso + '/');
 				if (!procesoFolder.exists()) {
 					procesoFolder.mkdir();
 				}
 
-				File activFolder = new File(destination + nombreCliente + '/'
+				File activFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
 						+ anho + '/' + descCronog + '/' + nroProceso + '/'
 						+ nroActiv + '/');
 				if (!activFolder.exists()) {
@@ -994,7 +996,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				}
 
 				// write the inputStream to a FileOutputStream
-				OutputStream out = new FileOutputStream(new File(destination
+				OutputStream out = new FileOutputStream(new File(appProperties.getDocumentPath()
 						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
 						+ nroProceso + '/' + nroActiv + '/' + fileName));
 
@@ -1027,7 +1029,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
 				doc.setFechaDesbloqueo(new Date());
-				doc.setFilepath(destination + nombreCliente + '/' + anho + '/'
+				doc.setFilepath(appProperties.getDocumentPath() + nombreCliente + '/' + anho + '/'
 						+ descCronog + '/' + nroProceso + '/' + nroActiv + '/');
 
 				String nombreUsu = usuarioBC.getUsuarioActual();
@@ -1051,17 +1053,21 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	public void eliminarDocumento(ActionEvent actionEvent) {
 
-		if (documentoSeleccionado == null) {
-			agregarMensaje("Documento no seleccionado");
-		} else {
-			documentoBC.eliminar(documentoSeleccionado.getDocumentoId());
-			int index = documentos.indexOf(documentoSeleccionado);
-			documentos.remove(index);
-
-			agregarMensaje("Documento eliminado");
-
+		try {
+			if (documentoSeleccionado == null) {
+				agregarMensaje("Documento no seleccionado");
+			} else {
+				documentoBC.eliminar(documentoSeleccionado.getDocumentoId());
+				int index = documentos.indexOf(documentoSeleccionado);
+				documentos.remove(index);
+	
+				agregarMensaje("Documento eliminado");
+	
+			}
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
+			agregarMensajeError(ex.getMessage());
 		}
-
 	}
 
 }

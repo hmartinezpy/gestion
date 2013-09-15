@@ -30,6 +30,9 @@ public class Cronograma extends Base implements Serializable  {
 	
 	@Column(name="nombre")
 	private String nombre;
+	
+	@Column(name="sigla")
+	private String sigla;
 
 
 	@OneToMany(mappedBy="master",cascade=CascadeType.ALL)
@@ -61,6 +64,13 @@ public class Cronograma extends Base implements Serializable  {
 		this.nombre = nombre;
 	}
 	
+	public String getSigla() {
+		return sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
+	}
 	
 	public List<CronogramaDetalle> getCronogramaDetalles(){
 		return this.cronogramaDetalles;

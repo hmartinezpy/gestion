@@ -1,8 +1,9 @@
 package py.com.ait.gestion.view;
 
-import java.util.Date;
 import java.util.List;
 
+import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
 import org.ticpy.tekoporu.annotation.NextView;
@@ -101,25 +102,10 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 	public void setCronogramas(List<Cronograma> cronogramas) {
 		this.cronogramas = cronogramas;
 	}
-	
-	private Usuario getResponsable() {
 		
-		return usuarioBC.load(getIdResponsable());
-	}
-	
-	private Cliente getCliente() {
-		
-		return clienteBC.load(getIdCliente());
-	}
-
-	private Cronograma getCronograma() {
-	
-	return cronogramaBC.load(getIdCronograma());
-}
-	
 	@Override
 	public String delete() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -191,4 +177,17 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso,Long> {
 		return getPreviousView();
 	}
 
+	public String calculoNroProceso(AjaxBehaviorEvent event) {
+		
+		Proceso proceso = getBean();
+		String nroProceso = "";
+		if(proceso.getCronograma() != null) {
+			
+			Cronograma cronograma = proceso.getCronograma();
+			nroProceso = procesoBC.getSiguienteNroProceso(cronograma.getCronogramaId());
+			
+		}
+		proceso.setNroProceso(nroProceso);
+		return nroProceso;
+	}
 }
