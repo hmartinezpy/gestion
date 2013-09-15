@@ -1,6 +1,7 @@
 package py.com.ait.gestion.business;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
+import py.com.ait.gestion.domain.TipoAlarma;
+import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.ActividadDAO;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
@@ -61,7 +64,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		if (actividad.getNroActividad() == null
 				|| actividad.getNroActividad().equals("")) {
 
-			actividad.setNroActividad(getSiguienteNroActividad());
+			actividad.setNroActividad(getSiguienteNroActividad(null));
 		}
 		super.insert(actividad);
 
@@ -75,13 +78,14 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		}
 	}
 
-	public String getSiguienteNroActividad() {
-		String nroActividadActual = getNumeroActividadActual();
+	public String getSiguienteNroActividad(Actividad a) {
+		String nroActividadActual = getNumeroActividadActual(a);
 		StringBuilder sb = new StringBuilder();
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		String nroActividad = sb
-				.append((Integer.parseInt(nroActividadActual) + 1)).append("/")
-				.append(year).toString();
+		// int year = Calendar.getInstance().get(Calendar.YEAR);
+		String nroActividad = sb.append(
+				(Integer.parseInt(nroActividadActual) + 1)).toString();
+		// .append("/")
+		// .append(year).toString();
 		return nroActividad;
 	}
 
@@ -98,10 +102,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 						.getRespuesta().equals(""))) {
 
 			String mensaje = "No se puede resolver una actividad con pregunta y sin respuesta.";
-//			mensaje += "pregunta: " + actividad.getPregunta() + " respuesta: "
-//					+ actividad.getRespuesta();
+			// mensaje += "pregunta: " + actividad.getPregunta() +
+			// " respuesta: "
+			// + actividad.getRespuesta();
 			// messageContext.add(mensaje);
-			System.out.println("ActividadBC.editar() "+mensaje);
+			System.out.println("ActividadBC.editar() " + mensaje);
 			logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 
@@ -111,7 +116,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 			String mensaje = "La respuesta debe ser SI o NO.";
 			// messageContext.add(mensaje);
-			System.out.println("ActividadBC.editar() "+mensaje);
+			System.out.println("ActividadBC.editar() " + mensaje);
 			logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 
@@ -122,10 +127,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 					+ actividad.getRespuesta());
 			resolveActividadAndInsertNext(actividad);
 		}
-		System.out.println("ActividadBC.resolveActividad() Marcando actividad como resuelta <<<<<<<");
+		System.out
+				.println("ActividadBC.resolveActividad() Marcando actividad como resuelta <<<<<<<");
 		actividad.setEstado(Definiciones.EstadoActividad.Resuelta);
 		update(actividad);
-		
+
 	}
 
 	@Transactional
@@ -163,11 +169,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 	@Transactional
 	public void insertActividadFromCronogramaDetalle(CronogramaDetalle cd,
-			Long actividadAnterior, Proceso proceso) {
+			Actividad actividadAnterior, Proceso proceso) {
 
 		Actividad actividad = new Actividad();
 		actividad.setMaster(proceso);
-		actividad.setNroActividad(getSiguienteNroActividad());
+		actividad.setNroActividad(getSiguienteNroActividad(actividadAnterior));
 		actividad.setCronogramaDetalle(cd);
 		actividad.setDescripcion(cd.getTarea());
 		Calendar cal = new GregorianCalendar();
@@ -181,7 +187,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		Actividad actAnterior = null;
 		if (actividadAnterior != null) {
 			actAnterior = new Actividad();
-			actAnterior.setActividadId(actividadAnterior);
+			actAnterior.setActividadId(actividadAnterior.getActividadId());
 		}
 		actividad.setActividadAnterior(actAnterior);
 		actividad.setAlerta(cd.getAlerta());
@@ -194,8 +200,12 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		return actividadDAO.getMaxId();
 	}
 
-	public String getNumeroActividadActual() {
-		return actividadDAO.getLastSequence();
+	public String getNumeroActividadActual(Actividad a) {
+		return actividadDAO.getLastNroActividadByActividad(a);
+	}
+
+	public String getNumeroSubActividadByActividad(Actividad actividad) {
+		return actividadDAO.getCurrentNumeroSubActividadByActividad(actividad);
 	}
 
 	@Transactional
@@ -207,8 +217,83 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		if (cd == null) { // ya no hay siguiente cronograma detalle
 			return;
 		} else {
-			insertActividadFromCronogramaDetalle(cd, a.getActividadId(),
-					a.getMaster());
+			insertActividadFromCronogramaDetalle(cd, a, a.getMaster());
 		}
+	}
+
+	@Transactional
+	public Actividad crearSubActividad(Actividad padre, String descripcion,
+			Usuario responsable, TipoAlarma alerta, TipoAlarma alarma) {
+		Actividad result = new Actividad();
+
+		result.setMaster(padre.getMaster());
+		result.setNroActividad(getNextNroSubActividad(padre));
+		result.setCronogramaDetalle(null);
+		result.setDescripcion(descripcion);
+		result.setResponsable(responsable);
+		result.setFechaCreacion(new Date());
+		result.setEstado(Definiciones.EstadoActividad.Nueva);
+		result.setAlerta(alerta);
+		result.setAlarma(alarma);
+		result.setSuperTarea(padre);
+
+		insert(result);
+
+		return result;
+	}
+
+	private String getNextNroSubActividad(Actividad actividad) {
+		String NroSubActividadActual = getNumeroSubActividadByActividad(actividad);
+		System.out
+				.println("ActividadBC.getNextNroSubActividad() NroSubActividadActual = "
+						+ NroSubActividadActual);
+
+		String currentNroActividad = actividad.getNroActividad();
+
+		int nextSubActividad = Integer.parseInt(NroSubActividadActual);
+		nextSubActividad++;
+		String nextNroSubActividad = currentNroActividad + "."
+				+ nextSubActividad;
+		return nextNroSubActividad;
+	}
+
+	@Transactional
+	public Actividad devolverActividad(Actividad aDevolver) {
+		Actividad anterior = load(aDevolver.getActividadAnterior()
+				.getActividadId());
+
+		if (anterior.getEstado() == Definiciones.EstadoActividad.Resuelta) {
+			String mensaje = "No se puede devolver una actividad que ya está RESUELTA";
+			System.out.println("ActividadBC.devolverActividad() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+		}
+
+		// Al devolver una actividad, se toman la mayoría de los datos de la
+		// actividad anterior a la devuelta, y se crea una nueva instancia
+		// con algunos datos establecidos a nuevos.
+		Actividad actividadDevuelta = new Actividad();
+		actividadDevuelta.setActividadAnterior(anterior.getActividadAnterior());
+		actividadDevuelta.setAlarma(anterior.getAlarma());
+		actividadDevuelta.setAlerta(anterior.getAlerta());
+		actividadDevuelta.setChecklistCompleto(anterior.getChecklistCompleto());
+		actividadDevuelta.setCronogramaDetalle(anterior.getCronogramaDetalle());
+		actividadDevuelta.setDescripcion(anterior.getDescripcion());
+		actividadDevuelta.setPregunta(anterior.getPregunta());
+		actividadDevuelta.setRespuesta(anterior.getRespuesta());
+		// Es una nueva actividad, cuyo estado irá directamente a "En proceso"
+		actividadDevuelta.setEstado(Definiciones.EstadoActividad.EnProceso);
+		actividadDevuelta.setFechaCreacion(new Date());
+		actividadDevuelta.setMaster(anterior.getMaster());
+		actividadDevuelta.setNroActividad(getSiguienteNroActividad(aDevolver));
+
+		aDevolver.setEstado(Definiciones.EstadoActividad.Devuelta);
+
+		update(aDevolver);
+		System.out.println("ActividadBC.devolverActividad() Se marcó como devuelta la actividad con id: "+aDevolver.getActividadId());
+		insert(actividadDevuelta);
+		System.out.println("ActividadBC.devolverActividad() Se insertó la actividad con id: "+actividadDevuelta.getActividadId());
+
+		return actividadDevuelta;
 	}
 }

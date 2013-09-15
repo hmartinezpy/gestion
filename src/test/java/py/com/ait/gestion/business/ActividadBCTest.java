@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 
 import javax.inject.Inject;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ticpy.tekoporu.junit.DemoiselleRunner;
@@ -14,6 +13,8 @@ import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
+import py.com.ait.gestion.domain.TipoAlarma;
+import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 import py.com.ait.gestion.persistence.ProcesoDAO;
 
@@ -29,16 +30,16 @@ public class ActividadBCTest {
 	@Inject
 	private ProcesoDAO procesoDAO;
 	
-	@Before
+//	@Before
 	public void before() {
 		
 		
 	}
 
-	//@Test
+	@Test
 	public void testInsertActividadFromCronogramaDetalle() {
 		
-		Long procesoId = 1L;
+		Long procesoId = procesoDAO.getMaxId();
 		Proceso p = procesoDAO.load(procesoId);		
 		CronogramaDetalle cd = cronogramaDetalleDAO.getFirstCronogramaDetalleByCronograma(p.getCronograma());
 		actividadBC.insertActividadFromCronogramaDetalle(cd, null, p);		
@@ -49,7 +50,7 @@ public class ActividadBCTest {
 	}
 
 	@Test
-	public void testResolveActividadAndInsertNext() {
+	public void resolverActividadAndtInsertNext() {
 		Long actividadId=actividadBC.getMaxId();
 		if (actividadId == null)
 			return;
@@ -64,6 +65,46 @@ public class ActividadBCTest {
 		assertEquals(actividad.getMaster().getProcesoId(), a.getMaster().getProcesoId());
 	}
 	
+	@Test
+	public void insertSubActividad() {
+		
+		Long actividadId=actividadBC.getMaxId();
+		if (actividadId == null)
+			return;
+		Actividad padre = actividadBC.load(actividadId);
+		String descripcion = "";
+		Usuario responsable = null;
+		TipoAlarma alerta= null;
+		TipoAlarma alarma= null;
+		Actividad subActividad = actividadBC.crearSubActividad(padre, descripcion, responsable, alerta, alarma);
+//		Actividad subActividad = actividadBC.load(actividadBC.getMaxId());
+
+		assertNotNull(subActividad);
+		assertEquals(subActividad.getMaster().getProcesoId(), padre.getMaster().getProcesoId());
+		assertEquals(subActividad.getSuperTarea().getActividadId(), padre.getActividadId());
+
+	}
+	
+	@Test
+	public void devolverActividad() {
+		
+		Long actividadId=actividadBC.getMaxId();
+		Actividad aDevolver = actividadBC.load(actividadId);
+		if (actividadId == null)
+			return;
+		
+		Actividad anteriorDeVuelta = null;
+		try{
+		anteriorDeVuelta = actividadBC.devolverActividad(aDevolver);
+//		Actividad subActividad = actividadBC.load(actividadBC.getMaxId());
+		} catch (Exception ex){
+			ex.printStackTrace();
+		}
+
+		assertNotNull(anteriorDeVuelta);
+		assertEquals(anteriorDeVuelta.getMaster().getProcesoId(), aDevolver.getMaster().getProcesoId());
+
+	}
 	
 	
 }
