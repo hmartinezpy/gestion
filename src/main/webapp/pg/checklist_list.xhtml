@@ -22,7 +22,7 @@
 
         <h:form id="form" >
         	<p:growl id="messages"/>        	
-            <p:dataTable  var="checklist" value="#{checklistListMB.checklists}"  id="checklists"  editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+            <p:dataTable  var="checklist" value="#{checklistListMB.checklists}"  id="checklists"  editable="true" paginator="true" paginatorPosition="bottom" rows="10">
 				        
                 <p:column headerText="Descripcion" style="font-weight:bold;" >
                      <h:outputText style="font-weight:normal;" value="#{checklist.descripcion}" />                                              
@@ -66,7 +66,7 @@
         <br></br>
         <h:form id="form2" >
         	
-            <p:dataTable  id="detalles" var="detalle" value="#{checklistListMB.detalles}"  editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+            <p:dataTable  id="detalles" var="detalle" value="#{checklistListMB.detalles}"  editable="true" paginator="true" paginatorPosition="bottom" rows="10">
 				<f:facet name="header">  
 		            Detalles  #{checklistListMB.checklistSeleccionado.descripcion}
 		        </f:facet> 

@@ -23,7 +23,7 @@
         <h:form >
         	<p:growl id="messages"/>
         	
-            <p:dataTable  var="pregunta" value="#{preguntaListMB.preguntas}"  id="preguntas" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+            <p:dataTable  var="pregunta" value="#{preguntaListMB.preguntas}"  id="preguntas" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
 				        
                 <p:column headerText="Descripcion" style="font-weight:bold;" >
                      <h:outputText style="font-weight:normal;" value="#{pregunta.descripcion}" />                                              

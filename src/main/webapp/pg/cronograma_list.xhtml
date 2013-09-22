@@ -22,7 +22,7 @@
 
         <h:form id="form" >
         	<p:growl id="messages"/>        	
-            <p:dataTable  var="cronograma" value="#{cronogramaListMB.cronogramas}"  id="cronogramas"  editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+            <p:dataTable  var="cronograma" value="#{cronogramaListMB.cronogramas}"  id="cronogramas"  editable="true" paginator="true" paginatorPosition="bottom" rows="10">
 				        
                 <p:column headerText="Nombre" style="font-weight:bold;" >
                      <h:outputText style="font-weight:normal;" value="#{cronograma.nombre}" />                                              
@@ -30,20 +30,20 @@
                 
                 <p:column style="width:30px;" >				
 					<p:commandButton action="#{cronogramaListMB.getNextView}" actionListener="#{cronogramaListMB.clear}"
-						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						value ="Editar" ajax="false" icon="ui-icon-pencil" >
 						<f:param name="id" value="#{cronograma.cronogramaId}" />
 					</p:commandButton>
 				</p:column>
 				<p:column style="width:50px;" headerText="" >
                     <p:commandLink id="showDialogButton" onclick="confirmation.show();">
-                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <span class="ui-icon ui-icon-trash" title="Eliminar">  </span> 
                         <f:setPropertyActionListener value="#{cronograma}" target="#{cronogramaListMB.cronogramaSeleccionado}" />
                     </p:commandLink>
                 </p:column>
             
             	<p:column style="width:50px;" headerText="" >
                     <p:commandLink update=":form:messages, :form2:detalles, :form3:panel3"  action="#{cronogramaListMB.elegirCronograma}" >
-                        <span class="ui-icon ui-icon-calculator">  </span> 
+                        <span class="ui-icon ui-icon-calculator" title="Ver Detalles">  </span> 
                         <f:setPropertyActionListener value="#{cronograma}" target="#{cronogramaListMB.cronogramaSeleccionado}" />
                     </p:commandLink>
                 </p:column>                
@@ -66,7 +66,7 @@
         <br></br>
         <h:form id="form2" >
         	
-            <p:dataTable  id="detalles" var="detalle" value="#{cronogramaListMB.detalles}"  editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+            <p:dataTable  id="detalles" var="detalle" value="#{cronogramaListMB.detalles}"  editable="true" paginator="true" paginatorPosition="bottom" rows="10">
 				<f:facet name="header">  
 		            Detalles  #{cronogramaListMB.cronogramaSeleccionado.nombre}
 		        </f:facet> 
@@ -110,13 +110,13 @@
                 
               	<p:column style="width:50px;" headerText="" >
                     <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{cronogramaListMB.elegirDetalle}" >
-                        <span class="ui-icon ui-icon-pencil">  </span> 
+                        <span class="ui-icon ui-icon-pencil" title="Editar">  </span> 
                         <f:setPropertyActionListener value="#{detalle}" target="#{cronogramaListMB.detalleSeleccionado}" />
                     </p:commandLink>
                 </p:column>   
                 <p:column style="width:50px;" headerText="" >
                     <p:commandLink id="showDialogButton2" onclick="confirmation2.show();">
-                        <span class="ui-icon ui-icon-trash">  </span> 
+                        <span class="ui-icon ui-icon-trash" title="Eliminar">  </span> 
                         <f:setPropertyActionListener value="#{detalle}" target="#{cronogramaListMB.detalleSeleccionado}" />
                     </p:commandLink>
                 </p:column>
@@ -142,7 +142,7 @@
                             <h:panelGrid columns="2" cellpadding="5" >
                             	
                             	<h:outputText value="Descripcion" />
-                                <p:inputText value="#{cronogramaListMB.tarea}" required="true" />
+                                <p:inputText value="#{cronogramaListMB.tarea}" required="true" maxlength="50" size="50"/>
 			                    
 			                    <h:outputText value="NroOrden" />
                                 <p:inputText value="#{cronogramaListMB.nroOrden}"/>
@@ -210,7 +210,7 @@
 			                    </p:selectOneMenu>
 			                                
 			                    <br></br>
-                                <p:commandButton value="Agregar" id="agregar" actionListener="#{cronogramaListMB.registrarCronogramaDetalle}"
+                                <p:commandButton value="Guardar" id="agregar" actionListener="#{cronogramaListMB.registrarCronogramaDetalle}"
                                              oncomplete="dlg.hide()" icon="ui-icon-disk" update=":form:messages,:form2:detalles,panel3"/>                             
 			                    
                             </h:panelGrid>
@@ -229,7 +229,7 @@
                             <h:panelGrid columns="2" cellpadding="5" >
                             	
                             	<h:outputText value="Descripcion" />
-                                <p:inputText value="#{cronogramaListMB.detalleSeleccionado.tarea}" required="true" />
+                                <p:inputText value="#{cronogramaListMB.detalleSeleccionado.tarea}" required="true" maxlength="50" size="50"/>
 			                    
 			                    <h:outputText value="NroOrden" />
                                 <p:inputText value="#{cronogramaListMB.detalleSeleccionado.nroOrden}"/>
@@ -298,7 +298,7 @@
 			                    </p:selectOneMenu>
 			                    
 			                    <br></br>
-                                <p:commandButton value="Editar" id="editar" actionListener="#{cronogramaListMB.editarCronogramaDetalle}"
+                                <p:commandButton value="Guardar" id="editar" actionListener="#{cronogramaListMB.editarCronogramaDetalle}"
                                               oncomplete="dlg2.hide()"  icon="ui-icon-disk" update=":form:messages,:form2:detalles"/>                             
 			                    
                             </h:panelGrid>

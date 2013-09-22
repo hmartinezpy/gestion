@@ -22,7 +22,7 @@
         <h:form id="form">
             <p:growl id="messages" showDetail="true"/>
             <p:fieldset legend="Clientes" toggleable="true" toggleSpeed="500">
-            <p:dataTable var="cliente" value="#{clienteMB.clientes}" id="clientes" editable="true" paginator="true" paginatorPosition="bottom" rows="9">
+            <p:dataTable var="cliente" value="#{clienteMB.clientes}" id="clientes" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
                 <p:ajax event="rowEdit" listener="#{clienteMB.onEdit}" update=":form:messages" />
 
 				        
