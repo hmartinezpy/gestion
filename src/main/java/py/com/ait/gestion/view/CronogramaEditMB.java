@@ -35,10 +35,7 @@ public class CronogramaEditMB extends AbstractEditPageBean<Cronograma,Long> {
 
 	@Override
 	public String insert() {
-		Cronograma cronograma = new Cronograma();
-		cronograma.setNombre(getBean().getNombre());
-		
-		cronogramaBC.registrar(cronograma);
+		cronogramaBC.registrar(getBean());
 		return getPreviousView();
 
 	}

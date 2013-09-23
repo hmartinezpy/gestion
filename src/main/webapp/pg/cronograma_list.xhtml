@@ -28,6 +28,10 @@
                      <h:outputText style="font-weight:normal;" value="#{cronograma.nombre}" />                                              
                 </p:column>  
                 
+                <p:column headerText="Sigla" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{cronograma.sigla}" />                                              
+                </p:column>  
+                
                 <p:column style="width:30px;" >				
 					<p:commandButton action="#{cronogramaListMB.getNextView}" actionListener="#{cronogramaListMB.clear}"
 						value ="Editar" ajax="false" icon="ui-icon-pencil" >
