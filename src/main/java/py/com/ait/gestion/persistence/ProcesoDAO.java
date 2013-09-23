@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.ticpy.tekoporu.stereotype.PersistenceController;
 import org.ticpy.tekoporu.template.JPACrud;
 
+import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.Proceso;
 
@@ -66,5 +67,21 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		q.setParameter("proceso", procesoSeleccionado.getProcesoId());
 		
 		return ((List<Actividad>) q.getResultList());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Proceso> getProcesos(String filtroEstadoProceso) {
+		
+		String filtro = "";
+		if(filtroEstadoProceso.equals("C")) {
+			
+			filtro = "where p.estado in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+		} else if(filtroEstadoProceso.equals("A")) {
+			
+			filtro = "where p.estado not in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+		}
+		
+		Query q = em.createQuery("select p from Proceso p " + filtro + " order by p.nroProceso");		
+		return ((List<Proceso>) q.getResultList());
 	}
 }

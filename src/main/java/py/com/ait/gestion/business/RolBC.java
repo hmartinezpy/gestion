@@ -1,5 +1,6 @@
 package py.com.ait.gestion.business;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -102,6 +103,26 @@ public class RolBC extends DelegateCrud<Rol, Long, RolDAO> {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public List<String> getRolesAsString() {
+		
+		return getRolesFiltradosAsString(null);
+	}
+
+	public List<String> getRolesFiltradosAsString(List<String> rolesAFiltrar) {
+		
+		boolean aplicarFiltrado = (rolesAFiltrar != null);
+		List<String> list = new ArrayList<String>();
+		for(Rol r : rolDAO.findAll()) {
+			
+			if(aplicarFiltrado && !rolesAFiltrar.contains(r.getDescripcion()))
+				list.add(r.getDescripcion());
+			else if(!aplicarFiltrado)
+				list.add(r.getDescripcion());
+		}
+		
+		return list;
 	}
 	
 }

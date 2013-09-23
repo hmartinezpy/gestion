@@ -1,8 +1,16 @@
 package py.com.ait.gestion.domain;import java.io.Serializable;
-
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 /**
  * The persistent class for the documento database table.
  * 
@@ -52,13 +60,17 @@ public class Documento  extends Base implements Serializable {
 	
 	@Column(name="id_entidad")
 	private Long idEntidad;
-	
+
+	//bi-directional many-to-one association to Usuario
+	@ManyToOne(optional=true)
+	@JoinColumn(name="usuario_creacion", nullable=true)
+	private Usuario usuarioCreacion;
 	
 	public Documento() {
 		super();
     }
 
-	public Documento(Long documentoId, String filename,String filepath, String filetype, String fileExtension, String bloqueado, Date fechaBloqueo,Usuario usuarioBloqueo, Date fechaDesbloqueo,Usuario usuarioDesbloqueo, String entidad, Long idEntidad ) {
+	public Documento(Long documentoId, String filename,String filepath, String filetype, String fileExtension, String bloqueado, Date fechaBloqueo,Usuario usuarioBloqueo, Date fechaDesbloqueo,Usuario usuarioDesbloqueo, String entidad, Long idEntidad, Usuario usuarioCreacion ) {
 		this.documentoId = documentoId;
 		this.filename = filename;
 		this.filepath = filepath;
@@ -71,6 +83,7 @@ public class Documento  extends Base implements Serializable {
 		this.usuarioDesbloqueo = usuarioDesbloqueo;
 		this.entidad = entidad;
 		this.idEntidad = idEntidad;
+		this.usuarioCreacion = usuarioCreacion;
     }
 
 	public Long getDocumentoId() {
@@ -168,9 +181,15 @@ public class Documento  extends Base implements Serializable {
 	public void setIdEntidad(Long idEntidad) {
 		this.idEntidad = idEntidad;
 	}
-
+ 
+	public Usuario getUsuarioCreacion() {
+		
+		return this.usuarioCreacion;
+	}
 	
-   	
+	public void setUsuarioCreacion(Usuario usuarioCreacion) {
+		
+		this.usuarioCreacion = usuarioCreacion;
+	}
 	
-
 }

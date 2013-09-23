@@ -12,6 +12,7 @@ import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
 
 import py.com.ait.gestion.constant.Definiciones;
+import py.com.ait.gestion.domain.Permiso;
 import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
@@ -22,6 +23,8 @@ import py.com.ait.gestion.persistence.UsuarioDAO;
 public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 	
 	private static final long serialVersionUID = -3511112688607750317L;
+	@Inject private PermisoBC permisoBC;
+	@Inject private UsuarioRolPermisoBC usuarioRolPermisoBC;
 	@Inject private UsuarioDAO usuarioDAO;
 	@Inject private AudLogDAO audLogDAO;
 	@Inject private Logger logger;
@@ -111,6 +114,13 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 	public List<Usuario> getUsuariosByRol(Long rolId) {
 		
 		return usuarioDAO.getUsuariosByRol(rolId);
+	}
+
+	public boolean isAdminUser(String currentUser) {
+
+		Usuario us = findSpecificUser(currentUser);
+		Permiso permiso =permisoBC.getPermiso("administracion");
+		return usuarioRolPermisoBC.tiene(permiso, us);
 	}
 
 }

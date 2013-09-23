@@ -26,6 +26,8 @@
 		<class>py.com.ait.gestion.domain.Checklist</class>
 		<class>py.com.ait.gestion.domain.ChecklistDetalle</class>
 		<class>py.com.ait.gestion.domain.Actividad</class>
+		<class>py.com.ait.gestion.domain.Documento</class>
+		<class>py.com.ait.gestion.domain.DocumentoRol</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
@@ -35,7 +37,6 @@
 
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="false" />
-			<property name="hibernate.hbm2ddl.auto" value="update" />
 
 			<property name="eclipselink.logging.level" value="FINE" />
 		</properties>

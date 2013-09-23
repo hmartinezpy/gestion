@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import org.primefaces.event.DateSelectEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
@@ -31,6 +33,7 @@ import py.com.ait.gestion.business.CronogramaDetalleBC;
 import py.com.ait.gestion.business.DocumentoBC;
 import py.com.ait.gestion.business.ObservacionBC;
 import py.com.ait.gestion.business.ProcesoBC;
+import py.com.ait.gestion.business.RolBC;
 import py.com.ait.gestion.business.TipoAlarmaBC;
 import py.com.ait.gestion.business.UsuarioBC;
 import py.com.ait.gestion.constant.AppProperties;
@@ -39,8 +42,10 @@ import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Documento;
+import py.com.ait.gestion.domain.DocumentoRol;
 import py.com.ait.gestion.domain.Observacion;
 import py.com.ait.gestion.domain.Proceso;
+import py.com.ait.gestion.domain.Rol;
 import py.com.ait.gestion.domain.Usuario;
 
 @ViewController
@@ -58,6 +63,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	@Inject
 	private ProcesoBC procesoBC;
+	
+	@Inject
+	private RolBC rolBC;
 
 	@Inject
 	private ObservacionBC observacionBC;
@@ -71,7 +79,12 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private List<Actividad> actividades;
 	private List<Observacion> observaciones;
 	private List<Documento> documentos;
+	
+	private String carpetaFileUpload;
+	private List<String> carpetas;
 
+	private String filtroEstadoProceso = "";
+	
 	public Proceso getProcesoSeleccionado() {
 		return procesoSeleccionado;
 	}
@@ -117,6 +130,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
 				.getProcesoId()));
 
+		updateCarpetas();
 		String numeroProceso = procesoSeleccionado.getNroProceso();
 		agregarMensaje("Proceso seleccionado: " + numeroProceso);
 	}
@@ -139,8 +153,22 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public List<Proceso> getProcesos() {
-		procesos = procesoBC.listar();
+		procesos = procesoBC.listar(filtroEstadoProceso);
 		return procesos;
+	}
+	
+	public void updateFiltroEstadoProceso() {
+		
+		this.actividades = null;
+		getProcesos();
+	}
+
+	public String getFiltroEstadoProceso() {
+		return filtroEstadoProceso;
+	}
+
+	public void setFiltroEstadoProceso(String filtroEstadoProceso) {
+		this.filtroEstadoProceso = filtroEstadoProceso;
 	}
 
 	public void setProcesos(List<Proceso> procesos) {
@@ -150,7 +178,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public void eliminar(ActionEvent actionEvent) {
 		procesoBC.eliminar(procesoSeleccionado.getProcesoId());
 		procesoSeleccionado = new Proceso();
-		setProcesos(procesoBC.listar());
+		setProcesos(procesoBC.listar(getFiltroEstadoProceso()));
 		agregarMensaje("Proceso eliminado");
 	}
 
@@ -742,9 +770,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		if (observacionSeleccionada == null) {
 			agregarMensaje("Observacion no seleccionada");
 		} else {
-			String actual = usuarioBC.getUsuarioActual();
-			String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
-			if (obsUsu.equals(actual)) {
+			//String actual = usuarioBC.getUsuarioActual();
+			//String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
+			//if (obsUsu.equals(actual)) {
 
 				observacionBC.eliminar(observacionSeleccionada
 						.getObservacionId());
@@ -753,9 +781,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 				agregarMensaje("Observacion eliminada");
 
-			} else {
-				agregarMensaje("No tiene permisos para realizar esta operación");
-			}
+			//} 
+			//else {
+			//	agregarMensaje("No tiene permisos para realizar esta operación");
+			//}
 		}
 
 	}
@@ -782,6 +811,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 			try {
 
+				//get folder name
+				String folder = this.carpetaFileUpload;
+				if(folder == null) folder = "";
+				else if(folder.equals("---Sin carpeta---")) folder = "";
+				else if(folder.trim().equals("")) folder = "";
+				else folder += '/';
+				
 				String nombreCliente = procesoSeleccionado.getCliente()
 						.getNombre();
 				String descCronog = procesoSeleccionado.getCronograma()
@@ -791,8 +827,8 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 				int k = nroProceso.lastIndexOf('/');
 				if (k > 0) {
-					anho = nroProceso.substring(k + 1);
-					nroProceso = nroProceso.substring(0, k);
+					anho = nroProceso.substring(k - 4, k);
+					nroProceso = nroProceso.substring(k + 1);
 				}
 
 				File rootFolder = new File(appProperties.getDocumentPath());
@@ -822,11 +858,18 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				if (!procesoFolder.exists()) {
 					procesoFolder.mkdir();
 				}
+				
+				File procesoSubFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
+						+ anho + '/' + descCronog + '/' + nroProceso + '/' + folder);
+				if (!procesoSubFolder.exists()) {
+					procesoSubFolder.mkdir();
+				}
 
 				// write the inputStream to a FileOutputStream
-				OutputStream out = new FileOutputStream(new File(appProperties.getDocumentPath()
+				String filePath = appProperties.getDocumentPath()
 						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-						+ nroProceso + '/' + fileName));
+						+ nroProceso + '/' + folder;
+				OutputStream out = new FileOutputStream(new File(filePath + fileName));
 
 				int read = 0;
 				byte[] bytes = new byte[1024];
@@ -857,8 +900,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
 				doc.setFechaDesbloqueo(new Date());
-				doc.setFilepath(appProperties.getDocumentPath() + nombreCliente + '/' + anho + '/'
-						+ descCronog + '/' + nroProceso + '/');
+				doc.setFilepath(filePath);
 
 				String nombreUsu = usuarioBC.getUsuarioActual();
 				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
@@ -1069,5 +1111,76 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 			agregarMensajeError(ex.getMessage());
 		}
 	}
+	
+	public boolean getIsAdminUser() {
+		 
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+									.getUserPrincipal().getName();
+		
+		return usuarioBC.isAdminUser(currentUser);
+	}
+	
+	public String getCarpetaFileUpload() {
+		
+		return this.carpetaFileUpload;
+	}
+	
+	public void setCarpetaFileUpload(String carpetaFileUpload) {
+		
+		this.carpetaFileUpload = carpetaFileUpload;
+	}
+	
+	public void updateCarpetas() {
+		
+		this.carpetas = null;
+		this.carpetaFileUpload = "";
+		if(procesoSeleccionado != null) {
+			
+			this.carpetas = procesoBC.getCarpetas(procesoSeleccionado);
+		}
+	}
+	
+	public List<String> getCarpetas() {
+		
+		return this.carpetas;
+	}
+	
+	/*
+	 * Manejo de roles para documentos 
+	 */	
+	//Lista dual para el pick list
+	private DualListModel<String> listaDual;
+	
+	public DualListModel<String> getListaDual() {
+		
+		listaDual = new DualListModel<String>();
+		if(documentoSeleccionado != null) {
+			List<String> documentoRoles = procesoBC.getDocumentoRoles(documentoSeleccionado.getDocumentoId());
+			List<String> rolesFiltrado = rolBC.getRolesFiltradosAsString(documentoRoles);
+			listaDual = new DualListModel<String>(rolesFiltrado, documentoRoles);
+		}
+		return listaDual;
+	}
 
+	public void setListaDual(DualListModel<String> listaDual) {
+		this.listaDual = listaDual;
+	}
+	
+	//Manejo de roles
+	public void guardarRoles() {
+		
+		try {
+			
+			if(documentoSeleccionado != null) {
+				List<String> roles = this.listaDual.getTarget();
+				procesoBC.guardarRoles(documentoSeleccionado, roles);
+				agregarMensaje("Cambios guardados correctamente");
+			}
+		} catch(RuntimeException ex) {
+			
+			agregarMensajeError(ex.getMessage());
+		}
+	}
+
+	
 }

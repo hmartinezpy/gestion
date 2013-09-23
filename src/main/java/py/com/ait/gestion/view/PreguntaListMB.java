@@ -22,8 +22,8 @@ import py.com.ait.gestion.domain.Pregunta;
 public class PreguntaListMB extends AbstractListPageBean<Pregunta,Long> {
 
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1L;	
+	
 	@Inject 
 	private FacesContext facesContext;
 	

@@ -19,11 +19,34 @@
                 </f:facet>
             </p:ajaxStatus>
             
+		<h:form id="formFiltro" >
+			<p:toolbar style="margin-top:-20px;width:905px;" >  
+			    <p:toolbarGroup align="right">  
+			        
+			        <p:commandButton value="Todos" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="T" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton>  
+			        
+			        <p:commandButton value="Abiertos" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="A" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton>
+			        
+			        <p:commandButton value="Cerrados" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="C" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton> 
+			        
+			    </p:toolbarGroup> 
+	       	</p:toolbar>
+	    </h:form>
 
-        <h:form id="form" >
+        <h:form id="form" >        	
+        	
         	<p:growl id="messages"/>
         	
-            <p:dataTable  var="proceso" value="#{procesoListMB.procesos}"  id="procesos" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+            <p:dataTable style="width:910px;" var="proceso" value="#{procesoListMB.procesos}"  id="procesos" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
 				        
                 <p:column headerText="#Proceso" style="font-weight:bold;" >
                      <h:outputText style="font-weight:normal;" value="#{proceso.nroProceso}" />                                              
@@ -88,7 +111,7 @@
                     </p:commandLink>
                 </p:column> 
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:formfileP:fileP" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
+                    <p:commandLink update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
                         <span class="ui-icon ui-icon-clipboard">  </span> 
                         <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
                     </p:commandLink>
@@ -113,7 +136,7 @@
 		<br></br>
         <h:form id="form2" >
         
-        	<p:dataTable  var="actividad" value="#{procesoListMB.actividades}"  id="actividades" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
+        	<p:dataTable style="width:910px;" var="actividad" value="#{procesoListMB.actividades}"  id="actividades" editable="true" paginator="true" paginatorPosition="bottom" rows="8">
 				        
 				<f:facet name="header">  
 		            Actividades  #{procesoListMB.procesoSeleccionado.nroProceso}
@@ -123,7 +146,7 @@
                      <h:outputText style="font-weight:normal;" value="#{actividad.nroActividad}" />                                              
                 </p:column>
                 
-                <p:column headerText="Descripción"  style="font-weight:bold;" >
+                <p:column headerText="Descripción"  style="font-weight:bold;" width="150" >
                 <h:outputText style="font-weight:normal;" value="#{actividad.descripcion}" />
                 </p:column>
                 
@@ -158,19 +181,13 @@
                     </p:commandLink>
                 </p:column>
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:formobsA:obsA" onclick="dlgObsA.show()" action="#{procesoListMB.mostrarObsActividad}" >
+                    <p:commandLink update=":form:messages,:formobsP:obsP" onclick="dlgObsP.show()" action="#{procesoListMB.mostrarObsProceso}" >
                         <span class="ui-icon ui-icon-bookmark">  </span> 
                         <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
                     </p:commandLink>
                 </p:column> 
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink id="showDialogButton2" onclick="confirmation2.show();">
-                        <span class="ui-icon ui-icon-trash">  </span> 
-                        <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
-                    </p:commandLink>
-                </p:column>
-                <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:formfileA:fileA" onclick="dlgFileA.show()" action="#{procesoListMB.mostrarFileActividad}" >
+                    <p:commandLink update=":form:messages,:formfileP:fileP" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
                         <span class="ui-icon ui-icon-clipboard">  </span> 
                         <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
                     </p:commandLink>
@@ -267,13 +284,15 @@
 			                     <h:outputText style="font-weight:normal;" value="#{observacion.usuario.usuario}" />                                              
 			                </p:column>   
 			                
+			                <!-- 
 			                <p:column style="width:50px;" headerText=""  >
 			                    <p:commandLink  update=":form:messages,:formObsPE:panelObsPE" onclick="dlgObsPE.show()" action="#{procesoListMB.elegirObservacion}">
 			                        <span class="ui-icon ui-icon-pencil">  </span> 
 									<f:setPropertyActionListener value="#{observacion}" target="#{procesoListMB.observacionSeleccionada}" />
 			                    </p:commandLink>
 			                </p:column>
-			                <p:column style="width:50px;" headerText="" >
+			                 -->
+			                <p:column style="width:50px;" headerText="" rendered="#{procesoListMB.isAdminUser}" >
 			                    <p:commandLink id="showDialogButtonOP" onclick="confirmationOP.show()" >
 			                        <span class="ui-icon ui-icon-trash">  </span> 
 			                        <f:setPropertyActionListener value="#{observacion}" target="#{procesoListMB.observacionSeleccionada}" />
@@ -458,22 +477,56 @@
 			                </p:column>
 			                
 			                <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink update=":form:messages,:formDocumentoRoles:panelDocumentoRoles" onclick="dlgDocumentoRoles.show()">
+			                        <span class="ui-icon ui-icon-key" title="Asociar roles permitidos">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                </p:column>
+			                
+			                <p:column style="width:50px;" headerText="" >
 			                    <p:commandLink update=":form:messages,:formDownload:panelDownload" onclick="dlgDownloadP.show()" action="#{procesoListMB.elegirDocumento}" >
 			                        <span class="ui-icon ui-icon-triangle-1-s">  </span> 
 			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
 			                    </p:commandLink>
 			                </p:column>
 			                
-		                </p:dataTable>
-		                <!-- .......... -->
+		                </p:dataTable>		                
 		              	<br></br>
 		                <p:toolbarGroup>
-							<p:fileUpload update=":form:messages,:formfileP:fileP" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}"
-						  />
-		 				</p:toolbarGroup> 
-                        
+							<p:fileUpload update=":form:messages,:formfileP:fileP" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}" />							
+		 				</p:toolbarGroup>
+		 				<div style="margin-top:10px;">
+		 					<h:outputText value="Carpeta: " style="vertical-align:top;" />
+			            	<p:selectOneMenu value="#{procesoListMB.carpetaFileUpload}" effect="fold" editable="true" id="selectCarpeta" >  
+					            <f:selectItem itemLabel="---Sin carpeta---" itemValue="" />
+					            <f:selectItems value="#{procesoListMB.carpetas}" />  
+					            <f:ajax event="valueChange" />
+					        </p:selectOneMenu>
+						</div>		
+						
 				</h:form>
             </p:dialog> 
+            
+            <p:dialog header="Documento Roles" widgetVar="dlgDocumentoRoles"  resizable="false">
+             <h:form id="formDocumentoRoles">
+                        <p:panel style="width:600px"  >
+                         <h:panelGrid columns="2" id="panelDocumentoRoles" cellpadding="5" > 
+                           
+	                         <h:outputText style="font-weight:normal;" value="#{procesoListMB.documentoSeleccionado.filename}" />
+	                         <!-- PickList de roles -->					        
+					         <p:fieldset legend="#{messages['rol.label']}" toggleable="true" toggleSpeed="500" rendered="true" >
+								<h:panelGrid id="roles" columns="3">
+									<p:pickList id="rolesAsociados" value="#{procesoListMB.listaDual}" iconOnly="true" var="rol" itemValue="#{rol}" itemLabel="#{rol}" effect="bounce"  disabled="false"/>     
+								</h:panelGrid>
+							 </p:fieldset>
+	                         <p:commandButton value="Guardar" oncomplete="dlgDocumentoRoles.hide()" 
+	                                 actionListener="#{procesoListMB.guardarRoles}" update=":form:messages" 
+	                                 icon="ui-icon-disk" />
+                         </h:panelGrid>
+                         </p:panel>
+             </h:form>
+             </p:dialog> 
+            
             <p:confirmDialog id="confirmDialogFP" message="¿Desea eliminar el Archivo"
                             header="Eliminar?" severity="alert" widgetVar="confirmationFP">
                 <p:commandButton id="confirmFP" value="Si" oncomplete="confirmationFP.hide()" 
