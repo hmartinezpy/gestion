@@ -46,7 +46,7 @@
                         <span class="ui-icon ui-icon-calculator" title="Ver Detalles">  </span> 
                         <f:setPropertyActionListener value="#{cronograma}" target="#{cronogramaListMB.cronogramaSeleccionado}" />
                     </p:commandLink>
-                </p:column>                
+                </p:column>
             </p:dataTable>
             
             <p:confirmDialog id="confirmDialog" message="¿Desea eliminar el Cronograma?"
@@ -140,12 +140,12 @@
 				<h:form id="form3">       		
                         <p:panel style="width:500px"  id="panel3" >
                             <h:panelGrid columns="2" cellpadding="5" >
-                            	
-                            	<h:outputText value="Descripcion" />
-                                <p:inputText value="#{cronogramaListMB.tarea}" required="true" maxlength="50" size="50"/>
-			                    
+
 			                    <h:outputText value="NroOrden" />
                                 <p:inputText value="#{cronogramaListMB.nroOrden}"/>
+
+                            	<h:outputText value="Descripcion" />
+                                <p:inputText value="#{cronogramaListMB.tarea}" required="true" maxlength="50" size="50"/>
                                 				
 			                    <h:outputText value="RolResponsable: " /> 
 			                    <p:selectOneMenu id="selectRolResp" value="#{cronogramaListMB.idRolResponsable}" >  

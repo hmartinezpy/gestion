@@ -58,7 +58,7 @@ public class ActividadBCTest {
 		a.setEstado(Definiciones.EstadoActividad.Resuelta);
 		if (a.getPregunta() != null)
 			a.setRespuesta("SI");
-		actividadBC.resolveActividad(a);
+		actividadBC.resolveActividad(a, null);
 		Actividad actividad = actividadBC.load(actividadBC.getMaxId());
 
 		assertNotNull(actividad);
@@ -72,7 +72,8 @@ public class ActividadBCTest {
 		if (actividadId == null)
 			return;
 		Actividad padre = actividadBC.load(actividadId);
-		String descripcion = "";
+		double rand = Math.round(Math.random() * 100);
+		String descripcion = "descripcion "+ rand;
 		Usuario responsable = null;
 		TipoAlarma alerta= null;
 		TipoAlarma alarma= null;

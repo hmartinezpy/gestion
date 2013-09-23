@@ -57,7 +57,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	@Inject
 	private AppProperties appProperties;
-	
+
 	@Inject
 	private FacesContext facesContext;
 
@@ -236,10 +236,14 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private String checklistCompleto;
 
 	private List<Usuario> usuariosPorRol;
+	private List<Usuario> sigteUsuariosPorRol;
+	private Usuario sigteUsuario;
+	private List<Usuario> allUsuarios;
 	private List<CronogramaDetalle> cronogramaDetallesporCronograma;
 	private List<Actividad> actividadesPorProceso;
 
 	private Actividad actividadSeleccionada;
+	private CronogramaDetalle sigteCronogramaDetalle;
 
 	public void mostrarObsActividad() {
 
@@ -436,11 +440,66 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	public List<Usuario> getUsuariosPorRol() {
 
-		if (actividadSeleccionada != null)
-			usuariosPorRol = usuarioBC.getUsuariosByRol(actividadSeleccionada
-					.getCronogramaDetalle().getRolResponsable().getRolId());
+		if (actividadSeleccionada != null) {
+
+			if (actividadSeleccionada.getCronogramaDetalle() == null
+					&& actividadSeleccionada.getSuperTarea() != null) {
+				// Es una subActividad, listar todos los usuarios posibles.
+				usuariosPorRol = usuarioBC.findAll();
+			} else {
+				// Listar los usuarios de acuerdo al rol del cronogramaDetalle
+				usuariosPorRol = usuarioBC
+						.getUsuariosByRol(actividadSeleccionada
+								.getCronogramaDetalle().getRolResponsable()
+								.getRolId());
+			}
+		}
 
 		return usuariosPorRol;
+	}
+
+	public void nextActividadUsuariosPorRol() {
+
+		if (actividadSeleccionada != null) {
+			// Obtener siguiente cronograma detalle para filtrar posibles responsables
+			CronogramaDetalle cd = cronogramaDetalleBC
+					.getNextCronogramaDetalle(
+							actividadSeleccionada.getCronogramaDetalle(),
+							actividadSeleccionada.getRespuesta());
+
+			// Listar los usuarios de acuerdo al rol del cronogramaDetalle
+			// siguiente
+			setSigteUsuariosPorRol(usuarioBC.getUsuariosByRol(cd.getRolResponsable()
+					.getRolId()));
+		}
+
+	}
+
+	public List<Usuario> getSigteUsuariosPorRol() {
+		return sigteUsuariosPorRol;
+	}
+
+	public void setSigteUsuariosPorRol(List<Usuario> sigteUsuariosPorRol) {
+		this.sigteUsuariosPorRol = sigteUsuariosPorRol;
+	}
+
+	public Usuario getSigteUsuario() {
+		return sigteUsuario;
+	}
+
+	public void setSigteUsuario(Usuario sigteUsuario) {
+		this.sigteUsuario = sigteUsuario;
+	}
+
+	public List<Usuario> getAllUsuarios() {
+
+		if (actividadSeleccionada != null) {
+
+			// Listar todos los usuarios posibles.
+			allUsuarios = usuarioBC.findAll();
+		}
+
+		return allUsuarios;
 	}
 
 	public void setUsuariosPorRol(List<Usuario> usuariosPorRol) {
@@ -563,6 +622,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public void elegirActividad() {
 		Actividad actividad = actividadSeleccionada;
 
+		setSigteCronogramaDetalle(cronogramaDetalleBC.getNextCronogramaDetalle(
+				actividadSeleccionada.getCronogramaDetalle(), actividadSeleccionada.getRespuesta()));
+
 		agregarMensaje("Actividad seleccionada: " + actividad.getNroActividad());
 
 	}
@@ -611,6 +673,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		return cal.getTime();
 	}
 
+	public CronogramaDetalle getSigteCronogramaDetalle() {
+		return sigteCronogramaDetalle;
+	}
+
+	public void setSigteCronogramaDetalle(CronogramaDetalle sigteCronogramaDetalle) {
+		this.sigteCronogramaDetalle = sigteCronogramaDetalle;
+	}
 	public void resolverActividad() {
 		if (actividadSeleccionada == null) {
 			agregarMensaje("Actividad no seleccionada");
@@ -621,9 +690,73 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					actividad.setResponsable(usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
 				}
-				actividadBC.resolveActividad(actividad);
+				actividadBC.resolveActividad(actividad,
+						getSigteUsuario());
 				elegirProceso();
-				agregarMensaje("Actividad editada");
+				agregarMensaje("Ha pasado a la siguiente Actividad");
+			} catch (RuntimeException ex) {
+				ex.printStackTrace();
+				agregarMensajeError(ex.getMessage());
+			}
+		}
+	}
+
+	public void finalizarProceso() {
+		if (actividadSeleccionada == null) {
+			agregarMensaje("Actividad no seleccionada");
+		} else {
+			try {
+				Actividad actividad = actividadSeleccionada;
+				if (actividad.getResponsable() != null) {
+					actividad.setResponsable(usuarioBC.load(actividad
+							.getResponsable().getUsuarioId()));
+				}
+				actividadBC.resolveActividad(actividad,
+						getSigteUsuario());
+				elegirProceso();
+				agregarMensaje("Ha finalizado el Proceso");
+			} catch (RuntimeException ex) {
+				ex.printStackTrace();
+				agregarMensajeError(ex.getMessage());
+			}
+		}
+	}
+
+	public void devolverActividad() {
+		if (actividadSeleccionada == null) {
+			agregarMensaje("Actividad no seleccionada");
+		} else {
+			try {
+				Actividad actividad = actividadSeleccionada;
+				if (actividad.getResponsable() != null) {
+					actividad.setResponsable(usuarioBC.load(actividad
+							.getResponsable().getUsuarioId()));
+				}
+				actividadBC.devolverActividad(actividad);
+				elegirProceso();
+				agregarMensaje("Actividad devuelta");
+			} catch (RuntimeException ex) {
+				ex.printStackTrace();
+				agregarMensajeError(ex.getMessage());
+			}
+		}
+	}
+
+	public void crearSubActividad() {
+		if (actividadSeleccionada == null) {
+			agregarMensaje("Actividad no seleccionada");
+		} else {
+			try {
+				Actividad actividad = actividadSeleccionada;
+				if (actividad.getResponsable() != null) {
+					actividad.setResponsable(usuarioBC.load(actividad
+							.getResponsable().getUsuarioId()));
+				}
+				actividadBC.crearSubActividad(actividad,
+						actividadSeleccionada.getDescripcion(),
+						actividadSeleccionada.getResponsable(), null, null);
+				elegirProceso();
+				agregarMensaje("SubActividad creada");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
 				agregarMensajeError(ex.getMessage());
@@ -836,25 +969,27 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					rootFolder.mkdir();
 				}
 
-				File clienteFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/');
+				File clienteFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/');
 				if (!clienteFolder.exists()) {
 					clienteFolder.mkdir();
 				}
 
-				File anhoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/');
+				File anhoFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/');
 				if (!anhoFolder.exists()) {
 					anhoFolder.mkdir();
 				}
 
-				File cronogFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/' + descCronog + '/');
+				File cronogFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/');
 				if (!cronogFolder.exists()) {
 					cronogFolder.mkdir();
 				}
 
-				File procesoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/' + descCronog + '/' + nroProceso + '/');
+				File procesoFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/');
 				if (!procesoFolder.exists()) {
 					procesoFolder.mkdir();
 				}
@@ -1007,40 +1142,43 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					rootFolder.mkdir();
 				}
 
-				File clienteFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/');
+				File clienteFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/');
 				if (!clienteFolder.exists()) {
 					clienteFolder.mkdir();
 				}
 
-				File anhoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/');
+				File anhoFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/');
 				if (!anhoFolder.exists()) {
 					anhoFolder.mkdir();
 				}
 
-				File cronogFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/' + descCronog + '/');
+				File cronogFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/');
 				if (!cronogFolder.exists()) {
 					cronogFolder.mkdir();
 				}
 
-				File procesoFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/' + descCronog + '/' + nroProceso + '/');
+				File procesoFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/');
 				if (!procesoFolder.exists()) {
 					procesoFolder.mkdir();
 				}
 
-				File activFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/' + descCronog + '/' + nroProceso + '/'
-						+ nroActiv + '/');
+				File activFolder = new File(appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/' + nroActiv + '/');
 				if (!activFolder.exists()) {
 					activFolder.mkdir();
 				}
 
 				// write the inputStream to a FileOutputStream
-				OutputStream out = new FileOutputStream(new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-						+ nroProceso + '/' + nroActiv + '/' + fileName));
+				OutputStream out = new FileOutputStream(new File(
+						appProperties.getDocumentPath() + nombreCliente + '/'
+								+ anho + '/' + descCronog + '/' + nroProceso
+								+ '/' + nroActiv + '/' + fileName));
 
 				int read = 0;
 				byte[] bytes = new byte[1024];
@@ -1071,8 +1209,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
 				doc.setFechaDesbloqueo(new Date());
-				doc.setFilepath(appProperties.getDocumentPath() + nombreCliente + '/' + anho + '/'
-						+ descCronog + '/' + nroProceso + '/' + nroActiv + '/');
+				doc.setFilepath(appProperties.getDocumentPath() + nombreCliente
+						+ '/' + anho + '/' + descCronog + '/' + nroProceso
+						+ '/' + nroActiv + '/');
 
 				String nombreUsu = usuarioBC.getUsuarioActual();
 				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
@@ -1102,9 +1241,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				documentoBC.eliminar(documentoSeleccionado.getDocumentoId());
 				int index = documentos.indexOf(documentoSeleccionado);
 				documentos.remove(index);
-	
+
 				agregarMensaje("Documento eliminado");
-	
+
 			}
 		} catch (RuntimeException ex) {
 			ex.printStackTrace();

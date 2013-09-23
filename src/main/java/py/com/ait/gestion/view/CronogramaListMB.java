@@ -90,7 +90,8 @@ public class CronogramaListMB extends AbstractListPageBean<Cronograma,Long> {
     }
 	
 	public void elegirCronograma(){
-		setDetalles(cronogramaSeleccionado.getCronogramaDetalles());
+//		setDetalles(cronogramaSeleccionado.getCronogramaDetalles());
+		setDetalles(cronogramaBC.getCronogramaDetallesByCronograma(cronogramaSeleccionado));
 		String nombreCronograma = cronogramaSeleccionado.getNombre();
 		agregarMensaje("Cronograma seleccionado: " + nombreCronograma);
 		

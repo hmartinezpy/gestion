@@ -21,6 +21,7 @@ import py.com.ait.gestion.domain.TipoAlarma;
 import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.ActividadDAO;
 import py.com.ait.gestion.persistence.AudLogDAO;
+import py.com.ait.gestion.persistence.ProcesoDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
 import py.com.ait.gestion.persistence.UsuarioDAO;
 
@@ -46,6 +47,9 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 	@Inject
 	private CronogramaDetalleBC cronogramaDetalleBC;
+
+	@Inject
+	private ProcesoDAO procesoDAO;
 
 	@Inject
 	private Logger logger;
@@ -90,7 +94,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	}
 
 	@Transactional
-	public void resolveActividad(Actividad actividad) {
+	public void resolveActividad(Actividad actividad, Usuario responsable) {
 
 		// Si se modifica el estado a Resuelta, validar la respuesta a la
 		// pregunta (SI o NO)
@@ -125,7 +129,10 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 					+ actividad.getPregunta()
 					+ " respuesta: "
 					+ actividad.getRespuesta());
-			resolveActividadAndInsertNext(actividad);
+			if (responsable != null){
+				responsable = usuarioDAO.load(responsable.getUsuarioId());
+			}
+			resolveActividadAndInsertNext(actividad, responsable);
 		}
 		System.out
 				.println("ActividadBC.resolveActividad() Marcando actividad como resuelta <<<<<<<");
@@ -170,6 +177,13 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	@Transactional
 	public void insertActividadFromCronogramaDetalle(CronogramaDetalle cd,
 			Actividad actividadAnterior, Proceso proceso) {
+		insertActividadFromCronogramaDetalle(cd,
+				actividadAnterior, proceso, null);
+	}
+
+	@Transactional
+	public void insertActividadFromCronogramaDetalle(CronogramaDetalle cd,
+			Actividad actividadAnterior, Proceso proceso, Usuario responsable) {
 
 		Actividad actividad = new Actividad();
 		actividad.setMaster(proceso);
@@ -192,6 +206,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setActividadAnterior(actAnterior);
 		actividad.setAlerta(cd.getAlerta());
 		actividad.setAlarma(cd.getAlarma());
+		actividad.setResponsable(responsable);
 
 		insert(actividad);
 	}
@@ -209,16 +224,22 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	}
 
 	@Transactional
-	private void resolveActividadAndInsertNext(Actividad a) {
+	private void resolveActividadAndInsertNext(Actividad a, Usuario responsable) {
 
 		CronogramaDetalle cd = cronogramaDetalleBC.getNextCronogramaDetalle(
 				a.getCronogramaDetalle(), a.getRespuesta());
 
 		if (cd == null) { // ya no hay siguiente cronograma detalle
-			return;
+			//Debemos marcar el proceso como finalizado
+			finalizarProceso(a.getMaster());
 		} else {
-			insertActividadFromCronogramaDetalle(cd, a, a.getMaster());
+			insertActividadFromCronogramaDetalle(cd, a, a.getMaster(), responsable);
 		}
+	}
+
+	private void finalizarProceso(Proceso proceso) {
+		proceso.setEstado(Definiciones.EstadoProceso.Resuelto);
+		procesoDAO.update(proceso);
 	}
 
 	@Transactional
@@ -281,6 +302,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividadDevuelta.setDescripcion(anterior.getDescripcion());
 		actividadDevuelta.setPregunta(anterior.getPregunta());
 		actividadDevuelta.setRespuesta(anterior.getRespuesta());
+		actividadDevuelta.setResponsable(anterior.getResponsable());
 		// Es una nueva actividad, cuyo estado irá directamente a "En proceso"
 		actividadDevuelta.setEstado(Definiciones.EstadoActividad.EnProceso);
 		actividadDevuelta.setFechaCreacion(new Date());

@@ -7,6 +7,7 @@ import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Cronograma;
+import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.CronogramaDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
@@ -92,6 +93,11 @@ public class CronogramaBC extends DelegateCrud<Cronograma, Long, CronogramaDAO>{
 
 	public long getMaxId() {
 		return cronogramaDAO.getMaxId();
+	}
+
+	public List<CronogramaDetalle> getCronogramaDetallesByCronograma(
+			Cronograma cronogramaSeleccionado) {
+		return cronogramaDAO.getCronogramaDetallesByCronograma(cronogramaSeleccionado);
 	}
 
 }

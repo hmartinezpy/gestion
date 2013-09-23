@@ -56,9 +56,6 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	private CronogramaDetalleDAO cronogramaDetalleDAO;
 
 	@Inject
-	private ActividadBC actividadDAO;
-	
-	@Inject
 	private CronogramaDAO cronogramaDAO;
 	
 	@Inject
@@ -296,4 +293,11 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return documentoRolDAO.getRolesByDocumentoAsString(documentoId);
 	}
 	
+
+	@Transactional
+	public void finalizarProceso(Proceso proceso) {
+		proceso.setEstado(Definiciones.EstadoProceso.Resuelto);
+		update(proceso);
+		
+	}
 }
