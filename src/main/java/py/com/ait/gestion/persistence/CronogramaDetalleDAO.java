@@ -84,16 +84,22 @@ public class CronogramaDetalleDAO extends JPACrud<CronogramaDetalle, Long> {
 		}
 
 		System.out
-				.println("CronogramaDetalleDAO.getNextCronogramaDetalle() respuesta: "
-						+ respuesta);
+				.println("CronogramaDetalleDAO.getNextCronogramaDetalle() pregunta: "
+						+ cronogramaDetalle.getPregunta());
+		System.out
+		.println("CronogramaDetalleDAO.getNextCronogramaDetalle() respuesta: "
+				+ respuesta);
 
-		if (respuesta == null || respuesta.equals("")) {
+		if (cronogramaDetalle.getPregunta() == null) {
+			nextCronogramaDetalleId = cronogramaDetalle.getTareaSiguiente()
+					.getCronogramaDetalleId();
+		} else if ("".equals(cronogramaDetalle.getPregunta())) {
 			nextCronogramaDetalleId = cronogramaDetalle.getTareaSiguiente()
 					.getCronogramaDetalleId();
 		} else if ("SI".equals(respuesta)) {
 			nextCronogramaDetalleId = cronogramaDetalle.getRespuestaSi()
 					.getCronogramaDetalleId();
-		} else if ("NO".equals(respuesta)) {
+		} else {
 			nextCronogramaDetalleId = cronogramaDetalle.getRespuestaNo()
 					.getCronogramaDetalleId();
 		}

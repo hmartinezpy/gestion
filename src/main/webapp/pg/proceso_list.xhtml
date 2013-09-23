@@ -78,12 +78,7 @@
                 	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
                 </h:outputText>
                 </p:column>
-                <p:column headerText="FechFinRepr"  style="font-weight:bold;">
-                <h:outputText style="font-weight:normal;" value="#{proceso.fechaFinReprogramada}" >
-                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
-                </h:outputText>
-                </p:column>
-                
+                                
                 <p:column style="width:30px;" >				
 					<p:commandButton action="#{procesoListMB.getNextView}" actionListener="#{procesoListMB.clear}"
 						value ="Editar" ajax="false" image="ui-icon-pencil" >
@@ -186,7 +181,7 @@
                     </p:commandLink>
                 </p:column>
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:formfileP:fileP" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
+                    <p:commandLink update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
                         <span class="ui-icon ui-icon-folder-open" title="Documentos">  </span> 
                         <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
                     </p:commandLink>
@@ -244,7 +239,7 @@
                                 <p:calendar id="cal_fechaFinPrevista" value="#{procesoListMB.actividadSeleccionada.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm" /> 
                                 
                                 <h:outputText value="Pregunta " rendered="#{procesoListMB.mostrarCampoRespuesta}"/>
-                                <p:inputTextarea rows="1" cols="20" value="#{procesoListMB.actividadSeleccionada.pregunta}" disabled="true" rendered="#{procesoListMB.mostrarCampoRespuesta}" /> 
+                                <p:inputTextarea rows="2" cols="50" value="#{procesoListMB.actividadSeleccionada.pregunta}" disabled="true" rendered="#{procesoListMB.mostrarCampoRespuesta}" /> 
 			                    
 			                    <h:outputText value="Respuesta " rendered="#{procesoListMB.mostrarCampoRespuesta}"/>
                                 <p:selectOneMenu id="SelectRespuesta" value="#{procesoListMB.actividadSeleccionada.respuesta}" rendered="#{procesoListMB.mostrarCampoRespuesta}"  >  			                        
