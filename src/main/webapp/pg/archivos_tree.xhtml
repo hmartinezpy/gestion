@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Archivos</h1>
+		<div class="entry" style="line-height:200%;margin-left:300px">
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+			
+			<h:form id="form">  
+			    <p:growl id="messages"/>
+			    
+			    <p:commandButton
+				        value="Download"
+				        title="Download"
+				        image="ui-icon-arrowthick-1-s"
+				        ajax="false">
+				    <p:fileDownload value="#{archivoTreeMB.file}" />
+				</p:commandButton>
+			    
+			    <p:tree id="docTree" value="#{archivoTreeMB.root}" var="item" animate="true" selectionMode="single" selection="#{archivoTreeMB.selectedTreeNode}" >
+			    <p:ajax event="select" listener="#{archivoTreeMB.onNodeSelect}" update=":form:messages"/>
+			        <p:treeNode expandedIcon="ui-icon-folder-open"  
+			                    collapsedIcon="ui-icon-folder-collapsed">  
+			            <h:outputText value="#{item}"/>  
+			        </p:treeNode>  
+			  
+			        <p:treeNode type="document" icon="ui-icon-document">  
+			            <h:outputText value="#{item}"/> 
+			        </p:treeNode>  
+			  
+			    </p:tree>  
+			  
+			</h:form>  
+
+
+
+
+       
+			
+		</div>
+			
+
+	</ui:define>
+</ui:composition>
+
