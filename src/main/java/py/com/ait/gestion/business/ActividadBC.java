@@ -187,7 +187,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 		Actividad actividad = new Actividad();
 		actividad.setMaster(proceso);
-		actividad.setNroActividad(getSiguienteNroActividad(actividadAnterior));
+		if (actividadAnterior != null){
+			actividad.setNroActividad(getSiguienteNroActividad(actividadAnterior));
+		} else {
+			actividad.setNroActividad("1");
+		}
 		actividad.setCronogramaDetalle(cd);
 		actividad.setDescripcion(cd.getTarea());
 		Calendar cal = new GregorianCalendar();
