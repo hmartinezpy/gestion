@@ -113,13 +113,11 @@
                             <h:panelGrid columns="2" cellpadding="5" >
                             	
                             	<h:outputText value="Descripcion" />
-                                <p:inputText value="#{checklistListMB.descripcion}" required="true" />
-			                    				
-			                    
+                                <p:inputText value="#{checklistListMB.descripcion}" maxlength="50" size="50" required="true" />
+
 			                    <h:outputText value="NroOrden" />
                                 <p:inputText value="#{checklistListMB.nroOrden}"/>
-			                    
-			                                
+
 			                    <br></br>
                                 <p:commandButton value="Agregar" id="agregar" actionListener="#{checklistListMB.registrarChecklistDetalle}"
                                             oncomplete="dlg.hide()" icon="ui-icon-disk" update=":form:messages,:form2:detalles,panel3"/>                             
@@ -137,21 +135,19 @@
         			
                         <p:panel style="width:500px" id="panel4" >
                             <h:panelGrid columns="2" cellpadding="5" >
-                            	
-                            	<h:outputText value="Descripcion" />
-                                <p:inputText value="#{checklistListMB.detalleSeleccionado.descripcion}" required="true" />
-			                    				
 			                    <h:outputText value="NroOrden" />
                                 <p:inputText value="#{checklistListMB.detalleSeleccionado.nroOrden}"/>
-			                    
-			                    
+                            	
+                            	<h:outputText value="Descripcion" />
+                                <p:inputText value="#{checklistListMB.detalleSeleccionado.descripcion}" maxlength="50" size="50" required="true" />
+
 			                    <br></br>
                                 <p:commandButton value="Editar" id="editar" actionListener="#{checklistListMB.editarChecklistDetalle}"
-                                                oncomplete="dlg2.hide()" icon="ui-icon-disk" update=":form:messages,:form2:detalles"/>                             
+                                                oncomplete="dlg2.hide()" icon="ui-icon-disk" update=":form:messages,:form2:detalles"/>
 			                    
                             </h:panelGrid>
-                        </p:panel>      
-                                    
+                        </p:panel>
+
                     </h:form>
             	</p:dialog>          
         
