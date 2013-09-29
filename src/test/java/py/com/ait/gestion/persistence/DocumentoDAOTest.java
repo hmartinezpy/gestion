@@ -29,8 +29,10 @@ public class DocumentoDAOTest {
 	@Test
 	public void testGetFileProceso() {
 		
+		long adminUsuarioId = 1L;
+		boolean isAdmin = true;
 		long procesoId = 4L;
-		List<Documento> list = documentoDAO.getFileProceso(procesoId);
+		List<Documento> list = documentoDAO.getFileProceso(procesoId, isAdmin, adminUsuarioId);
 		assertNotNull(list);
 		assertTrue(list.size() > 0);
 		

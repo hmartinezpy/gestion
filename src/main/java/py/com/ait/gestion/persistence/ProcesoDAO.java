@@ -61,27 +61,40 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado) {
+	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado, boolean isAdminUser, Long currentUserId) {
 
-		Query q = em.createQuery("select a from Actividad a where a.master.procesoId = :proceso order by a.fechaCreacion");
+		
+		String filtro = "where a.master.procesoId = :proceso";
+		//si no es admin, agregar filtro por el usuario actual
+		if(!isAdminUser && procesoSeleccionado.getResponsable().getUsuarioId() != currentUserId) {
+			
+			filtro += " and a.responsable.usuarioId = " + currentUserId;
+		}
+		Query q = em.createQuery("select a from Actividad a " + filtro + " order by a.fechaCreacion");
 		q.setParameter("proceso", procesoSeleccionado.getProcesoId());
 		
 		return ((List<Actividad>) q.getResultList());
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Proceso> getProcesos(String filtroEstadoProceso) {
+	public List<Proceso> getProcesos(String filtroEstadoProceso, boolean isAdminUser, Long currentUserId) {
 		
-		String filtro = "";
+		String filtro = "where p.procesoId = a.master.procesoId";
 		if(filtroEstadoProceso.equals("C")) {
 			
-			filtro = "where p.estado in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+			filtro += " and p.estado in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
 		} else if(filtroEstadoProceso.equals("A")) {
 			
-			filtro = "where p.estado not in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+			filtro += " and p.estado not in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+		}
+		//si no soy admin agregar filtros por usuario actual
+		if(!isAdminUser) {
+			
+			filtro += " and (p.responsable.usuarioId = " + currentUserId + 
+					" or a.responsable.usuarioId = " + currentUserId + ")";
 		}
 		
-		Query q = em.createQuery("select p from Proceso p " + filtro + " order by p.nroProceso");		
+		Query q = em.createQuery("select distinct p from Proceso p, Actividad a " + filtro + " order by p.nroProceso");		
 		return ((List<Proceso>) q.getResultList());
 	}
 }

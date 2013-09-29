@@ -1,5 +1,6 @@
 package py.com.ait.gestion.domain;import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 /**
@@ -66,6 +68,13 @@ public class Documento  extends Base implements Serializable {
 	@JoinColumn(name="usuario_creacion", nullable=true)
 	private Usuario usuarioCreacion;
 	
+	//bi-directional many-to-one association to Usuario
+	@OneToMany(fetch=FetchType.LAZY, targetEntity=DocumentoRol.class, mappedBy="documento")
+	private List<DocumentoRol> documentoRoles;
+
+	@Column(name="fecha_ultimo_update")
+	private Date fechaUltimoUpdate;
+
 	public Documento() {
 		super();
     }
@@ -191,5 +200,20 @@ public class Documento  extends Base implements Serializable {
 		
 		this.usuarioCreacion = usuarioCreacion;
 	}
+
+	public List<DocumentoRol> getDocumentoRoles() {
+		return documentoRoles;
+	}
+
+	public void setDocumentoRoles(List<DocumentoRol> documentoRoles) {
+		this.documentoRoles = documentoRoles;
+	}
 	
+	public Date getFechaUltimoUpdate() {
+		return fechaUltimoUpdate;
+	}
+
+	public void setFechaUltimoUpdate(Date fechaUltimoUpdate) {
+		this.fechaUltimoUpdate = fechaUltimoUpdate;
+	}
 }

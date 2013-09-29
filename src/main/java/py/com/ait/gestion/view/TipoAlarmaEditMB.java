@@ -1,6 +1,5 @@
 package py.com.ait.gestion.view;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -85,8 +84,14 @@ public class TipoAlarmaEditMB extends AbstractEditPageBean<TipoAlarma,Long> {
 		TipoAlarma tipoAlarma = new TipoAlarma();
 		tipoAlarma.setDescripcion(getBean().getDescripcion());
 		tipoAlarma.setTipo(getBean().getTipo());
-		tipoAlarma.setDias(getBean().getDias());
-		tipoAlarma.setHoras(getBean().getHoras());		
+		long cantidad = 0L; //default value 0
+		if(getBean().getDias() != null && getBean().getDias().longValue() > 0)
+			cantidad = getBean().getDias();
+		tipoAlarma.setDias(cantidad);	
+		cantidad = 0L; //default value 0
+		if(getBean().getHoras() != null && getBean().getHoras().longValue() > 0)
+			cantidad = getBean().getHoras();
+		tipoAlarma.setHoras(cantidad);	
 		tipoAlarma.setResponsable1(getResponsable1());
 		tipoAlarma.setResponsable2(getResponsable2());
 		
@@ -100,6 +105,14 @@ public class TipoAlarmaEditMB extends AbstractEditPageBean<TipoAlarma,Long> {
 		TipoAlarma tipoAlarma = getBean();
 		tipoAlarma.setResponsable1(getResponsable1());
 		tipoAlarma.setResponsable2(getResponsable2());
+		long cantidad = 0L; //default value 0
+		if(tipoAlarma.getDias() != null && tipoAlarma.getDias().longValue() > 0)
+			cantidad = tipoAlarma.getDias();
+		tipoAlarma.setDias(cantidad);	
+		cantidad = 0L; //default value 0
+		if(tipoAlarma.getHoras() != null && tipoAlarma.getHoras().longValue() > 0)
+			cantidad = tipoAlarma.getHoras();
+		tipoAlarma.setHoras(cantidad);
 		
 		tipoAlarmaBC.editar(tipoAlarma);
 		

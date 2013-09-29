@@ -1,13 +1,18 @@
 package py.com.ait.gestion.business;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
+
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Documento;
+import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.DocumentoDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
@@ -28,6 +33,9 @@ public class DocumentoBC extends DelegateCrud<Documento, Long, DocumentoDAO>{
 	private UsuarioDAO usuarioDAO;
 	
 	@Inject 
+	private UsuarioBC usuarioBC;
+	
+	@Inject 
 	SesionLogDAO sesionLogDAO;
 
 
@@ -35,8 +43,11 @@ public class DocumentoBC extends DelegateCrud<Documento, Long, DocumentoDAO>{
 		return documentoDAO.findAll();	
 	}
 	
-	public List<Documento> getFileProceso(Long idProceso) {
-		return documentoDAO.getFileProceso(idProceso);	
+	public List<Documento> getFileProceso(Long idProceso, String currentUser) {
+		
+		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
+		return documentoDAO.getFileProceso(idProceso, isAdminUser, usuario.getUsuarioId());	
 	}
 	
 	public List<Documento> getFileActividad(Long idActividad) {
@@ -106,7 +117,30 @@ public class DocumentoBC extends DelegateCrud<Documento, Long, DocumentoDAO>{
 		}
 	}
 
+	public void updateBloqueoDocumento(Documento documento, boolean bloquear) {
 
+		String nombreUsu = usuarioBC.getUsuarioActual();
+		Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+		Date fecha = new Date();
+		if(bloquear) {
+
+			documento.setBloqueado("Si");
+			documento.setFechaBloqueo(fecha);		
+			documento.setUsuarioBloqueo(actual);
+		} else {
+			
+			documento.setBloqueado("No");
+			documento.setFechaDesbloqueo(fecha);		
+			documento.setUsuarioDesbloqueo(actual);
+		}		
+		editar(documento);		
+	}
+	
+	public Documento getDocumentoByFileName(String fileName, String filePath, String fileExtension) {
+		
+		return documentoDAO.getDocumentoByFileName(fileName, filePath, fileExtension);
+	}
+	
 }
 	
 	

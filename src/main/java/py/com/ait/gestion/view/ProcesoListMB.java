@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -42,10 +41,8 @@ import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Documento;
-import py.com.ait.gestion.domain.DocumentoRol;
 import py.com.ait.gestion.domain.Observacion;
 import py.com.ait.gestion.domain.Proceso;
-import py.com.ait.gestion.domain.Rol;
 import py.com.ait.gestion.domain.Usuario;
 
 @ViewController
@@ -110,7 +107,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void elegirProceso() {
-		setActividades(procesoBC.getActividadesByProceso(procesoSeleccionado));
+		
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+				.getUserPrincipal().getName();
+		setActividades(procesoBC.getActividadesByProceso(procesoSeleccionado, currentUser));
 		// setCronogramaDetallesporCronograma(procesoSeleccionado.getCronograma().getCronogramaDetalles());
 		String numeroProceso = procesoSeleccionado.getNroProceso();
 		agregarMensaje("Proceso seleccionado: " + numeroProceso);
@@ -127,8 +127,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	public void mostrarFileProceso() {
 
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+				.getUserPrincipal().getName();
 		this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
-				.getProcesoId()));
+				.getProcesoId(), currentUser));
 
 		updateCarpetas();
 		String numeroProceso = procesoSeleccionado.getNroProceso();
@@ -153,7 +155,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public List<Proceso> getProcesos() {
-		procesos = procesoBC.listar(filtroEstadoProceso);
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+				.getUserPrincipal().getName();		
+		procesos = procesoBC.listar(filtroEstadoProceso, currentUser);
 		return procesos;
 	}
 	
@@ -178,7 +182,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public void eliminar(ActionEvent actionEvent) {
 		procesoBC.eliminar(procesoSeleccionado.getProcesoId());
 		procesoSeleccionado = new Proceso();
-		setProcesos(procesoBC.listar(getFiltroEstadoProceso()));
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+				.getUserPrincipal().getName();
+		setProcesos(procesoBC.listar(getFiltroEstadoProceso(), currentUser));
 		agregarMensaje("Proceso eliminado");
 	}
 
@@ -943,7 +949,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		} else {
 
 			try {
-
+				
+				String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+						.getUserPrincipal().getName();
+				
 				//get folder name
 				String folder = this.carpetaFileUpload;
 				if(folder == null) folder = "";
@@ -957,97 +966,114 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 						.getNombre();
 				String nroProceso = procesoSeleccionado.getNroProceso();
 				String anho = "";
+				
 
 				int k = nroProceso.lastIndexOf('/');
 				if (k > 0) {
 					anho = nroProceso.substring(k - 4, k);
 					nroProceso = nroProceso.substring(k + 1);
 				}
-
-				File rootFolder = new File(appProperties.getDocumentPath());
-				if (!rootFolder.exists()) {
-					rootFolder.mkdir();
-				}
-
-				File clienteFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/');
-				if (!clienteFolder.exists()) {
-					clienteFolder.mkdir();
-				}
-
-				File anhoFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/');
-				if (!anhoFolder.exists()) {
-					anhoFolder.mkdir();
-				}
-
-				File cronogFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/');
-				if (!cronogFolder.exists()) {
-					cronogFolder.mkdir();
-				}
-
-				File procesoFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-						+ nroProceso + '/');
-				if (!procesoFolder.exists()) {
-					procesoFolder.mkdir();
-				}
 				
-				File procesoSubFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-						+ anho + '/' + descCronog + '/' + nroProceso + '/' + folder);
-				if (!procesoSubFolder.exists()) {
-					procesoSubFolder.mkdir();
-				}
-
-				// write the inputStream to a FileOutputStream
-				String filePath = appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-						+ nroProceso + '/' + folder;
-				OutputStream out = new FileOutputStream(new File(filePath + fileName));
-
-				int read = 0;
-				byte[] bytes = new byte[1024];
-
-				while ((read = in.read(bytes)) != -1) {
-					out.write(bytes, 0, read);
-				}
-
-				in.close();
-				out.flush();
-				out.close();
-
 				String extension = "";
 				String nombreArchivo = "";
-
 				int i = fileName.lastIndexOf('.');
 				if (i > 0) {
 					extension = fileName.substring(i + 1);
 					nombreArchivo = fileName.substring(0, i);
 				}
+				
+				String filePath = appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/' + folder;
+				
+				Documento documentoOrig = documentoBC.getDocumentoByFileName(nombreArchivo, filePath, extension);
+				if(documentoOrig != null && documentoOrig.getBloqueado().equals("Si")
+					&& !documentoOrig.getUsuarioBloqueo().getUsuario().equals(currentUser)) {
+					
+					//error, el archivoya existe y está bloqueado por otro usuario
+					agregarMensajeError("Error, el archivo: " + fileName + " está bloqueado para edición!!\n" +
+										"Usuario que bloquéo: " + documentoOrig.getUsuarioBloqueo().getUsuario() + "\n" +
+										"Fecha de bloqueo: " + documentoOrig.getFechaBloqueo().toString());
+				} else {
 
-				Proceso procesoSelec = procesoSeleccionado;
-
-				Documento doc = new Documento();
-
-				doc.setFilename(nombreArchivo);
-				doc.setFileExtension(extension);
-				doc.setBloqueado("No");
-				doc.setFechaBloqueo(new Date());
-				doc.setFechaDesbloqueo(new Date());
-				doc.setFilepath(filePath);
-
-				String nombreUsu = usuarioBC.getUsuarioActual();
-				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
-				doc.setUsuarioBloqueo(actual);
-				doc.setUsuarioDesbloqueo(actual);
-
-				doc.setEntidad("Proceso");
-				doc.setIdEntidad(procesoSelec.getProcesoId());
-
-				documentoBC.registrar(doc);
-				documentos.add(doc);
-				agregarMensaje("Archivo subido");
+					//copiar el archivo
+					File rootFolder = new File(appProperties.getDocumentPath());
+					if (!rootFolder.exists()) {
+						rootFolder.mkdir();
+					}
+	
+					File clienteFolder = new File(appProperties.getDocumentPath()
+							+ nombreCliente + '/');
+					if (!clienteFolder.exists()) {
+						clienteFolder.mkdir();
+					}
+	
+					File anhoFolder = new File(appProperties.getDocumentPath()
+							+ nombreCliente + '/' + anho + '/');
+					if (!anhoFolder.exists()) {
+						anhoFolder.mkdir();
+					}
+	
+					File cronogFolder = new File(appProperties.getDocumentPath()
+							+ nombreCliente + '/' + anho + '/' + descCronog + '/');
+					if (!cronogFolder.exists()) {
+						cronogFolder.mkdir();
+					}
+	
+					File procesoFolder = new File(appProperties.getDocumentPath()
+							+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+							+ nroProceso + '/');
+					if (!procesoFolder.exists()) {
+						procesoFolder.mkdir();
+					}
+					
+					File procesoSubFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
+							+ anho + '/' + descCronog + '/' + nroProceso + '/' + folder);
+					if (!procesoSubFolder.exists()) {
+						procesoSubFolder.mkdir();
+					}
+					
+					OutputStream out = new FileOutputStream(new File(filePath + fileName));
+					int read = 0;
+					byte[] bytes = new byte[1024];
+	
+					while ((read = in.read(bytes)) != -1) {
+						out.write(bytes, 0, read);
+					}
+	
+					in.close();
+					out.flush();
+					out.close();					
+	
+					Proceso procesoSelec = procesoSeleccionado;
+					if(documentoOrig == null) {
+						
+						//nuevo documento, insertar						
+						Documento doc = new Documento();
+						doc.setFilename(nombreArchivo);
+						doc.setFileExtension(extension);
+						doc.setBloqueado("No");
+						doc.setFilepath(filePath);
+						doc.setEntidad("Proceso");
+						doc.setIdEntidad(procesoSelec.getProcesoId());
+						doc.setFechaUltimoUpdate(new Date());
+						
+						String nombreUsu = usuarioBC.getUsuarioActual();
+						Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+						doc.setUsuarioCreacion(actual);
+		
+						documentoBC.registrar(doc);
+						documentos.add(doc);
+						agregarMensaje("Archivo subido correctamente");
+					} else {
+						
+						//documento ya existente, actualizar
+						documentoOrig.setFechaUltimoUpdate(new Date());
+						documentoBC.editar(documentoOrig);
+						documentos = documentoBC.getFileProceso(procesoSeleccionado.getProcesoId(), currentUser);
+						agregarMensaje("Archivo subido y actualizado correctamente");
+					}					
+				}
 
 			} catch (IOException e) {
 				agregarMensaje("Error subiendo el archivo");
@@ -1070,15 +1096,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					"application/octet-stream", downloadName + "."
 							+ downloadExt);
 			setFile(archivo);
-			doc.setBloqueado("Si");
-			doc.setFechaBloqueo(new Date());
-			String nombreUsu = usuarioBC.getUsuarioActual();
-			Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
-			doc.setUsuarioBloqueo(actual);
-			documentoBC.editar(doc);
-
 			agregarMensaje("Archivo seleccionado :" + downloadName + "."
 					+ downloadExt);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			agregarMensaje("Error seleccionando el archivo");
@@ -1259,6 +1279,22 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		return usuarioBC.isAdminUser(currentUser);
 	}
 	
+	public Long getUsuarioId() {
+		 
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+									.getUserPrincipal().getName();
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);		
+		return usuario.getUsuarioId();
+	}
+	
+	public boolean getCanCreateProcess() {
+		 
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+									.getUserPrincipal().getName();
+		
+		return procesoBC.canCreateProcess(currentUser);
+	}
+	
 	public String getCarpetaFileUpload() {
 		
 		return this.carpetaFileUpload;
@@ -1320,6 +1356,31 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 			agregarMensajeError(ex.getMessage());
 		}
 	}
+	
+	public void bloquearDocumento() {
+		
+		if(documentoSeleccionado != null) {
+			
+			documentoBC.updateBloqueoDocumento(documentoSeleccionado, true);
+			//String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+			//		.getUserPrincipal().getName();
+			//this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
+			//		.getProcesoId(), currentUser));
+			agregarMensaje("Documento: " + documentoSeleccionado.getFilename() + " bloqueado correctamente");
+		}
+	}
 
+	public void desbloquearDocumento() {
+		
+		if(documentoSeleccionado != null) {
+			
+			documentoBC.updateBloqueoDocumento(documentoSeleccionado, false);
+			//String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+			//		.getUserPrincipal().getName();
+			//this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
+			//		.getProcesoId(), currentUser));
+			agregarMensaje("Documento: " + documentoSeleccionado.getFilename() + " desbloqueado correctamente");
+		}
+	}	
 	
 }

@@ -114,4 +114,11 @@ public final class Definiciones {
 		
 		return list;
 	}
+	
+	public static class EstadoNotificacion
+	{
+		public static final String Activo="ACT";
+		public static final String Inactivo="INA";
+		public static final String Notificado="NOT";
+	}
 }

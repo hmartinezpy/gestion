@@ -81,12 +81,12 @@
                                 
                 <p:column style="width:30px;" >				
 					<p:commandButton action="#{procesoListMB.getNextView}" actionListener="#{procesoListMB.clear}"
-						value ="Editar" ajax="false" image="ui-icon-pencil" >
+						value ="Editar" ajax="false" image="ui-icon-pencil" rendered="#{procesoListMB.usuarioId eq proceso.responsable.usuarioId or procesoListMB.isAdminUser}">
 						<f:param name="id" value="#{proceso.procesoId}" />
 					</p:commandButton>
 				</p:column>
 				<p:column headerText="" >
-                    <p:commandLink id="showDialogButton" onclick="confirmation.show();">
+                    <p:commandLink id="showDialogButton" onclick="confirmation.show();" rendered="#{procesoListMB.isAdminUser}">
                         <span class="ui-icon ui-icon-trash" title="Eliminar">  </span> 
                         <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
                     </p:commandLink>
@@ -122,7 +122,7 @@
             </p:confirmDialog>
             
             <br></br>
-				<p:toolbarGroup>
+				<p:toolbarGroup rendered="#{procesoListMB.canCreateProcess}">
 					<p:commandButton value ="Nuevo " action="#{procesoListMB.getNextView}"
 						actionListener="#{procesoListMB.clear}" ajax="false" image="ui-icon-document" />
  				</p:toolbarGroup>
@@ -169,7 +169,10 @@
                 </p:column>
                                 
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{procesoListMB.elegirActividad}" rendered="#{actividad.estado != 'RES' and actividad.estado != 'DEV'}">
+                    <p:commandLink update=":form:messages,:form4:panel4" onclick="dlg2.show()" action="#{procesoListMB.elegirActividad}" 
+                    	rendered="#{actividad.estado != 'RES' and actividad.estado != 'DEV' and actividad.estado != 'CAN' 
+                    				and (actividad.responsable.usuarioId eq procesoListMB.usuarioId
+                    				or procesoListMB.isAdminUser)}">
                         <span class="ui-icon ui-icon-pencil" title="Editar">  </span> 
                         <f:setPropertyActionListener value="#{actividad}" target="#{procesoListMB.actividadSeleccionada}" />
                     </p:commandLink>
@@ -199,6 +202,41 @@
             </h:form>
             
 			<br></br>
+            <br></br>
+          	
+          	<h:form id="formNotif"> 
+			
+				<p:growl id="messagesNotif" sticky="true" escape="false" />
+				
+		        <p:poll interval="300" listener="#{notificacionMB.updateNotificaciones()}"  
+					update=":formNotif:messagesNotif,:formNotif:notificaciones" widgetVar="poll" autoStart="true" />
+								
+				<p:dataTable style="width:910px;" var="notificacion" value="#{notificacionMB.notificaciones}"  id="notificaciones" 
+					editable="true" paginator="true" paginatorPosition="bottom" rows="5">
+	                
+	                <f:facet name="header">  
+		            	NOTIFICACIONES
+		        	</f:facet> 
+	                <p:column headerText="ID" style="font-weight:bold;" >
+	                     <h:outputText style="font-weight:normal;" value="#{notificacion.notificacionId}" />                                              
+	                </p:column>
+	                
+	                <p:column headerText="Titulo" style="font-weight:bold;" >
+	                     <h:outputText style="font-weight:normal;" value="#{notificacion.titulo}" />                                              
+	                </p:column>
+	                
+	                <p:column headerText="Descripcion" style="font-weight:bold;" >
+	                     <h:outputText style="font-weight:normal;" value="#{notificacion.descripcion}" />                                              
+	                </p:column>
+	                
+	                <p:column headerText="Fecha" style="font-weight:bold;" >
+	                     <h:outputText style="font-weight:normal;" value="#{notificacion.fechaCreacion}" />                                              
+	                </p:column>
+	                
+                </p:dataTable>
+			</h:form>
+          	
+          	<br></br>
             <br></br>
           			
 			<p:dialog header="Editar Actividad" widgetVar="dlg2" resizable="false">  
@@ -498,7 +536,7 @@
              <p:dialog header="Documentos" widgetVar="dlgFileP"  resizable="false">  
 		
 				<h:form id="formfileP">
-                         <p:dataTable  var="documento" value="#{procesoListMB.documentos}"  id="fileP" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
+                         <p:dataTable  var="documento" value="#{procesoListMB.documentos}"  id="fileP" editable="true" paginator="true" paginatorPosition="bottom" rows="5">
 				        
 			                <p:column headerText="Filename" style="font-weight:bold" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.filename}" />                                              
@@ -535,21 +573,44 @@
                              <p:column headerText="UsuarioDesbloqueo" style="font-weight:bold;" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioDesbloqueo.usuario}" />  
 			                 </p:column>
+			                
+			                 <p:column headerText="Creador" style="font-weight:bold;" >
+			                     <h:outputText style="font-weight:normal;" value="#{documento.usuarioCreacion.usuario}" />  
+			                 </p:column>
+			                 
+			                <p:column headerText="Modificado"  style="font-weight:bold;" >
+			                <h:outputText style="font-weight:normal;" value="#{documento.fechaUltimoUpdate}" >
+			                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+			                </h:outputText>
+			                </p:column>
 			                  
 			               <p:column style="width:50px;" headerText="" >
-			                    <p:commandLink id="showDialogButtonFP" onclick="confirmationFP.show()" >
+			                    <p:commandLink id="showDialogButtonFP" onclick="confirmationFP.show()" rendered="#{procesoListMB.usuarioId eq documento.usuarioCreacion.usuarioId or procesoListMB.isAdminUser}" >
 			                        <span class="ui-icon ui-icon-trash" title="Eliminar">  </span> 
 			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
 			                    </p:commandLink>
 			                </p:column>
 			                
 			                <p:column style="width:50px;" headerText="" >
-			                    <p:commandLink update=":form:messages,:formDocumentoRoles:panelDocumentoRoles" onclick="dlgDocumentoRoles.show()">
+			                    <p:commandLink update=":form:messages,:formDocumentoRoles:panelDocumentoRoles" onclick="dlgDocumentoRoles.show()"
+			                    		rendered="#{procesoListMB.usuarioId eq documento.usuarioCreacion.usuarioId or procesoListMB.isAdminUser}">
 			                        <span class="ui-icon ui-icon-key" title="Asociar roles permitidos">  </span> 
 			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
 			                    </p:commandLink>
 			                </p:column>
-			                
+			                <p:column style="width:50px;" headerText="" >
+			                    <p:commandLink update=":form:messages,:formfileP:fileP" onclick="dlgFileP.hide()" action="#{procesoListMB.bloquearDocumento}" 
+			                    	rendered="#{documento.bloqueado eq 'No'}">
+			                        <span class="ui-icon ui-icon-locked" title="Bloquear">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                    <p:commandLink update=":form:messages,:formfileP:fileP" onclick="dlgFileP.hide()" action="#{procesoListMB.desbloquearDocumento}" 
+			                    	rendered="#{documento.bloqueado eq 'Si' and (documento.usuarioBloqueo.usuarioId eq procesoListMB.usuarioId
+			                    				or procesoListMB.isAdminUser)}">
+			                        <span class="ui-icon ui-icon-unlocked" title="Desbloquear">  </span> 
+			                        <f:setPropertyActionListener value="#{documento}" target="#{procesoListMB.documentoSeleccionado}" />
+			                    </p:commandLink>
+			                </p:column>
 			                <p:column style="width:50px;" headerText="" >
 			                    <p:commandLink update=":form:messages,:formDownload:panelDownload" onclick="dlgDownloadP.show()" action="#{procesoListMB.elegirDocumento}" >
 			                        <span class="ui-icon ui-icon-circle-arrow-s" title="Descargar">  </span> 
@@ -560,7 +621,7 @@
 		                </p:dataTable>		                
 		              	<br></br>
 		                <p:toolbarGroup>
-							<p:fileUpload update=":form:messages,:formfileP:fileP" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}" />							
+							<p:fileUpload update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}" />							
 		 				</p:toolbarGroup>
 		 				<div style="margin-top:10px;">
 		 					<h:outputText value="Carpeta: " style="vertical-align:top;" />

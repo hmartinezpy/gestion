@@ -19,8 +19,10 @@ import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Documento;
 import py.com.ait.gestion.domain.DocumentoRol;
+import py.com.ait.gestion.domain.Permiso;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Rol;
+import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.CronogramaDAO;
 import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
@@ -63,10 +65,21 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	
 	@Inject
 	private DocumentoRolDAO documentoRolDAO;
+	
+	@Inject
+	private UsuarioBC usuarioBC;
+	
+	@Inject
+	private UsuarioRolPermisoBC usuarioRolPermisoBC;
+	
+	@Inject
+	private PermisoBC permisoBC;
 
-	public List<Proceso> listar(String filtroEstadoProceso) {
-				
-		return procesoDAO.getProcesos(filtroEstadoProceso);
+	public List<Proceso> listar(String filtroEstadoProceso, String currentUser) {
+		
+		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);		
+		return procesoDAO.getProcesos(filtroEstadoProceso, isAdminUser, usuario.getUsuarioId());
 	}
 
 	public Proceso recuperar(Long id) {
@@ -168,8 +181,11 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return procesoDAO.getLastSequence(cronogramaId);
 	}
 
-	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado) {
-		return procesoDAO.getActividadesByProceso(procesoSeleccionado);
+	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado, String currentUser) {
+		
+		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);	
+		return procesoDAO.getActividadesByProceso(procesoSeleccionado, isAdminUser, usuario.getUsuarioId());
 	}
 
 	public List<String> getCarpetas(Proceso proceso) {
@@ -300,4 +316,13 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		update(proceso);
 		
 	}
+	
+	public boolean canCreateProcess(String currentUser){
+		
+		boolean isAdminUser = usuarioBC.isAdminUser(currentUser); 		
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
+		Permiso permiso = permisoBC.getPermiso("crear procesos");
+		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);		
+		return (isAdminUser || tienePermiso);
+	}	
 }

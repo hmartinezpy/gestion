@@ -1,4 +1,5 @@
 package py.com.ait.gestion.persistence;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import org.ticpy.tekoporu.stereotype.PersistenceController;
 import org.ticpy.tekoporu.template.JPACrud;
 
 import py.com.ait.gestion.domain.Documento;
+import py.com.ait.gestion.domain.DocumentoRol;
 
 @PersistenceController
 public class DocumentoDAO extends JPACrud<Documento, Long> {
@@ -21,7 +23,7 @@ public class DocumentoDAO extends JPACrud<Documento, Long> {
 	private EntityManager em;
 	
 	@SuppressWarnings("unchecked")
-	public List<Documento> getFileProceso(Long idProceso) {
+	public List<Documento> getFileProceso(Long idProceso, boolean isAdminUser, Long currentUserId) {
 		
 		
 		Documento documento = new Documento();
@@ -31,7 +33,37 @@ public class DocumentoDAO extends JPACrud<Documento, Long> {
 		Criteria criteria = session.createCriteria(Documento.class);
 		Example where = Example.create(documento);
 		criteria.add(where);
-		return (List<Documento>)criteria.list();	
+		List<Documento> list = (List<Documento>)criteria.list();
+		List<Documento> result = list;	
+		
+		//si no es admin agregar filtro de usuario actual
+		if(!isAdminUser) {
+			
+			result = new ArrayList<Documento>();
+			Query q = em.createQuery("select distinct urp.rol.rolId from UsuarioRolPermiso urp " + 
+					"where urp.rol is not null and urp.usuario.usuarioId = :currentUser");
+
+			q.setParameter("currentUser", currentUserId);
+			List<Long> listRoles = (List<Long>)q.getResultList();
+			
+			for(Documento d : list) {
+				
+				if(d.getUsuarioCreacion().getUsuarioId() == currentUserId) {
+					//soy el creador
+					result.add(d);				
+				} else {
+					
+					for(DocumentoRol dr : d.getDocumentoRoles()) {
+						
+						//el rol permitido está entre mis roles
+						if(dr.getRol() != null && listRoles.contains(dr.getRol().getRolId()))
+							result.add(d);
+					}
+				}
+			}
+		}
+		
+		return result;		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -43,6 +75,25 @@ public class DocumentoDAO extends JPACrud<Documento, Long> {
 		q.setParameter("idEntidad", idActividad);
 		return q.getResultList();
 	
+	}
+
+	@SuppressWarnings("unchecked")
+	public Documento getDocumentoByFileName(String fileName, String filePath, String fileExtension) {
+		
+		Documento result = null;
+		Documento documento = new Documento();
+		documento.setFilename(fileName);
+		documento.setFilepath(filePath);
+		documento.setFileExtension(fileExtension);
+		Session session = (Session) em.getDelegate();
+		Criteria criteria = session.createCriteria(Documento.class);
+		Example where = Example.create(documento);
+		criteria.add(where);
+		List<Documento> list = (List<Documento>)criteria.list();
+		if(list.size() > 0)
+			result = list.get(0);
+			
+		return result;
 	}
 
 }
