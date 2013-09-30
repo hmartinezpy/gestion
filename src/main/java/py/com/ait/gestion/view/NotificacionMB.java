@@ -23,28 +23,9 @@ public class NotificacionMB {
 	@Inject
 	private NotificacionBC notificacionBC;
 	
-	//private int count;
-	
 	private String periodoCorte = "1S";
 	
-	private List<Notificacion> notificaciones;
-	
-	/*
-	public int getCount() {  
-        
-		return this.count;  
-    }  
-  
-    public void setCount(int count) {  
-        
-    	this.count = count;  
-    }  
-  
-    public void increment() {  
-        
-    	this.count++;  
-    }
-	*/
+	private List<Notificacion> notificaciones;	
 	
     public void agregarMensaje(String mensaje){
     	
@@ -60,6 +41,7 @@ public class NotificacionMB {
 	}
 	
 	public List<Notificacion> getNotificaciones() {
+		
 		return notificaciones;
 	}
 
@@ -86,7 +68,6 @@ public class NotificacionMB {
     		n.setDescripcion(n.getDescripcion().replaceAll("<br>", ". "));
     	}
     	
-    	//increment(); 	
     }
     
 }

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -39,14 +40,10 @@ public class ArchivoTreeMB {
 
 	private String docPath = "";
 
-	// private String docPath = "/tmp/jboss/";
-
-	public ArchivoTreeMB() {
-		if (appProperties == null) {
-			this.docPath = "/tmp/jboss/";
-		} else {
-			this.docPath = appProperties.getDocumentPath();
-		}
+	@PostConstruct
+	public void inicializar() {
+		
+		this.docPath = appProperties.getDocumentPath();
 	}
 
 	public void crearNodos(String path, TreeNode padre) {
@@ -56,7 +53,8 @@ public class ArchivoTreeMB {
 			for (File file : files) {
 				if (file.isDirectory()) {
 					TreeNode nodo = new DefaultTreeNode(file.getName(), padre);
-					crearNodos(path + file.getName() + "/", nodo);
+					nodo.setSelectable(false);
+					crearNodos(path + file.getName() + "/", nodo);					
 				} else {
 					TreeNode hoja = new DefaultTreeNode("document",
 							file.getName(), padre);
@@ -71,8 +69,10 @@ public class ArchivoTreeMB {
 
 		// logger.info("-----" + docPath);
 		root = new DefaultTreeNode("root", null);
+		root.setSelectable(false);
 
 		TreeNode main = new DefaultTreeNode(docPath, root);
+		main.setSelectable(false);
 		File[] filesMain = new File(docPath).listFiles();
 
 		if (filesMain != null) {
@@ -81,6 +81,7 @@ public class ArchivoTreeMB {
 				if (fileMain.isDirectory()) {
 					TreeNode nodo = new DefaultTreeNode(fileMain.getName(),
 							main);
+					nodo.setSelectable(false);
 					crearNodos(docPath + fileMain.getName() + "/", nodo);
 				} else {
 					TreeNode hoja = new DefaultTreeNode("document",
@@ -113,37 +114,43 @@ public class ArchivoTreeMB {
 
 	}
 
-	public void onNodeSelect(NodeSelectEvent event) {
-		try {
-
-			String ruta = getRuta(selectedTreeNode);
-			ruta = ruta.substring(0, ruta.length() - 1);
-			// logger.info("--------------- " + ruta);
-			InputStream stream = new FileInputStream(ruta);
-			StreamedContent archivo = new DefaultStreamedContent(stream,
-					"application/octet-stream",
-					(String) selectedTreeNode.getData());
-			setFile(archivo);
-
-			agregarMensaje("Archivo seleccionado: " + selectedTreeNode);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			// agregarMensaje("Error descargando el archivo");
-		}
-	}
-
 	public void setFile(StreamedContent file) {
 
 		this.file = file;
 	}
 
-	public StreamedContent getFile() {
+	//public StreamedContent getFile() {
 
-		return file;
-	}
+	//	return file;
+	//}
 
 	public void agregarMensaje(String mensaje) {
 		facesContext.addMessage("suceso", new FacesMessage(mensaje));
+	}
+	
+	public StreamedContent getFile() {
+		try {
+
+			if(selectedTreeNode != null) {
+				
+				String ruta = getRuta(selectedTreeNode);
+				ruta = ruta.substring(0, ruta.length() - 1);
+				// logger.info("--------------- " + ruta);
+				File file = new File(ruta);
+				if(!file.isDirectory()) {
+					InputStream stream = new FileInputStream(file);
+					StreamedContent archivo = new DefaultStreamedContent(stream,
+							"application/octet-stream",
+							(String) selectedTreeNode.getData());
+					//setFile(archivo);
+					return archivo;
+				}				
+			}			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			// agregarMensaje("Error descargando el archivo");
+		}
+		
+		return null;
 	}
 }

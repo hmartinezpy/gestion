@@ -208,8 +208,9 @@
 			
 				<p:growl id="messagesNotif" sticky="true" escape="false" />
 				
-		        <p:poll interval="300" listener="#{notificacionMB.updateNotificaciones()}"  
-					update=":formNotif:messagesNotif,:formNotif:notificaciones" widgetVar="poll" autoStart="true" />
+		        <p:poll interval="20" listener="#{notificacionMB.updateNotificaciones()}" id="formPoll"  
+					update=":formNotif:messagesNotif,:formNotif:notificaciones,:formNotif:formPoll" widgetVar="poll" autoStart="true" 
+					oncomplete="poll.stop();poll.cfg.frequency = 300;poll.start();" />
 								
 				<p:dataTable style="width:910px;" var="notificacion" value="#{notificacionMB.notificaciones}"  id="notificaciones" 
 					editable="true" paginator="true" paginatorPosition="bottom" rows="5">
