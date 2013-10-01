@@ -78,8 +78,11 @@
                 	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
                 </h:outputText>
                 </p:column>
-                                
-                <p:column style="width:30px;" >				
+                <p:column headerText="Actividad Actual" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.lastActividad}" />
+                </p:column>
+
+				<p:column style="width:30px;" >
 					<p:commandButton action="#{procesoListMB.getNextView}" actionListener="#{procesoListMB.clear}"
 						value ="Editar" ajax="false" image="ui-icon-pencil" rendered="#{procesoListMB.usuarioId eq proceso.responsable.usuarioId or procesoListMB.isAdminUser}">
 						<f:param name="id" value="#{proceso.procesoId}" />

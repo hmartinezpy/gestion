@@ -78,8 +78,12 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	public List<Proceso> listar(String filtroEstadoProceso, String currentUser) {
 		
 		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
-		Usuario usuario = usuarioBC.findSpecificUser(currentUser);		
-		return procesoDAO.getProcesos(filtroEstadoProceso, isAdminUser, usuario.getUsuarioId());
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
+		List<Proceso> result = procesoDAO.getProcesos(filtroEstadoProceso, isAdminUser, usuario.getUsuarioId());
+		for (Proceso proc : result){
+			proc.setLastActividad(actividadBC.getLastActividad(proc));
+		}
+		return result;
 	}
 
 	public Proceso recuperar(Long id) {

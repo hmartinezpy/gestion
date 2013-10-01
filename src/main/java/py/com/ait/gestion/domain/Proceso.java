@@ -60,7 +60,10 @@ public class Proceso  extends Base implements Serializable {
 	
 	@Column(name="cliente_notificado")
 	private String clienteNotificado;
-	
+
+	@Transient
+	private String lastActividad;
+
 	@OneToMany(mappedBy="master",cascade=CascadeType.ALL)
 	private List<Actividad> actividades;
 	
@@ -178,6 +181,14 @@ public class Proceso  extends Base implements Serializable {
 
 	public void setActividades(List<Actividad> actividades) {
 		this.actividades = actividades;
+	}
+
+	public String getLastActividad() {
+		return lastActividad;
+	}
+
+	public void setLastActividad(String lastActividad) {
+		this.lastActividad = lastActividad;
 	}
 
 

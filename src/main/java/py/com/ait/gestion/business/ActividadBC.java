@@ -322,4 +322,12 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 		return actividadDevuelta;
 	}
+
+	/**
+	 * @param proc
+	 * @return
+	 */
+	public String getLastActividad(Proceso proc) {
+		return actividadDAO.getLastActividad(proc);
+	}
 }

@@ -9,6 +9,7 @@ import org.ticpy.tekoporu.stereotype.PersistenceController;
 import org.ticpy.tekoporu.template.JPACrud;
 
 import py.com.ait.gestion.domain.Actividad;
+import py.com.ait.gestion.domain.Proceso;
 
 @PersistenceController
 public class ActividadDAO extends JPACrud<Actividad, Long> {
@@ -65,6 +66,39 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 			result = "0";
 		logger.info("ActividadDAO.getCurrentNumeroSubActividadByActividad() result: "
 				+ result);
+		return result;
+	}
+
+	/**
+	 * @param proc
+	 * @return
+	 */
+	public String getLastActividad(Proceso proc) {
+		String where = " where a.master = :proceso";
+		where += " and a.id = (select max(a1.id) from Actividad a1 where "+
+				" a1.master = a.master and a1.superTarea is null"+
+				" and a1.estado not in ('CAN', 'DEV')" +
+				")";
+		String groupBy = " group by a.descripcion, a.master";
+
+		String query = "select a.descripcion"
+				+ " from Actividad a" + where
+				+ groupBy;
+
+		Query q = em.createQuery(query);
+		
+		q.setParameter("proceso", proc);
+
+		logger.info("ActividadDAO.getLastActividad() query: " + query);
+		
+		String result;
+		try {
+			result = ((String) q.getSingleResult());
+		}catch (javax.persistence.NoResultException e) {
+			result = "";
+		}
+
+		logger.info("ActividadDAO.getLastActividad() result for proceso "+proc.getProcesoId()+"= " + result);
 		return result;
 	}
 
