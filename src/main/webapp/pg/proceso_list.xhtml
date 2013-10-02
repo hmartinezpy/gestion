@@ -249,16 +249,20 @@
                         <p:panel style="width:900px" id="panel4" >
                          <h:panelGrid columns="4" cellpadding="7" >
                         		<h:outputText value="Nroactividad " />
-                                <p:inputText required="true" value="#{procesoListMB.actividadSeleccionada.nroActividad}" />
+                                <p:inputText required="true" value="#{procesoListMB.actividadSeleccionada.nroActividad}" disabled="true"/>
                                 			                    
 			                    <h:outputText value="CronogramaDetalle " />
 			                    <p:inputText value="#{procesoListMB.actividadSeleccionada.cronogramaDetalle.tarea}" disabled="true" />
 			                    
 			                    <h:outputText value="Estado " />
-                                <p:selectOneMenu id="selectEstado" value="#{procesoListMB.actividadSeleccionada.estado}"  >  			                        
+                                <p:selectOneMenu id="selectEstado" value="#{procesoListMB.actividadSeleccionada.estado}"  rendered="#{!procesoListMB.subActividad}">
 									<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 									<f:selectItems value="#{procesoListMB.estadosActividad}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
-			                    </p:selectOneMenu>                                
+			                    </p:selectOneMenu>
+                                <p:selectOneMenu id="selectEstadoSubActividad" value="#{procesoListMB.actividadSeleccionada.estado}"  rendered="#{procesoListMB.subActividad}">
+									<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
+									<f:selectItems value="#{procesoListMB.estadosSubActividad}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
+			                    </p:selectOneMenu>
                                 
                                 <h:outputText value="Descripcion " />
                                 <p:inputTextarea rows="2" cols="50" value="#{procesoListMB.actividadSeleccionada.descripcion}" maxlength="50"/>   
@@ -294,14 +298,17 @@
 								<p:commandButton value="Siguiente Actividad" id="resolver" onclick="dlgSigteActividad.show()"
 											icon="ui-icon-play" update=":form:messages,:form2:actividades,:formSigteActividad:selectResponsable" 
 											action="#{procesoListMB.nextActividadUsuariosPorRol}" 
-											rendered="#{procesoListMB.sigteCronogramaDetalle != null}"/>
+											rendered="#{procesoListMB.sigteCronogramaDetalle != null and !procesoListMB.subActividad}"/>
 								<p:commandButton value="Finalizar Proceso" id="finalizar" onclick="dlgFinalizarActividad.show()"
 											icon="ui-icon-stop" update=":form:messages,:form2:actividades" 
-											rendered="#{procesoListMB.sigteCronogramaDetalle == null}"/>
+											rendered="#{procesoListMB.sigteCronogramaDetalle == null and !procesoListMB.subActividad}"/>
 								<p:commandButton value="Crear Sub Actividad" id="subActividad" onclick="dlgSubActividad.show()"
-											icon="ui-icon-newwin" update=":form:messages,:formSubActividad:panelSubActividad"/>
+											icon="ui-icon-newwin" update=":form:messages,:formSubActividad:panelSubActividad"
+											rendered="#{!procesoListMB.subActividad}"/>
 								<p:commandButton value="Devolver Actividad" id="devolverActividad" onclick="dlgDevolverActividad.show()"
-											icon="ui-icon-seek-prev" update=":form:messages,:formDevolverActividad:panelDevolverActividad"/>
+											icon="ui-icon-seek-prev" update=":form:messages,:formDevolverActividad:panelDevolverActividad"
+											rendered="#{!procesoListMB.subActividad}"/>
+
                          </h:panelGrid>
                         </p:panel>  
                         

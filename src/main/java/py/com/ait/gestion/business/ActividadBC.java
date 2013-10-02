@@ -77,7 +77,6 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Insert, actividad.getActividadId());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -153,7 +152,6 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Update, actividad.getActividadId());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -169,7 +167,6 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Delete, actividad.getActividadId());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -235,10 +232,58 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 		if (cd == null) { // ya no hay siguiente cronograma detalle
 			//Debemos marcar el proceso como finalizado
-			finalizarProceso(a.getMaster());
+			if (validarFinalizacion(a.getMaster())){
+				finalizarProceso(a.getMaster());
+			}
 		} else {
 			insertActividadFromCronogramaDetalle(cd, a, a.getMaster(), responsable);
 		}
+	}
+
+	/**
+	 * @param master
+	 * @return
+	 */
+	private boolean validarFinalizacion(Proceso proc) {
+		if (existenSubActividadesAbiertas(proc)){
+			String mensaje = "No se puede finalizar un proceso con SubActividades en estado NUEVA o EN PROCESO.";
+			System.out.println("ActividadBC.validarFinalizacion() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+		}
+		if (existenActividadesAbiertas(proc)){
+			String mensaje = "No se puede finalizar un proceso con Actividades en estado NUEVA o EN PROCESO.";
+			System.out.println("ActividadBC.validarFinalizacion() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+		}
+		return true;
+	}
+
+	/**
+	 * @param proc
+	 * @return
+	 */
+	private boolean existenSubActividadesAbiertas(Proceso proc) {
+		Long cantSubActividadesAbiertas = actividadDAO.cantActividadesAbiertas(proc, true);
+		if (cantSubActividadesAbiertas > 0){
+			//no puede haber ninguna subActividad abierta
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param proc
+	 * @return
+	 */
+	private boolean existenActividadesAbiertas(Proceso proc) {
+		Long cantSubActividadesAbiertas = actividadDAO.cantActividadesAbiertas(proc, false);
+		if (cantSubActividadesAbiertas > 1){
+			//Si se llega desde la ultima actividad, esa debe ser la unica abierta
+			return true;
+		}
+		return false;
 	}
 
 	private void finalizarProceso(Proceso proceso) {
@@ -314,6 +359,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividadDevuelta.setNroActividad(getSiguienteNroActividad(aDevolver));
 
 		aDevolver.setEstado(Definiciones.EstadoActividad.Devuelta);
+		aDevolver.setFechaDevuelta(new Date());
 
 		update(aDevolver);
 		System.out.println("ActividadBC.devolverActividad() Se marcó como devuelta la actividad con id: "+aDevolver.getActividadId());

@@ -102,4 +102,25 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 		return result;
 	}
 
+	/**
+	 * @param proc
+	 * @return
+	 */
+	public Long cantActividadesAbiertas(Proceso proc, boolean subactividad) {
+
+		String query = "select count(*) from Actividad a";
+		String where = " where proceso = :proceso" +
+					" and a.estado in ('NUE', 'PRO')";
+		if (subactividad == false){
+			where +=  " and a.superTarea is null";
+		} else {
+			where +=  " and a.superTarea is not null";
+		}
+		Query q = em
+				.createQuery(query+where);
+		q.setParameter("proceso", proc);
+		System.out.println("ActividadDAO.cantActividadesAbiertas() query "+query+where);
+		return ((Long) q.getSingleResult());
+	}
+
 }

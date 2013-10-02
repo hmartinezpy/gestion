@@ -250,6 +250,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	private Actividad actividadSeleccionada;
 	private CronogramaDetalle sigteCronogramaDetalle;
+	private boolean subActividad;
 
 	public void mostrarObsActividad() {
 
@@ -628,8 +629,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public void elegirActividad() {
 		Actividad actividad = actividadSeleccionada;
 
-		setSigteCronogramaDetalle(cronogramaDetalleBC.getNextCronogramaDetalle(
-				actividadSeleccionada.getCronogramaDetalle(), actividadSeleccionada.getRespuesta()));
+		if (actividadSeleccionada.getCronogramaDetalle() != null){
+			setSigteCronogramaDetalle(cronogramaDetalleBC.getNextCronogramaDetalle(
+					actividadSeleccionada.getCronogramaDetalle(), actividadSeleccionada.getRespuesta()));
+			setSubActividad(false);
+		}else {
+			setSubActividad(true);
+		}
 
 		agregarMensaje("Actividad seleccionada: " + actividad.getNroActividad());
 
@@ -652,6 +658,11 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public List<Estado> getEstadosActividad() {
 
 		return Definiciones.EstadoActividad.getEstadosActividad();
+	}
+
+	public List<Estado> getEstadosSubActividad() {
+
+		return Definiciones.EstadoActividad.getEstadosSubActividad();
 	}
 
 	public List<Estado> getSiNoList() {
@@ -686,18 +697,26 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public void setSigteCronogramaDetalle(CronogramaDetalle sigteCronogramaDetalle) {
 		this.sigteCronogramaDetalle = sigteCronogramaDetalle;
 	}
+	public boolean isSubActividad() {
+		return subActividad;
+	}
+
+	public void setSubActividad(boolean subActividad) {
+		this.subActividad = subActividad;
+	}
+
 	public void resolverActividad() {
 		if (actividadSeleccionada == null) {
 			agregarMensaje("Actividad no seleccionada");
 		} else {
 			try {
 				Actividad actividad = actividadSeleccionada;
+				actividadBC.resolveActividad(actividad,
+						getSigteUsuario());
 				if (actividad.getResponsable() != null) {
 					actividad.setResponsable(usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
 				}
-				actividadBC.resolveActividad(actividad,
-						getSigteUsuario());
 				elegirProceso();
 				agregarMensaje("Ha pasado a la siguiente Actividad");
 			} catch (RuntimeException ex) {

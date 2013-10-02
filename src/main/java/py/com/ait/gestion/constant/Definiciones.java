@@ -74,6 +74,17 @@ public final class Definiciones {
 			
 			return list;
 		}
+		
+		public static List<Estado> getEstadosSubActividad() {
+			
+			List<Estado> list = new ArrayList<Estado>();
+			list.add(new Estado(Nueva, "Nueva"));
+			list.add(new Estado(EnProceso, "En Proceso"));
+			list.add(new Estado(Cancelada, "Cancelada"));
+			list.add(new Estado(Resuelta, "Resuelta"));
+			
+			return list;
+		}
 	}
 	
 	public static class Estado {
