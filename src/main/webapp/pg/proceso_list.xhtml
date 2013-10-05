@@ -293,6 +293,18 @@
 									<f:selectItems value="#{procesoListMB.siNoList}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
 			                    </p:selectOneMenu> 
 
+                                <h:outputText value="fechaCobro " rendered="#{procesoListMB.canControlFactura}"/>
+                                <p:calendar id="cal_fechaCobro" value="#{procesoListMB.actividadSeleccionada.fechaCobro}" pattern="dd/MM/yyyy HH:mm"  rendered="#{procesoListMB.canControlFactura}"/> 
+                                
+                                <h:outputText value="Nro. Factura " rendered="#{procesoListMB.canControlFactura}"/>
+                                <p:inputTextarea rows="1" cols="20" maxlength="20" value="#{procesoListMB.actividadSeleccionada.nroFactura}" rendered="#{procesoListMB.canControlFactura}" /> 
+                                
+                                <h:outputText value="Nro. Cheque " rendered="#{procesoListMB.canControlFactura}"/>
+                                <p:inputTextarea rows="1" cols="20" maxlength="20" value="#{procesoListMB.actividadSeleccionada.chequeNro}" rendered="#{procesoListMB.canControlFactura}" /> 
+                                
+                                <h:outputText value="Bco. Cheque " rendered="#{procesoListMB.canControlFactura}"/>
+                                <p:inputTextarea rows="1" cols="20" maxlength="20" value="#{procesoListMB.actividadSeleccionada.chequeBanco}" rendered="#{procesoListMB.canControlFactura}" /> 
+
 								<p:commandButton value="Guardar" id="editar" actionListener="#{procesoListMB.editarActividad}"
 											oncomplete="dlg2.hide()"  icon="ui-icon-disk" update=":form:messages,:form2:actividades"/>   
 								<p:commandButton value="Siguiente Actividad" id="resolver" onclick="dlgSigteActividad.show()"
@@ -324,6 +336,8 @@
 								<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
 							</p:selectOneMenu>
+							<h:outputText value="Comentario " />
+							<p:inputTextarea rows="3" cols="50" maxlength="250" value="#{procesoListMB.descripcionObsP}" />
 
 							<p:commandButton onclick="dlgSigteActividad.hide(), dlg2.hide()" value="Confirmar" ajax="false"
 								icon="ui-icon-circle-check" actionListener="#{procesoListMB.resolverActividad}">
@@ -437,7 +451,7 @@
                          <h:panelGrid columns="2" cellpadding="5" >
                          
                          		<h:outputText value="Descripcion " />
-                                <p:inputTextarea rows="3" cols="40" value="#{procesoListMB.descripcionObsP}" />   
+                                <p:inputTextarea rows="3" cols="40" maxlength="250" value="#{procesoListMB.descripcionObsP}" />
                           
                          <p:commandButton value="Agregar"  actionListener="#{procesoListMB.registrarObsP}"
                                              oncomplete="dlgObsPN.hide()" icon="ui-icon-disk" update=":form:messages,:formobsP:obsP,panelObsPN"/> 

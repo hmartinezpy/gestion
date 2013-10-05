@@ -136,6 +136,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		System.out
 				.println("ActividadBC.resolveActividad() Marcando actividad como resuelta <<<<<<<");
 		actividad.setEstado(Definiciones.EstadoActividad.Resuelta);
+		actividad.setFechaResuelta(new Date());
 		update(actividad);
 
 	}
@@ -144,7 +145,12 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	public void editar(Actividad actividad) {
 
 		Actividad viejo = this.load(actividad.getActividadId());
-
+		if (Definiciones.EstadoActividad.Cancelada.equals(actividad.getEstado())){
+			actividad.setFechaCancelacion(new Date());
+		}
+		if (Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())){
+			actividad.setFechaResuelta(new Date());
+		}
 		super.update(actividad);
 
 		try {
@@ -257,7 +263,26 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 			logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 		}
+		if (existenFacturasSinCobro(proc)){
+			String mensaje = "No se puede finalizar un proceso con Actividades con Factura y sin fecha de cobro.";
+			System.out.println("ActividadBC.validarFinalizacion() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+		}
 		return true;
+	}
+
+	/**
+	 * @param proc
+	 * @return
+	 */
+	private boolean existenFacturasSinCobro(Proceso proc) {
+		Long cantActividadesSinCobro = actividadDAO.cantActividadesSinCobro(proc);
+		if (cantActividadesSinCobro > 0){
+			//Si se consignó una factura, y no tiene fecha de cobro, emitir mensaje
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -104,6 +104,18 @@ public class Actividad  extends Base implements Serializable {
 	@JoinColumn(name="proceso")
 	private Proceso master;
 	
+	@Column(name="fecha_cobro")
+	private Date fechaCobro;
+	
+	@Column(name="nro_factura")
+	private String nroFactura;
+	
+	@Column(name="cheque_nro")
+	private String chequeNro;
+	
+	@Column(name="cheque_banco")
+	private String chequeBanco;
+	
 	public Actividad() {
 		super();
     }
@@ -372,6 +384,46 @@ public class Actividad  extends Base implements Serializable {
 
 	public void setMaster(Proceso master) {
 		this.master = master;
+	}
+
+
+	public Date getFechaCobro() {
+		return fechaCobro;
+	}
+
+
+	public void setFechaCobro(Date fechaCobro) {
+		this.fechaCobro = fechaCobro;
+	}
+
+
+	public String getNroFactura() {
+		return nroFactura;
+	}
+
+
+	public void setNroFactura(String nroFactura) {
+		this.nroFactura = nroFactura;
+	}
+
+
+	public String getChequeNro() {
+		return chequeNro;
+	}
+
+
+	public void setChequeNro(String chequeNro) {
+		this.chequeNro = chequeNro;
+	}
+
+
+	public String getChequeBanco() {
+		return chequeBanco;
+	}
+
+
+	public void setChequeBanco(String chequeBanco) {
+		this.chequeBanco = chequeBanco;
 	}
 	
 	

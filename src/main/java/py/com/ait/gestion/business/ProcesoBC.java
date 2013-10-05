@@ -323,10 +323,22 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	
 	public boolean canCreateProcess(String currentUser){
 		
-		boolean isAdminUser = usuarioBC.isAdminUser(currentUser); 		
+		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
 		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
 		Permiso permiso = permisoBC.getPermiso("crear procesos");
-		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);		
+		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);
+		return (isAdminUser || tienePermiso);
+	}
+
+	/**
+	 * @param currentUser
+	 * @return
+	 */
+	public boolean canControlFactura(String currentUser) {
+		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
+		Permiso permiso = permisoBC.getPermiso("controlar facturas");
+		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);
 		return (isAdminUser || tienePermiso);
 	}	
 }

@@ -123,4 +123,22 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 		return ((Long) q.getSingleResult());
 	}
 
+	/**
+	 * @param proc
+	 * @param b
+	 * @return
+	 */
+	public Long cantActividadesSinCobro(Proceso proc) {
+
+		String query = "select count(*) from Actividad a";
+		String where = " where proceso = :proceso" +
+					" and a.nroFactura is not null" +
+					" and a.fechaCobro is null";
+		Query q = em
+				.createQuery(query+where);
+		q.setParameter("proceso", proc);
+		System.out.println("ActividadDAO.cantActividadesSinCobro() query "+query+where);
+		return ((Long) q.getSingleResult());
+	}
+
 }

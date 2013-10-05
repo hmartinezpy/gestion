@@ -718,6 +718,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 							.getResponsable().getUsuarioId()));
 				}
 				elegirProceso();
+				registrarObsP();
 				agregarMensaje("Ha pasado a la siguiente Actividad");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
@@ -864,7 +865,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 			obs.setIdEntidad(procesoSelec.getProcesoId());
 
 			observacionBC.registrar(obs);
-			observaciones.add(obs);
+			if (observaciones != null){
+				observaciones.add(obs);
+			}
 			agregarMensaje("Observacion creada");
 			this.setDescripcionObsP("");
 
@@ -1312,6 +1315,14 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 									.getUserPrincipal().getName();
 		
 		return procesoBC.canCreateProcess(currentUser);
+	}
+	
+	public boolean getCanControlFactura() {
+		 
+		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
+									.getUserPrincipal().getName();
+		
+		return procesoBC.canControlFactura(currentUser);
 	}
 	
 	public String getCarpetaFileUpload() {
