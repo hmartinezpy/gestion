@@ -7,6 +7,7 @@ import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
 import py.com.ait.gestion.constant.Definiciones;
+import py.com.ait.gestion.domain.Checklist;
 import py.com.ait.gestion.domain.ChecklistDetalle;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.ChecklistDetalleDAO;
@@ -91,6 +92,13 @@ public class ChecklistDetalleBC extends DelegateCrud<ChecklistDetalle, Long, Che
 		}
 	}
 
+	/**
+	 * @param checklist
+	 * @return
+	 */
+	public List<ChecklistDetalle> findByChecklist(Checklist checklist) {
+		return checklistDetalleDAO.findByChecklist(checklist);
+	}
 
 }
 	

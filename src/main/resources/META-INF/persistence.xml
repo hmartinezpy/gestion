@@ -31,7 +31,7 @@
 		<class>py.com.ait.gestion.domain.Observacion</class>
 		<class>py.com.ait.gestion.domain.DocumentoRol</class>
 		<class>py.com.ait.gestion.domain.Notificacion</class>
-		
+		<class>py.com.ait.gestion.domain.ActividadChecklistDetalle</class>
 
 		
 		<properties>

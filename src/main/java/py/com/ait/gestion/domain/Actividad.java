@@ -99,7 +99,7 @@ public class Actividad  extends Base implements Serializable {
 	
 	@OneToMany(mappedBy="superTarea")
     private List<Actividad> actividadST;
-		
+
 	@ManyToOne(fetch=FetchType.EAGER,optional=true)
 	@JoinColumn(name="proceso")
 	private Proceso master;
@@ -115,6 +115,12 @@ public class Actividad  extends Base implements Serializable {
 	
 	@Column(name="cheque_banco")
 	private String chequeBanco;
+	
+	@OneToMany(fetch=FetchType.EAGER, mappedBy="actividad")
+    private List<ActividadChecklistDetalle> checklistDetalle;
+
+	@Transient
+	private boolean tieneChecklist;
 	
 	public Actividad() {
 		super();
@@ -424,6 +430,32 @@ public class Actividad  extends Base implements Serializable {
 
 	public void setChequeBanco(String chequeBanco) {
 		this.chequeBanco = chequeBanco;
+	}
+
+
+	public List<ActividadChecklistDetalle> getChecklistDetalle() {
+		return checklistDetalle;
+	}
+
+
+	public void setChecklistDetalle(List<ActividadChecklistDetalle> checklistDetalle) {
+		this.checklistDetalle = checklistDetalle;
+	}
+
+
+	public boolean isTieneChecklist() {
+		boolean aRet=false;
+		if (this.checklistDetalle != null){
+			if (this.checklistDetalle.size()>0){
+				aRet=true;
+			}
+		}
+		return aRet;
+	}
+
+
+	public void setTieneChecklist(boolean tieneChecklist) {
+		this.tieneChecklist = tieneChecklist;
 	}
 	
 	

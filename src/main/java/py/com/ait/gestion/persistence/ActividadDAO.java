@@ -132,7 +132,8 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 
 		String query = "select count(*) from Actividad a";
 		String where = " where proceso = :proceso" +
-					" and a.nroFactura is not null" +
+					" and a.nroFactura != ''" +
+					" and a.estado not in ('CAN')" +
 					" and a.fechaCobro is null";
 		Query q = em
 				.createQuery(query+where);

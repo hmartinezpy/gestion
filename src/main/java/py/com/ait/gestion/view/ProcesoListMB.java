@@ -28,6 +28,7 @@ import org.ticpy.tekoporu.stereotype.ViewController;
 import org.ticpy.tekoporu.template.AbstractListPageBean;
 
 import py.com.ait.gestion.business.ActividadBC;
+import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
 import py.com.ait.gestion.business.DocumentoBC;
 import py.com.ait.gestion.business.ObservacionBC;
@@ -39,6 +40,7 @@ import py.com.ait.gestion.constant.AppProperties;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
+import py.com.ait.gestion.domain.ActividadChecklistDetalle;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Documento;
 import py.com.ait.gestion.domain.Observacion;
@@ -70,12 +72,16 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	@Inject
 	private DocumentoBC documentoBC;
 
+	@Inject
+	ActividadChecklistDetalleBC actividadChecklistDetalleBC;
+
 	private List<Proceso> procesos;
 	private Proceso procesoSeleccionado;
 
 	private List<Actividad> actividades;
 	private List<Observacion> observaciones;
 	private List<Documento> documentos;
+	private List<ActividadChecklistDetalle> checklist;
 	
 	private String carpetaFileUpload;
 	private List<String> carpetas;
@@ -144,6 +150,21 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 		String numeroActividad = actividadSeleccionada.getNroActividad();
 		agregarMensaje("Actividad seleccionada: " + numeroActividad);
+	}
+
+	public void mostrarChecklist() {
+
+		this.setChecklist(actividadChecklistDetalleBC.getChecklistByActividad(actividadSeleccionada));
+
+		agregarMensaje("Actividad seleccionada: " + actividadSeleccionada.getNroActividad());
+	}
+
+	public List<ActividadChecklistDetalle> getChecklist() {
+		return checklist;
+	}
+
+	public void setChecklist(List<ActividadChecklistDetalle> checklist) {
+		this.checklist = checklist;
 	}
 
 	public List<Actividad> getActividades() {
@@ -641,6 +662,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	}
 
+	public void elegirChecklistDetalle() {
+		ActividadChecklistDetalle actividadCheklistDetalle = this.checklistDetalle;
+
+		agregarMensaje("Item de Checklist seleccionado: " + actividadCheklistDetalle.getDescripcion());
+
+	}
+
 	public void editarActividad() {
 		if (actividadSeleccionada == null) {
 			agregarMensaje("Actividad no seleccionada");
@@ -650,8 +678,12 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				actividad.setResponsable(usuarioBC.load(actividad
 						.getResponsable().getUsuarioId()));
 			}
-			actividadBC.editar(actividad);
-			agregarMensaje("Actividad editada");
+			try{
+				actividadBC.editar(actividad);
+				agregarMensaje("Actividad editada");
+			} catch(Exception ex){
+				agregarMensajeError(ex.getMessage());
+			}
 		}
 	}
 
@@ -716,6 +748,9 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				if (actividad.getResponsable() != null) {
 					actividad.setResponsable(usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
+				}
+				if (actividad.getChecklistDetalle() != null) {
+					actividad.setTieneChecklist(true);
 				}
 				elegirProceso();
 				registrarObsP();
@@ -821,12 +856,22 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	private Documento documentoSeleccionado;
 
+	private ActividadChecklistDetalle checklistDetalle;
+
 	public Documento getDocumentoSeleccionado() {
 		return documentoSeleccionado;
 	}
 
 	public void setDocumentoSeleccionado(Documento documentoSeleccionado) {
 		this.documentoSeleccionado = documentoSeleccionado;
+	}
+
+	public ActividadChecklistDetalle getChecklistDetalle() {
+		return checklistDetalle;
+	}
+
+	public void setChecklistDetalle(ActividadChecklistDetalle checklistDetalle) {
+		this.checklistDetalle = checklistDetalle;
 	}
 
 	public String getDescripcionObsP() {
@@ -906,6 +951,16 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 		agregarMensaje("Observacion seleccionada: " + obs.getDescripcion());
 
+	}
+
+	public void editarChecklistDetalle() {
+		if (checklistDetalle == null) {
+			agregarMensaje("Item de Checklist no seleccionado");
+		} else {
+			ActividadChecklistDetalle edited = checklistDetalle;
+			actividadChecklistDetalleBC.editar(edited);
+			agregarMensaje("Item de Checklist editado");
+		}
 	}
 
 	public void editarObservacion() {

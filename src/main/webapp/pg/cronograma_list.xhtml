@@ -257,18 +257,21 @@
 			                    <p:selectOneMenu id="selectAlarma" value="#{cronogramaListMB.idAlarma}" >  
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.alarma.descripcion}" itemValue="#{cronogramaListMB.detalleSeleccionado.alarma.tipoAlarmaId}" /> 
 			                        <f:selectItems value="#{cronogramaListMB.alarmas}" var="alarma" itemLabel="#{alarma.descripcion}" itemValue="#{alarma.tipoAlarmaId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 			                    <h:outputText value="Alerta: " /> 
 			                    <p:selectOneMenu id="selectAlerta" value="#{cronogramaListMB.idAlerta}" >  
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.alerta.descripcion}" itemValue="#{cronogramaListMB.detalleSeleccionado.alerta.tipoAlarmaId}" /> 
 			                        <f:selectItems value="#{cronogramaListMB.alertas}" var="alerta" itemLabel="#{alerta.descripcion}" itemValue="#{alerta.tipoAlarmaId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 			                    <h:outputText value="TareaSgte: " /> 
 			                    <p:selectOneMenu id="selectTareaSgte" disabled="#{cronogramaListMB.checkPregunta}" value="#{cronogramaListMB.idTareaSgte}" >  
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.tareaSiguiente.tarea}" itemValue="#{cronogramaListMB.detalleSeleccionado.tareaSiguiente.cronogramaDetalleId}" />  
 			                        <f:selectItems value="#{cronogramaListMB.tareas}" var="tareaSgte" itemLabel="#{tareaSgte.tarea}" itemValue="#{tareaSgte.cronogramaDetalleId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 								<p:selectBooleanCheckbox id="checkPregunta" value="#{cronogramaListMB.checkPregunta}"> 
@@ -281,24 +284,28 @@
 			                    <p:selectOneMenu id="selectPregunta" disabled="#{!cronogramaListMB.checkPregunta}" value="#{cronogramaListMB.idPregunta}" >  
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.pregunta.descripcion}" itemValue="#{cronogramaListMB.detalleSeleccionado.pregunta.preguntaId}" />  
 			                        <f:selectItems value="#{cronogramaListMB.preguntas}" var="pregunta" itemLabel="#{pregunta.descripcion}" itemValue="#{pregunta.preguntaId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 			                    <h:outputText value="TareaSi: " /> 
 			                    <p:selectOneMenu id="selectTareaSi" disabled="#{!cronogramaListMB.checkPregunta}" value="#{cronogramaListMB.idTareaSi}" >  
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.respuestaSi.tarea}" itemValue="#{cronogramaListMB.detalleSeleccionado.respuestaSi.cronogramaDetalleId}" /> 
 			                        <f:selectItems value="#{cronogramaListMB.tareas}" var="tareaSi" itemLabel="#{tareaSi.tarea}" itemValue="#{tareaSi.cronogramaDetalleId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 			                    <h:outputText value="TareaNo: " /> 
 			                    <p:selectOneMenu id="selectTareaNo" disabled="#{!cronogramaListMB.checkPregunta}" value="#{cronogramaListMB.idTareaNo}" >  
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.respuestaNo.tarea}" itemValue="#{cronogramaListMB.detalleSeleccionado.respuestaNo.cronogramaDetalleId}" />
 			                        <f:selectItems value="#{cronogramaListMB.tareas}" var="tareaNo" itemLabel="#{tareaNo.tarea}" itemValue="#{tareaNo.cronogramaDetalleId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 			                    <h:outputText value="Checklist: " /> 
-			                    <p:selectOneMenu id="selectChecklist" value="#{cronogramaListMB.idChecklist}" >  
+			                    <p:selectOneMenu id="selectChecklist" value="#{cronogramaListMB.idChecklist}" >
 			                        <f:selectItem itemLabel="#{cronogramaListMB.detalleSeleccionado.checklist.descripcion}" itemValue="#{cronogramaListMB.detalleSeleccionado.checklist.checklistId}" /> 
 			                        <f:selectItems value="#{cronogramaListMB.checklists}" var="checklist" itemLabel="#{checklist.descripcion}" itemValue="#{checklist.checklistId}" />                                  
+									<f:selectItem itemLabel="---Ninguna---" itemValue="" />
 			                    </p:selectOneMenu>
 			                    
 			                    <br></br>

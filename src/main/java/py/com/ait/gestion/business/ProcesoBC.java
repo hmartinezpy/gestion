@@ -103,7 +103,7 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		//crear primera actividad
 		CronogramaDetalle cd = cronogramaDetalleDAO.getFirstCronogramaDetalleByCronograma(
 									proceso.getCronograma());
-		actividadBC.insertActividadFromCronogramaDetalle(cd, null, proceso);
+		actividadBC.insertActividadFromCronogramaDetalle(cd, null, proceso, proceso.getResponsable());
 		
 		try {
 			audLogDAO.log(null, proceso, usuarioDAO.getUsuarioActual(),

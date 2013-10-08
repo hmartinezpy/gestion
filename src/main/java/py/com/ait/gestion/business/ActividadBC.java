@@ -15,6 +15,9 @@ import org.ticpy.tekoporu.transaction.Transactional;
 
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
+import py.com.ait.gestion.domain.ActividadChecklistDetalle;
+import py.com.ait.gestion.domain.Checklist;
+import py.com.ait.gestion.domain.ChecklistDetalle;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.TipoAlarma;
@@ -54,6 +57,12 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	@Inject
 	private Logger logger;
 
+	@Inject
+	ChecklistDetalleBC checklistDetalleBC;
+	
+	@Inject
+	ActividadChecklistDetalleBC actividadChecklistDetalleBC;
+	
 	public List<Actividad> listar() {
 		return actividadDAO.findAll();
 	}
@@ -123,6 +132,18 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 			logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 
+		} else if (validarChecklistDetalles(actividad) == false) {
+
+			String mensaje = "No puede pasar a la siguiente actividad sin cumplir con todo el checklist.";
+			// messageContext.add(mensaje);
+			System.out.println("ActividadBC.editar() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
+		} else if (existenFacturasSinCobro(actividad.getMaster())){
+			String mensaje = "No puede pasar a la siguiente actividad con Factura y sin fecha de cobro.";
+			System.out.println("ActividadBC.editar() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
 		} else {
 			logger.info("ActividadBC.editar() Resolver la actividad! pregunta: "
 					+ actividad.getPregunta()
@@ -141,6 +162,19 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 	}
 
+	/**
+	 * @return
+	 */
+	private boolean validarChecklistDetalles(Actividad actividad) {
+		if (actividad.isTieneChecklist()){
+			Long cantIncumplido = actividadChecklistDetalleBC.validarCumplimiento(actividad);
+			if (cantIncumplido > 0){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Transactional
 	public void editar(Actividad actividad) {
 
@@ -150,6 +184,15 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		}
 		if (Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())){
 			actividad.setFechaResuelta(new Date());
+		}
+		if (actividad.getSuperTarea()!=null &&
+				actividad.getNroFactura() != null && !"".equals(actividad.getNroFactura()) 
+				&& actividad.getFechaCobro()==null
+				&& Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())){
+			String mensaje = "No puede marcar como resuelta la subactividad con Factura y sin fecha de cobro.";
+			System.out.println("ActividadBC.editar() " + mensaje);
+			logger.error(">>>> " + mensaje);
+			throw new RuntimeException(mensaje);
 		}
 		super.update(actividad);
 
@@ -216,6 +259,28 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setResponsable(responsable);
 
 		insert(actividad);
+		//Checklist
+		if (cd.getChecklist() != null){
+			insertActividadChecklistDetalle(actividad, cd.getChecklist());
+		}
+	}
+
+	/**
+	 * @param actividad
+	 * @param checklist
+	 */
+	private void insertActividadChecklistDetalle(Actividad actividad,
+			Checklist checklist) {
+		List<ChecklistDetalle> detalles = checklistDetalleBC.findByChecklist(checklist);
+		for (ChecklistDetalle cd : detalles){
+			ActividadChecklistDetalle acd = new ActividadChecklistDetalle();
+			acd.setActividad(actividad);
+			acd.setDescripcion(cd.getDescripcion());
+			acd.setFechaHora(new Date());
+			acd.setRespuesta("NO");
+
+			actividadChecklistDetalleBC.insert(acd);
+		}
 	}
 
 	public Long getMaxId() {
@@ -390,6 +455,18 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		System.out.println("ActividadBC.devolverActividad() Se marcó como devuelta la actividad con id: "+aDevolver.getActividadId());
 		insert(actividadDevuelta);
 		System.out.println("ActividadBC.devolverActividad() Se insertó la actividad con id: "+actividadDevuelta.getActividadId());
+
+		//XXX: esto pio anda?!
+		List<ActividadChecklistDetalle> detalles = anterior.getChecklistDetalle();
+		for (ActividadChecklistDetalle detalle: detalles){
+			ActividadChecklistDetalle nuevoDetalle = new ActividadChecklistDetalle();
+			nuevoDetalle.setActividad(actividadDevuelta);
+			nuevoDetalle.setDescripcion(detalle.getDescripcion());
+			nuevoDetalle.setFechaHora(new Date());
+			nuevoDetalle.setRespuesta("NO");
+			actividadChecklistDetalleBC.insert(nuevoDetalle);
+		}
+		System.out.println("ActividadBC.devolverActividad() Se insertaron checklists");
 
 		return actividadDevuelta;
 	}
