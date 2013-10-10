@@ -136,7 +136,7 @@
         
         	<p:dataTable style="width:910px;" var="actividad" value="#{procesoListMB.actividades}"  id="actividades" editable="true" paginator="true" paginatorPosition="bottom" rows="10">				        
 				<f:facet name="header">  
-		            Actividades  #{procesoListMB.procesoSeleccionado.nroProceso}
+		            Actividades - #{procesoListMB.procesoSeleccionado.descripcion} - #{procesoListMB.procesoSeleccionado.cliente.nombre} - #{procesoListMB.procesoSeleccionado.fechaFinFormateada}
 		        </f:facet> 
 		        
                 <p:column headerText="#Actividad" style="font-weight:bold;" >

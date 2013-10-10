@@ -1,6 +1,7 @@
 package py.com.ait.gestion.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +67,10 @@ public class Proceso  extends Base implements Serializable {
 
 	@OneToMany(mappedBy="master",cascade=CascadeType.ALL)
 	private List<Actividad> actividades;
-	
+
+	@Transient
+	private String fechaFinFormateada;
+
 	public Proceso() {
 		super();
     }
@@ -189,6 +193,18 @@ public class Proceso  extends Base implements Serializable {
 
 	public void setLastActividad(String lastActividad) {
 		this.lastActividad = lastActividad;
+	}
+
+	public String getFechaFinFormateada() {
+		String result = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		if (fechaFinPrevista != null)
+			result = sdf.format(fechaFinPrevista);
+		return result;
+	}
+
+	public void setFechaFinFormateada(String fechaFinFormateada) {
+		this.fechaFinFormateada = fechaFinFormateada;
 	}
 
 
