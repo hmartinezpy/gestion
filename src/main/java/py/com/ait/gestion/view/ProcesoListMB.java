@@ -843,6 +843,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 			agregarMensaje("Actividad no seleccionada");
 		} else {
 			try {
+				if (!validarSiPuedeDevolverActividad()){
+					return;
+				}
+
 				Actividad actividad = actividadSeleccionada;
 				if (actividad.getResponsable() != null) {
 					actividad.setResponsable(usuarioBC.load(actividad
@@ -856,6 +860,23 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				agregarMensajeError(ex.getMessage());
 			}
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean validarSiPuedeDevolverActividad() {
+		Actividad actividad = actividadSeleccionada;
+		boolean aret = true;
+		if  (procesoBC.existenSubTareas(actividad)){
+
+			String mensaje = "No puede devolver la actividad si cuenta con subtareas!";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			agregarMensajeError(mensaje);
+			aret = false;
+
+		}
+		return aret;
 	}
 
 	public void crearSubActividad() {

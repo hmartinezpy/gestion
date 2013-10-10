@@ -366,4 +366,18 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return false;
 	}
 
+	/**
+	 * @param actividad
+	 * @return
+	 */
+	public boolean existenSubTareas(Actividad actividad) {
+		List<Actividad> subtareas = actividadBC.getSubtareas(actividad);
+
+		if (subtareas != null && subtareas.size()> 0){
+			return true;
+		}
+
+		return false;
+	}
+
 }
