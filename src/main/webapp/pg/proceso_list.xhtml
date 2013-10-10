@@ -315,7 +315,7 @@
 								<p:commandButton value="Guardar" id="editar" actionListener="#{procesoListMB.editarActividad}"
 											oncomplete="dlg2.hide()"  icon="ui-icon-disk" update=":form:messages,:form2:actividades"/>   
 								<p:commandButton value="Siguiente Actividad" id="resolver" onclick="dlgSigteActividad.show()"
-											icon="ui-icon-play" update=":form:messages,:form2:actividades,:formSigteActividad:selectResponsable" 
+											icon="ui-icon-play" update=":form:messages,:form2:actividades,:formSigteActividad:selectSigteActividadResponsable" 
 											action="#{procesoListMB.nextActividadUsuariosPorRol}" 
 											rendered="#{procesoListMB.sigteCronogramaDetalle != null and !procesoListMB.subActividad}"/>
 								<p:commandButton value="Finalizar Proceso" id="finalizar" onclick="dlgFinalizarActividad.show()"
@@ -339,7 +339,7 @@
 					<p:panel style="width:400px"  >
 						<h:panelGrid columns="2" id="panelSubActividad" cellpadding="5" >
 							<h:outputText value="Responsable " />
-							<p:selectOneMenu id="selectResponsable" value="#{procesoListMB.sigteUsuario}" converter="usuarioConverter"  >
+							<p:selectOneMenu id="selectSigteActividadResponsable" value="#{procesoListMB.sigteUsuario}" converter="usuarioConverter"  >
 								<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
 							</p:selectOneMenu>

@@ -742,14 +742,14 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		if (actividadSeleccionada == null) {
 			agregarMensaje("Actividad no seleccionada");
 		} else {
+			Actividad actividad = actividadSeleccionada;
+			if (!validarSiPuedeResolverActividad()){
+				return;
+			}
+
 			try {
-				Actividad actividad = actividadSeleccionada;
 				actividadBC.resolveActividad(actividad,
 						getSigteUsuario());
-				if (actividad.getResponsable() != null) {
-					actividad.setResponsable(usuarioBC.load(actividad
-							.getResponsable().getUsuarioId()));
-				}
 				if (actividad.getChecklistDetalle() != null) {
 					actividad.setTieneChecklist(true);
 				}
@@ -760,7 +760,61 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				ex.printStackTrace();
 				agregarMensajeError(ex.getMessage());
 			}
+			if (actividad.getResponsable() != null) {
+				actividad.setResponsable(usuarioBC.load(actividad
+						.getResponsable().getUsuarioId()));
+			}
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean validarSiPuedeResolverActividad() {
+		Actividad actividad = actividadSeleccionada;
+		boolean aret = true;
+		if (actividad.getPregunta() != null
+				&& !actividad.getPregunta().equals("")
+				&& (actividad.getRespuesta() == null || actividad
+						.getRespuesta().equals(""))) {
+
+			String mensaje = "No se puede resolver una actividad con pregunta y sin respuesta.";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			agregarMensajeError(mensaje);
+			aret = false;
+
+		} else if (actividad.getRespuesta() != null
+				&& !actividad.getRespuesta().equals("SI")
+				&& !actividad.getRespuesta().equals("NO")) {
+
+			String mensaje = "La respuesta debe ser SI o NO.";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			agregarMensajeError(mensaje);
+			aret = false;
+
+		} else if (actividadBC.validarChecklistDetalles(actividad) == false) {
+
+			String mensaje = "No puede pasar a la siguiente actividad sin cumplir con todo el checklist.";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			agregarMensajeError(mensaje);
+			aret = false;
+
+		} else if (actividadBC.existenFacturasSinCobro(actividad.getMaster())){
+
+			String mensaje = "No puede pasar a la siguiente actividad con Factura y sin fecha de cobro.";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			agregarMensajeError(mensaje);
+			aret = false;
+
+		} else if  (procesoBC.existenSubTareasAbiertas(actividad)){
+
+			String mensaje = "No puede pasar a la siguiente actividad con subtareas no administrativas abiertas!";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			agregarMensajeError(mensaje);
+			aret = false;
+
+		}
+		return aret;
 	}
 
 	public void finalizarProceso() {

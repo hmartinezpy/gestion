@@ -1,5 +1,7 @@
 package py.com.ait.gestion.persistence;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -140,6 +142,18 @@ public class ActividadDAO extends JPACrud<Actividad, Long> {
 		q.setParameter("proceso", proc);
 		System.out.println("ActividadDAO.cantActividadesSinCobro() query "+query+where);
 		return ((Long) q.getSingleResult());
+	}
+
+	/**
+	 * @param actividad
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Actividad> getSubtareas(Actividad actividad) {
+		Query q = em
+				.createQuery("select a from Actividad a where a.superTarea = :a");
+		q.setParameter("a", actividad);
+		return (List<Actividad>) q.getResultList();
 	}
 
 }

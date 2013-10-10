@@ -331,14 +331,39 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	}
 
 	/**
-	 * @param currentUser
+	 * @param user
 	 * @return
 	 */
-	public boolean canControlFactura(String currentUser) {
-		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
-		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
+	public boolean canControlFactura(String user) {
+		boolean isAdminUser = usuarioBC.isAdminUser(user);
+		Usuario usuario = usuarioBC.findSpecificUser(user);
 		Permiso permiso = permisoBC.getPermiso("controlar facturas");
 		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);
 		return (isAdminUser || tienePermiso);
 	}	
+
+	/**
+	 * @param actividad
+	 * @return
+	 */
+	public boolean existenSubTareasAbiertas(Actividad actividad) {
+		// Validar que no posea subtareas abiertas, asignadas a usuarios sin el permiso "controlar facturas"
+
+		List<Actividad> subtareas = actividadBC.getSubtareas(actividad);
+		if (subtareas != null && subtareas.size()> 0){
+			for (Actividad subtarea:subtareas){
+				boolean esAdministrativa = canControlFactura(subtarea.getResponsable().getUsuario());
+
+				if (!esAdministrativa){
+					if (Definiciones.EstadoActividad.Nueva.equals(subtarea.getEstado())
+							|| Definiciones.EstadoActividad.EnProceso.equals(subtarea.getEstado())){
+						// Esta es una subtarea "no administrativa" abierta!
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 }

@@ -169,7 +169,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	/**
 	 * @return
 	 */
-	private boolean validarChecklistDetalles(Actividad actividad) {
+	public boolean validarChecklistDetalles(Actividad actividad) {
 		if (actividad.isTieneChecklist()){
 			Long cantIncumplido = actividadChecklistDetalleBC.validarCumplimiento(actividad);
 			if (cantIncumplido > 0){
@@ -368,7 +368,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @param proc
 	 * @return
 	 */
-	private boolean existenFacturasSinCobro(Proceso proc) {
+	public boolean existenFacturasSinCobro(Proceso proc) {
 		Long cantActividadesSinCobro = actividadDAO.cantActividadesSinCobro(proc);
 		if (cantActividadesSinCobro > 0){
 			//Si se consignó una factura, y no tiene fecha de cobro, emitir mensaje
@@ -523,5 +523,13 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 */
 	public String getLastActividad(Proceso proc) {
 		return actividadDAO.getLastActividad(proc);
+	}
+
+	/**
+	 * @param actividad
+	 * @return
+	 */
+	public List<Actividad> getSubtareas(Actividad actividad) {
+		return actividadDAO.getSubtareas(actividad);
 	}
 }
