@@ -102,14 +102,14 @@
                     </p:commandLink>
                 </p:column>
                 <p:column style="width:50px;" headerText="" >
-                    <p:commandLink update=":form:messages,:formobsP:obsP" onclick="dlgObsP.show()" action="#{procesoListMB.mostrarObsProceso}" >
+                    <p:commandLink update=":form:messages,:formobsP:obsP,:form2:actividades" onclick="dlgObsP.show()" action="#{procesoListMB.mostrarObsProceso}" >
                         <span class="ui-icon ui-icon-comment" title="Observaciones">  </span> 
                         <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
                     </p:commandLink>
                 </p:column> 
                 <p:column style="width:50px;" headerText="" >
 
-                    <p:commandLink update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
+                    <p:commandLink update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta,:form2:actividades" onclick="dlgFileP.show()" action="#{procesoListMB.mostrarFileProceso}" >
                         <span class="ui-icon ui-icon-folder-open" title="Documentos">  </span> 
                         <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
                     </p:commandLink>

@@ -123,24 +123,25 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void mostrarObsProceso() {
+		
 
 		this.setObservacion(observacionBC.getObsProceso(procesoSeleccionado
 				.getProcesoId()));
 
-		String numeroProceso = procesoSeleccionado.getNroProceso();
-		agregarMensaje("Proceso seleccionado: " + numeroProceso);
+		elegirProceso();
 	}
 
 	public void mostrarFileProceso() {
 
+		elegirProceso();
+		
 		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
 				.getUserPrincipal().getName();
 		this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
 				.getProcesoId(), currentUser));
 
 		updateCarpetas();
-		String numeroProceso = procesoSeleccionado.getNroProceso();
-		agregarMensaje("Proceso seleccionado: " + numeroProceso);
+		elegirProceso();
 	}
 
 	public void mostrarFileActividad() {
