@@ -68,7 +68,9 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		//si no es admin, agregar filtro por el usuario actual
 		if(!isAdminUser && procesoSeleccionado.getResponsable().getUsuarioId() != currentUserId) {
 			
-			filtro += " and a.responsable.usuarioId = " + currentUserId;
+			// De acuerdo a lo comentado por ggil en reunión de 09/10/2013, esto no aplica
+//			filtro += " and a.responsable.usuarioId = " + currentUserId;
+
 		}
 		Query q = em.createQuery("select a from Actividad a " + filtro + " order by a.fechaCreacion");
 		q.setParameter("proceso", procesoSeleccionado.getProcesoId());
