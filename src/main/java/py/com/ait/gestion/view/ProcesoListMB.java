@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -987,7 +988,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 			observacionBC.registrar(obs);
 			if (observaciones != null){
-				observaciones.add(obs);
+				List<Observacion> nuevasObservaciones = new ArrayList<Observacion>();
+				nuevasObservaciones.add(obs);
+				nuevasObservaciones.addAll(observaciones);
+				observaciones = nuevasObservaciones;
 			}
 			agregarMensaje("Observacion creada");
 			this.setDescripcionObsP("");
