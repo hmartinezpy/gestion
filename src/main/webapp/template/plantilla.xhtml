@@ -69,22 +69,21 @@
                             <p:menubar width="100%" style="padding-left: 20px;">                                  
                                 <p:menuitem value="INICIO" style="font-weight:bold;" icon="ui-icon-home" url="/pg/home.jsf" />                                      
                                 
-                                <p:submenu label="PLANTILLAS"  icon="ui-icon-calculator">
+                                <p:submenu label="PLANTILLAS"  icon="ui-icon-calculator" rendered="#{rolListMB.verMenuAdmin}">
                                 	<p:menuitem value="Cronogramas" icon="ui-icon-calendar" style="FONT-SIZE: 12px;" url="/pg/cronograma_list.jsf" />
                                 </p:submenu>
                                 <p:submenu label="WORKFLOW"  icon="ui-icon-calculator">
                                 	<p:menuitem value="Procesos" icon="ui-icon-shuffle" style="FONT-SIZE: 12px;" url="/pg/proceso_list.jsf" />                                	
                                 </p:submenu>
-                                <p:submenu label="CONFIGURACION" icon="ui-icon-gear">                                                                	
+                                <p:submenu label="CONFIGURACION" icon="ui-icon-gear" rendered="#{rolListMB.verMenuAdmin}">
 	                                <p:menuitem value="TipoAlarma" icon="ui-icon-alert" style="FONT-SIZE: 12px;" url="/pg/tipo_alarma_list.jsf" />
 	                                <p:menuitem value="Clientes" icon="ui-icon-person" style="FONT-SIZE: 12px;" url="/pg/cliente_list.jsf" />
 									<p:menuitem value="Preguntas" icon="ui-icon-pencil" style="FONT-SIZE: 12px;" url="/pg/pregunta_list.jsf" />
 									<p:menuitem value="Checklist" icon="ui-icon-check" style="FONT-SIZE: 12px;" url="/pg/checklist_list.jsf" />
-										                                
                                 </p:submenu>
-								<p:submenu label="INFORMES" icon="ui-icon-note">
+								<p:submenu label="INFORMES" icon="ui-icon-note" rendered="#{rolListMB.verMenuAdmin}">
 									<p:menuitem value="Informe de Auditoría" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;"/>
-									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf" />
+									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf"  rendered="#{rolListMB.verMenuArchivos}"/>
 								</p:submenu>
 								<p:submenu label="ADMINISTRACION" rendered="#{rolListMB.verMenuAdmin}" icon="ui-icon-locked">
 									<p:submenu label = "Auditoria" icon="ui-icon-note" style="FONT-SIZE: 12px;">
