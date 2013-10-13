@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import javax.inject.Inject;
 
@@ -20,7 +24,7 @@ import py.com.ait.gestion.domain.Notificacion;
 import py.com.ait.gestion.persistence.NotificacionDAO;
 import py.com.ait.gestion.util.MailUtil;
 
-@Scheduler(expression = "00:00:00 EVERY_HOUR 3")
+@Scheduler(expression = "00:00:00 EVERY_MINUTE 5")
 @BusinessController
 public class NotificacionAgentBC extends DelegateCrud<Notificacion, Long, NotificacionDAO> implements ISchedulerAction {
 
@@ -70,24 +74,43 @@ public class NotificacionAgentBC extends DelegateCrud<Notificacion, Long, Notifi
 		list.addAll(notificacionDAO.getAlertasReprogramacionProcesos());
 		list.addAll(notificacionDAO.getAlertasActividades());
 		list.addAll(notificacionDAO.getAlarmasActividades());
-		
+				
 		//insertar notificaciones nuevas y enviar mails
-		for(Notificacion notificacion : list) {
+		boolean inserted = false;
+		ExecutorService executorService = Executors.newFixedThreadPool(2);
+		for(final Notificacion notificacion : list) {
 			
-			notificacionDAO.insert(notificacion);
+			logger.debug(">>>>>Notificacion Entidad: " + notificacion.getEntidad());
+			logger.debug(">>>>>Notificacion EntidadID: " + notificacion.getEntidadId());
+			logger.debug(">>>>>Notificacion Usuario: " + notificacion.getUsuario().getUsuario());
+			logger.debug(">>>>>Notificacion Tipo: " + notificacion.getTipo());
+			inserted = notificacionDAO.insertar(notificacion);
 			
-			if(notificacion.getUsuario().getEmail() != null
-				&& !notificacion.getUsuario().getEmail().trim().equals("")) {
-			
-				try {
-					mailUtil.sendMail(notificacion.getUsuario().getEmail(), 
-							notificacion.getTitulo(), notificacion.getDescripcion());
-				} catch(Exception ex) {
+			if(inserted) {
+				if(notificacion.getUsuario().getEmail() != null
+					&& !notificacion.getUsuario().getEmail().trim().equals("")) {
+				
+					notificacion.setDescripcion(notificacion.getDescripcion().replaceAll("<br>", "\n"));
+					//asynch send mail
+					FutureTask<Integer> futureTask =
+				       new FutureTask<Integer>(new Callable<Integer>() {
+				         public Integer call() {
+				        	try {
+				        		 mailUtil.sendMail(notificacion.getUsuario().getEmail(), 
+										notificacion.getTitulo(), notificacion.getDescripcion());
+				        		 
+				        	} catch(Exception ex) {
+									
+								logger.error(">>>>>Error al enviar mail de notificacion, Mail: " + 
+												notificacion.getUsuario().getEmail() + ", NotificacionID: " + 
+												notificacion.getNotificacionId());
+								logger.error(">>>>>Exception Message: " + ex.getMessage());
+							}
+				        	return 0;
+				        	 
+				       }});
+					executorService.execute(futureTask);
 					
-					logger.error(">>>>>Error al enviar mail de notificacion, Mail: " + 
-									notificacion.getUsuario().getEmail() + ", NotificacionID: " + 
-									notificacion.getNotificacionId());
-					logger.error(">>>>>Exception Message: " + ex.getMessage());
 				}
 			}
 		}

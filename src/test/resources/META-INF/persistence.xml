@@ -29,6 +29,7 @@
 		<class>py.com.ait.gestion.domain.Documento</class>
 		<class>py.com.ait.gestion.domain.DocumentoRol</class>
 		<class>py.com.ait.gestion.domain.Notificacion</class>
+		<class>py.com.ait.gestion.domain.ActividadChecklistDetalle</class>
 
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />

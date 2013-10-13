@@ -1029,6 +1029,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				
 				String currentUser = FacesContext.getCurrentInstance().getExternalContext()
 						.getUserPrincipal().getName();
+				Usuario usuarioActual = usuarioBC.findSpecificUser(currentUser);
 				
 				//get folder name
 				String folder = this.carpetaFileUpload;
@@ -1063,8 +1064,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
 						+ nroProceso + '/' + folder;
 				
-				Documento documentoOrig = documentoBC.getDocumentoByFileName(nombreArchivo, filePath, extension);
-				if(documentoOrig != null && documentoOrig.getBloqueado().equals("Si")
+				Documento documentoOrig = documentoBC.getDocumentoByFileName(nombreArchivo, filePath, extension);				
+				boolean puedoVer = documentoBC.puedoVer(documentoOrig, usuarioActual);				
+				if(!puedoVer){
+					
+					//error, el archivo ya existe y el usuario actual no posee privilegios para verlo
+					agregarMensajeError("Error, no posee privilegios sobre el archivo: " + fileName + " !!");
+				} else if(documentoOrig != null && documentoOrig.getBloqueado().equals("Si")
 					&& !documentoOrig.getUsuarioBloqueo().getUsuario().equals(currentUser)) {
 					
 					//error, el archivoya existe y está bloqueado por otro usuario
@@ -1133,11 +1139,8 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 						doc.setFilepath(filePath);
 						doc.setEntidad("Proceso");
 						doc.setIdEntidad(procesoSelec.getProcesoId());
-						doc.setFechaUltimoUpdate(new Date());
-						
-						String nombreUsu = usuarioBC.getUsuarioActual();
-						Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
-						doc.setUsuarioCreacion(actual);
+						doc.setFechaUltimoUpdate(new Date());						
+						doc.setUsuarioCreacion(usuarioActual);
 		
 						documentoBC.registrar(doc);
 						documentos.add(doc);

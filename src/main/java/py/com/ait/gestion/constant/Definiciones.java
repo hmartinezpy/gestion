@@ -132,4 +132,15 @@ public final class Definiciones {
 		public static final String Inactivo="INA";
 		public static final String Notificado="NOT";
 	}
+	
+	public static class TipoNotificacion
+	{
+		public static final String AlertaInicio="ALE_ACT_INICIO";
+		public static final String AlertaReprogramacionProceso="ALE_PRO_REPROGRAMACION";
+		public static final String AlertaActividad="ALE_ACT";
+		public static final String AlarmaActividad="ALA_ACT";
+		public static final String AlertaActividadFinalizada="ALE_ACT_FINALIZADA";
+		public static final String AlertaSubActividadFinalizada="ALE_ACT_SUB_FINALIZADA";
+		public static final String AlertaSubActividadNueva="ALE_ACT_SUB_NUEVA";
+	}
 }

@@ -24,6 +24,7 @@ import py.com.ait.gestion.domain.TipoAlarma;
 import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.ActividadDAO;
 import py.com.ait.gestion.persistence.AudLogDAO;
+import py.com.ait.gestion.persistence.NotificacionDAO;
 import py.com.ait.gestion.persistence.ProcesoDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
 import py.com.ait.gestion.persistence.UsuarioDAO;
@@ -62,6 +63,9 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	
 	@Inject
 	ActividadChecklistDetalleBC actividadChecklistDetalleBC;
+	
+	@Inject
+	private NotificacionDAO notificacionDAO;
 	
 	public List<Actividad> listar() {
 		return actividadDAO.findAll();
@@ -196,6 +200,19 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		}
 		super.update(actividad);
 
+		if (actividad.getSuperTarea()!=null &&
+				Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())) {
+			
+			String titulo = "SubActividad Finalizada " + actividad.getActividadId()
+					+ "-" + actividad.getMaster().getNroProceso();
+			String descripcion = "SUBACTIVIDAD FINALIZADA!!<br>"
+				+ "SUBACTIVIDAD: " + actividad.getDescripcion() + "<br>"
+				+ "PROCESO: " + actividad.getMaster().getDescripcion() + "<br>"
+				+ "RESPONSABLE: " + actividad.getResponsable().getUsuario();
+			notificacionDAO.insertarNotificacion(titulo, descripcion, actividad, 
+					actividad.getSuperTarea().getResponsable(), Definiciones.TipoNotificacion.AlertaSubActividadFinalizada);
+		}
+		
 		try {
 			audLogDAO.log(viejo, actividad, usuarioDAO.getUsuarioActual(),
 					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
@@ -259,6 +276,16 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setResponsable(responsable);
 
 		insert(actividad);
+		String titulo = "Nueva Actividad " + actividad.getActividadId()
+				+ "-" + actividad.getMaster().getNroProceso();
+		String descripcion = "NUEVA ACTIVIDAD!!<br>"
+			+ "ACTIVIDAD: " + actividad.getDescripcion() + "<br>"
+			+ "PROCESO: " + actividad.getMaster().getDescripcion() + "<br>"
+			+ "RESPONSABLE: " + actividad.getResponsable().getUsuario() + "<br>"
+			+ "FECHA INICIO: " + actividad.getFechaInicioPrevisto();
+		notificacionDAO.insertarNotificacion(titulo, descripcion, actividad,
+				actividad.getResponsable(), Definiciones.TipoNotificacion.AlertaActividadFinalizada);
+		
 		//Checklist
 		if (cd.getChecklist() != null){
 			insertActividadChecklistDetalle(actividad, cd.getChecklist());
@@ -398,6 +425,14 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		result.setSuperTarea(padre);
 
 		insert(result);
+		String titulo = "Nueva SubActividad " + result.getActividadId()
+				+ "-" + result.getMaster().getNroProceso();
+		String descripcionNotif = "NUEVA SUBACTIVIDAD!!<br>"
+			+ "SUBACTIVIDAD: " + result.getDescripcion() + "<br>"
+			+ "PROCESO: " + result.getMaster().getDescripcion() + "<br>"
+			+ "RESPONSABLE: " + result.getResponsable().getUsuario();
+		notificacionDAO.insertarNotificacion(titulo, descripcionNotif, result, 
+				result.getResponsable(), Definiciones.TipoNotificacion.AlertaSubActividadNueva);
 
 		return result;
 	}
@@ -445,6 +480,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		// Es una nueva actividad, cuyo estado irá directamente a "En proceso"
 		actividadDevuelta.setEstado(Definiciones.EstadoActividad.EnProceso);
 		actividadDevuelta.setFechaCreacion(new Date());
+		actividadDevuelta.setFechaInicioPrevisto(new Date());
 		actividadDevuelta.setMaster(anterior.getMaster());
 		actividadDevuelta.setNroActividad(getSiguienteNroActividad(aDevolver));
 
@@ -454,6 +490,16 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		update(aDevolver);
 		System.out.println("ActividadBC.devolverActividad() Se marcó como devuelta la actividad con id: "+aDevolver.getActividadId());
 		insert(actividadDevuelta);
+		String titulo = "Actividad Devuelta " + actividadDevuelta.getActividadId()
+				+ "-" + actividadDevuelta.getMaster().getNroProceso();
+		String descripcion = "ACTIVIDAD DEVUELTA!!<br>"
+			+ "ACTIVIDAD: " + actividadDevuelta.getDescripcion() + "<br>"
+			+ "PROCESO: " + actividadDevuelta.getMaster().getDescripcion() + "<br>"
+			+ "RESPONSABLE: " + actividadDevuelta.getResponsable().getUsuario() + "<br>"
+			+ "FECHA INICIO: " + actividadDevuelta.getFechaInicioPrevisto();
+		notificacionDAO.insertarNotificacion(titulo, descripcion, actividadDevuelta, 
+				actividadDevuelta.getResponsable(), Definiciones.TipoNotificacion.AlertaActividadFinalizada);
+		
 		System.out.println("ActividadBC.devolverActividad() Se insertó la actividad con id: "+actividadDevuelta.getActividadId());
 
 		//XXX: esto pio anda?!

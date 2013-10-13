@@ -55,6 +55,9 @@ public class Notificacion  extends Base implements Serializable {
 	@Column(name="descripcion")
 	private String descripcion;
 	
+	@Column(name="tipo")
+	private String tipo;
+	
 	public Notificacion() {
 		super();
     }
@@ -162,5 +165,13 @@ public class Notificacion  extends Base implements Serializable {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}	
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
 }

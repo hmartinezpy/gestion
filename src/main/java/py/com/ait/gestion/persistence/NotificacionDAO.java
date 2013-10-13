@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -15,13 +19,16 @@ import org.hibernate.criterion.Order;
 import org.slf4j.Logger;
 import org.ticpy.tekoporu.stereotype.PersistenceController;
 import org.ticpy.tekoporu.template.JPACrud;
+import org.ticpy.tekoporu.transaction.Transactional;
 
+import py.com.ait.gestion.constant.AppProperties;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.Notificacion;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Rol;
 import py.com.ait.gestion.domain.Usuario;
+import py.com.ait.gestion.util.MailUtil;
 
 @PersistenceController
 public class NotificacionDAO extends JPACrud<Notificacion, Long> {
@@ -34,6 +41,12 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 	@Inject
 	private EntityManager em;
 
+	@Inject
+	private AppProperties appProperties;
+	
+	@Inject
+	private MailUtil mailUtil;
+	
 	@SuppressWarnings("unchecked")
 	public List<Rol> findPage(int pageSize, int first, String sortField,
 			boolean sortOrderAsc) {
@@ -74,7 +87,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 		Query q = em
 				.createQuery("select a from Actividad a, CronogramaDetalle cd "
 						+ "where a.cronogramaDetalle.cronogramaDetalleId = cd.cronogramaDetalleId "
-						+ "and a.estado = 'NUE' and cd.alertaInicio = 'S'");
+						+ "and a.estado = 'NUE' and cd.alertaInicio = 'Si'");
 		List<Actividad> listAct = (List<Actividad>) q.getResultList();
 		Calendar fechaInicioCal = Calendar.getInstance();
 		Date fechaInicio;
@@ -105,7 +118,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 						+ "PROCESO: " + a.getMaster().getDescripcion() + "<br>"
 						+ "RESPONSABLE: " + a.getResponsable().getUsuario() + "<br>"
 						+ "FECHA INICIO: " + fechaInicioCal.getTime().toString();
-				list.add(crearNotificacion(titulo, descripcion, a, a.getResponsable()));
+				list.add(crearNotificacion(titulo, descripcion, a, a.getResponsable(), Definiciones.TipoNotificacion.AlertaInicio));
 
 			}// end if fechaActual is after fechaInicio
 
@@ -133,7 +146,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 					+ "PROCESO: " + p.getDescripcion() + "<br>"
 					+ "RESPONSABLE: " + p.getResponsable().getUsuario() + "<br>"
 					+ "FECHA FIN REPROGRAMADA: " + p.getFechaFinReprogramada().toString();
-			list.add(crearNotificacion(titulo, descripcion, p, p.getResponsable()));
+			list.add(crearNotificacion(titulo, descripcion, p, p.getResponsable(), Definiciones.TipoNotificacion.AlertaReprogramacionProceso));
 
 		}// end for proceso
 		return list;
@@ -173,7 +186,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 						+ "PROCESO: " + a.getMaster().getDescripcion() + "<br>"
 						+ "RESPONSABLE: " + a.getResponsable().getUsuario() + "<br>"
 						+ "FECHA FIN: " + fechaFin.toString();
-				list.add(crearNotificacion(titulo, descripcion, a, a.getResponsable()));
+				list.add(crearNotificacion(titulo, descripcion, a, a.getResponsable(), Definiciones.TipoNotificacion.AlertaActividad));
 
 				// alertar a responsable1 y responsable2 segun cronograma detalle
 				if (a.getAlerta().getResponsable1() != null
@@ -181,7 +194,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 					// alertar responsable 1
 					list.add(crearNotificacion(titulo, descripcion, a, 
-								a.getAlerta().getResponsable1()));
+								a.getAlerta().getResponsable1(), Definiciones.TipoNotificacion.AlertaActividad));
 				}
 
 				if (a.getAlerta().getResponsable2() != null
@@ -189,7 +202,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 					// alertar responsable 2
 					list.add(crearNotificacion(titulo, descripcion, a, 
-								a.getAlerta().getResponsable2()));
+								a.getAlerta().getResponsable2(), Definiciones.TipoNotificacion.AlertaActividad));
 				}
 			}// end if fechaActual is after fechaFin
 
@@ -231,7 +244,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 						+ "PROCESO: " + a.getMaster().getDescripcion() + "<br>"
 						+ "RESPONSABLE: " + a.getResponsable().getUsuario() + "<br>"
 						+ "FECHA FIN: " + fechaFin.toString();
-				list.add(crearNotificacion(titulo, descripcion, a, a.getResponsable()));
+				list.add(crearNotificacion(titulo, descripcion, a, a.getResponsable(), Definiciones.TipoNotificacion.AlarmaActividad));
 
 				// alertar a responsable1 y responsable2 segun cronograma detalle
 				if (a.getAlarma().getResponsable1() != null
@@ -239,7 +252,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 					// alertar responsable 1					
 					list.add(crearNotificacion(titulo, descripcion, a, 
-								a.getAlarma().getResponsable1()));
+								a.getAlarma().getResponsable1(), Definiciones.TipoNotificacion.AlarmaActividad));
 				}
 
 				if (a.getAlarma().getResponsable2() != null
@@ -247,7 +260,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 					// alertar responsable 2
 					list.add(crearNotificacion(titulo, descripcion, a, 
-								a.getAlarma().getResponsable2()));
+								a.getAlarma().getResponsable2(), Definiciones.TipoNotificacion.AlarmaActividad));
 				}
 			}// end if fechaActual is after fechaFin
 
@@ -255,8 +268,18 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 		return list;
 	}
 	
-	private Notificacion crearNotificacion(String titulo, String descripcion,
-											Object entidad, Usuario usuarioNotificacion) {
+	/*
+	 * 	Crea un objeto Notificación en memoria y retorna el mismo
+	 * 
+	 * 	Parámetros:
+	 *	Titulo, Descripcion: corresponden al subject y body de la notificación
+	 *	Entidad: es un objeto Actividad o Proceso que genera la notificación
+	 *	UsuarioNotificación: corresponde al Usuario que será notificado (por sistema y mail)
+	 *	Tipo: toma valores de Definiciones.TipoNotificacion 
+	 *	(agregar en las definiciones en caso que aún no esté) 
+	 */
+	public Notificacion crearNotificacion(String titulo, String descripcion,
+											Object entidad, Usuario usuarioNotificacion, String tipo) {
 		
 		String entidadDesc = "";
 		Long entidadId = null;
@@ -284,6 +307,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 		notificacion.setMostrado("N");
 		notificacion.setFechaMostrado(null);
 		notificacion.setFechaCreacion(new Date());
+		notificacion.setTipo(tipo);
 		
 		return notificacion;
 	}
@@ -341,5 +365,91 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 		logger.debug(">>>>>Usuario de notificacion: " + usuarioNotificaciones);
 		logger.debug(">>>>>Fecha de corte: " + fechaCorte.getTime().toString());
 		return (List<Notificacion>) q.getResultList();
+	}
+	
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public boolean insertar(Notificacion notificacion) {
+		
+		//tomar fecha actual para aplicar substracción de acuerdo al intervalo de notificacion
+		Calendar fechaIntervalo = Calendar.getInstance();
+		fechaIntervalo.add(Calendar.MINUTE, appProperties.getNotificacionIntervaloMin() * (-1));
+		logger.debug(">>>>>FechaIntervalo: " + fechaIntervalo.getTime());
+		
+		//chequear si ya no existe una notificacion igual dentro del intervalo de notificación
+		Query q = em.createQuery("select n from Notificacion n where n.estado <> 'INA'" +
+							 " and n.usuario.usuario = :usuario " +
+							 " and n.entidad = :entidad " +
+							 " and n.entidadId = :entidadId " +
+							 " and n.tipo = :tipo " +
+							 " and n.fechaCreacion >= :fechaIntervalo");
+		
+		q.setParameter("usuario", notificacion.getUsuario().getUsuario());
+		logger.debug(">>>>>Usuario: " + notificacion.getUsuario().getUsuario());
+		q.setParameter("entidad", notificacion.getEntidad());
+		logger.debug(">>>>>Entidad: " + notificacion.getEntidad());
+		q.setParameter("entidadId", notificacion.getEntidadId());
+		logger.debug(">>>>>EntidadId: " + notificacion.getEntidadId());
+		q.setParameter("tipo", notificacion.getTipo());
+		logger.debug(">>>>>Tipo: " + notificacion.getTipo());
+		q.setParameter("fechaIntervalo", fechaIntervalo.getTime());
+		logger.debug(">>>>>FechaIntervalo: " + fechaIntervalo.getTime());
+		List<Notificacion> result = (List<Notificacion>)q.getResultList();		
+		if(result != null && result.size() > 0) {
+			
+			logger.debug(">>>>>Notificacion ya existe");
+			return false;
+		}
+		
+		logger.debug(">>>>>Notificacion para insertar");
+		insert(notificacion);
+		return true;
+	}
+	
+	/*
+	 * 	Inserta una Notificacion y envia la notificacion por mail
+	 * 
+	 * 	Parámetros:
+	 *	Titulo, Descripcion: corresponden al subject y body de la notificación
+	 *	Entidad: es un objeto Actividad o Proceso que genera la notificación
+	 *	UsuarioNotificación: corresponde al Usuario que será notificado (por sistema y mail)
+	 *	Tipo: toma valores de Definiciones.TipoNotificacion 
+	 *	(agregar en las definiciones en caso que aún no esté) 
+	 */
+	@Transactional
+	public void insertarNotificacion(String titulo, String descripcion,
+			Object entidad, Usuario usuarioNotificacion, String tipo) {
+		
+		final Notificacion notificacion = crearNotificacion(titulo, descripcion, entidad, 
+														usuarioNotificacion, tipo);
+		boolean inserted = insertar(notificacion);		
+		if(inserted) {
+			ExecutorService executorService = Executors.newFixedThreadPool(2);
+			if(notificacion.getUsuario().getEmail() != null
+				&& !notificacion.getUsuario().getEmail().trim().equals("")) {
+			
+				notificacion.setDescripcion(notificacion.getDescripcion().replaceAll("<br>", "\n"));
+				//asynch send mail
+				FutureTask<Integer> futureTask =
+			       new FutureTask<Integer>(new Callable<Integer>() {
+			         public Integer call() {
+			        	try {
+			        		 mailUtil.sendMail(notificacion.getUsuario().getEmail(), 
+									notificacion.getTitulo(), notificacion.getDescripcion());
+			        		 
+			        	} catch(Exception ex) {
+								
+							logger.error(">>>>>Error al enviar mail de notificacion, Mail: " + 
+											notificacion.getUsuario().getEmail() + ", NotificacionID: " + 
+											notificacion.getNotificacionId());
+							logger.error(">>>>>Exception Message: " + ex.getMessage());
+						}
+			        	return 0;
+			        	 
+			       }});
+				executorService.execute(futureTask);
+				
+			}
+		}
 	}
 }

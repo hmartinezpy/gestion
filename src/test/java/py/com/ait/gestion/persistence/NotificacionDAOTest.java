@@ -128,7 +128,8 @@ public class NotificacionDAOTest {
 			System.out.println("Responsable: " + n.getResponsable().getUsuario());
 			System.out.println("Usuario: " + n.getUsuario().getUsuario());
 			System.out.println("Estado: " + n.getEstado());
-			System.out.println("FechaCreacion: " + n.getFechaCreacion());			
+			System.out.println("FechaCreacion: " + n.getFechaCreacion());
+			System.out.println("Tipo: " + n.getTipo());
 		}
 		System.out.println("==================FIN ALERTAS INICIO======================");
 	}
@@ -193,7 +194,7 @@ public class NotificacionDAOTest {
 		System.out.println("==================FIN PROCESOS======================");
 	}
 	
-	@Test
+	//@Test
 	public void testGetNotificaciones() {
 		
 		System.out.println("==================NOTIFICACIONES======================");
@@ -213,5 +214,17 @@ public class NotificacionDAOTest {
 			System.out.println("FechaCreacion: " + n.getFechaCreacion());			
 		}
 		System.out.println("==================FIN NOTIFICACIONES======================");
+	}
+	
+	@Test
+	public void testInsertar() {
+		
+		List<Notificacion> notificaciones = notificacionDAO.getAlertasInicio();
+		boolean inserted;
+		for(Notificacion notificacion : notificaciones) {
+		
+			inserted = notificacionDAO.insertar(notificacion);
+			System.out.println(">>>>>Inserted: " + inserted);
+		}
 	}
 }

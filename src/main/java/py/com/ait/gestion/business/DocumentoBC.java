@@ -13,10 +13,12 @@ import org.ticpy.tekoporu.transaction.Transactional;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Documento;
 import py.com.ait.gestion.domain.Usuario;
+import py.com.ait.gestion.domain.UsuarioRolPermiso;
 import py.com.ait.gestion.persistence.AudLogDAO;
 import py.com.ait.gestion.persistence.DocumentoDAO;
 import py.com.ait.gestion.persistence.SesionLogDAO;
 import py.com.ait.gestion.persistence.UsuarioDAO;
+import py.com.ait.gestion.domain.DocumentoRol;
 
 @BusinessController
 public class DocumentoBC extends DelegateCrud<Documento, Long, DocumentoDAO>{
@@ -139,6 +141,35 @@ public class DocumentoBC extends DelegateCrud<Documento, Long, DocumentoDAO>{
 	public Documento getDocumentoByFileName(String fileName, String filePath, String fileExtension) {
 		
 		return documentoDAO.getDocumentoByFileName(fileName, filePath, fileExtension);
+	}
+
+	public boolean puedoVer(Documento documento, Usuario usuarioActual) {
+		
+		boolean puedoVer = false;		
+		if(documento == null) {
+			puedoVer = true; //el documento no existe aún
+		} else {
+			boolean isAdminUser = usuarioBC.isAdminUser(usuarioActual.getUsuario());		
+			if(isAdminUser){ 
+				puedoVer = true; //soy admin
+			} else if(documento.getUsuarioCreacion().getUsuario().equals(usuarioActual.getUsuario())) {					
+				puedoVer = true; //soy owner
+			} else {
+				//checkear para cada rol habilitado si posee alguno
+				for(DocumentoRol dr : documento.getDocumentoRoles()){
+					
+					for(UsuarioRolPermiso urp : usuarioActual.getUsuarioRolPermisos()) {
+						
+						if(urp.getRol() != null && urp.getRol().getRolId() == dr.getRol().getRolId()) {
+							puedoVer = true; //tengo un rol habilitado
+							break;
+						}
+					}
+					if(puedoVer) break;
+				}
+			}
+		}
+		return puedoVer;
 	}
 	
 }
