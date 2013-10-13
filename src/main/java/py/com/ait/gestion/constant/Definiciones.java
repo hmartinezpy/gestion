@@ -85,6 +85,12 @@ public final class Definiciones {
 			
 			return list;
 		}
+
+		public static String getEstadosCerrados() {
+
+			return ("'" + Resuelta + "','" + Cancelada + "','" + Devuelta + "'");
+		}
+
 	}
 	
 	public static class Estado {

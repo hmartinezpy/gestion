@@ -23,11 +23,6 @@
 			<p:toolbar style="margin-top:-20px;width:905px;" >  
 			    <p:toolbarGroup align="right">  
 			        
-			        <p:commandButton value="Todos" update=":form:procesos,:form2:actividades" 
-			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
-			        	<f:setPropertyActionListener value="T" target="#{procesoListMB.filtroEstadoProceso}" />
-			        </p:commandButton>  
-			        
 			        <p:commandButton value="Abiertos" update=":form:procesos,:form2:actividades" 
 			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
 			        	<f:setPropertyActionListener value="A" target="#{procesoListMB.filtroEstadoProceso}" />
@@ -37,6 +32,11 @@
 			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
 			        	<f:setPropertyActionListener value="C" target="#{procesoListMB.filtroEstadoProceso}" />
 			        </p:commandButton> 
+			        
+			        <p:commandButton value="Todos" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="T" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton>  
 			        
 			    </p:toolbarGroup> 
 	       	</p:toolbar>

@@ -88,6 +88,7 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		} else if(filtroEstadoProceso.equals("A")) {
 			
 			filtro += " and p.estado not in (" + Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+			filtro += " and a.estado not in (" + Definiciones.EstadoActividad.getEstadosCerrados() + ")";
 		}
 		//si no soy admin agregar filtros por usuario actual
 		if(!isAdminUser) {

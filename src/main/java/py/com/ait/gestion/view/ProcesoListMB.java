@@ -87,7 +87,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private String carpetaFileUpload;
 	private List<String> carpetas;
 
-	private String filtroEstadoProceso = "";
+	private String filtroEstadoProceso = "A";
 	
 	public Proceso getProcesoSeleccionado() {
 		return procesoSeleccionado;
