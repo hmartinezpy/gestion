@@ -304,13 +304,13 @@
                                 <p:calendar id="cal_fechaCobro" value="#{procesoListMB.actividadSeleccionada.fechaCobro}" pattern="dd/MM/yyyy HH:mm"  rendered="#{procesoListMB.canControlFactura}"/> 
                                 
                                 <h:outputText value="Nro. Factura " rendered="#{procesoListMB.canControlFactura}"/>
-                                <p:inputTextarea rows="1" cols="20" maxlength="20" value="#{procesoListMB.actividadSeleccionada.nroFactura}" rendered="#{procesoListMB.canControlFactura}" /> 
+                                <p:inputText maxlength="20" value="#{procesoListMB.actividadSeleccionada.nroFactura}" rendered="#{procesoListMB.canControlFactura}" /> 
                                 
                                 <h:outputText value="Nro. Cheque " rendered="#{procesoListMB.canControlFactura}"/>
-                                <p:inputTextarea rows="1" cols="20" maxlength="20" value="#{procesoListMB.actividadSeleccionada.chequeNro}" rendered="#{procesoListMB.canControlFactura}" /> 
+                                <p:inputText maxlength="20" value="#{procesoListMB.actividadSeleccionada.chequeNro}" rendered="#{procesoListMB.canControlFactura}" /> 
                                 
                                 <h:outputText value="Bco. Cheque " rendered="#{procesoListMB.canControlFactura}"/>
-                                <p:inputTextarea rows="1" cols="20" maxlength="20" value="#{procesoListMB.actividadSeleccionada.chequeBanco}" rendered="#{procesoListMB.canControlFactura}" /> 
+                                <p:inputText maxlength="20" value="#{procesoListMB.actividadSeleccionada.chequeBanco}" rendered="#{procesoListMB.canControlFactura}" /> 
 
 								<p:commandButton value="Guardar" id="editar" actionListener="#{procesoListMB.editarActividad}"
 											oncomplete="dlg2.hide()"  icon="ui-icon-disk" update=":form:messages,:form2:actividades"/>   
@@ -620,7 +620,7 @@
              <p:dialog header="Documentos" widgetVar="dlgFileP"  resizable="false">  
 		
 				<h:form id="formfileP">
-                         <p:dataTable  var="documento" value="#{procesoListMB.documentos}"  id="fileP" editable="true" paginator="true" paginatorPosition="bottom" rows="5">
+                         <p:dataTable  var="documento" value="#{procesoListMB.documentos}"  id="fileP" editable="true" paginator="true" paginatorPosition="bottom" rows="4">
 				        
 			                <p:column headerText="Filename" style="font-weight:bold" >
 			                     <h:outputText style="font-weight:normal;" value="#{documento.filename}" />                                              
