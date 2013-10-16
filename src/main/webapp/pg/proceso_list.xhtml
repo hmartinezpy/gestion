@@ -315,13 +315,13 @@
 								<p:commandButton value="Guardar" id="editar" actionListener="#{procesoListMB.editarActividad}"
 											oncomplete="dlg2.hide()"  icon="ui-icon-disk" update=":form:messages,:form2:actividades"/>   
 								<p:commandButton value="Siguiente Actividad" id="resolver" onclick="dlgSigteActividad.show()"
-											icon="ui-icon-play" update=":form:messages,:form2:actividades,:formSigteActividad:selectSigteActividadResponsable" 
+											icon="ui-icon-play" update=":form:messages,:formSigteActividad:selectSigteActividadResponsable" 
 											action="#{procesoListMB.nextActividadUsuariosPorRol}" 
 											rendered="#{procesoListMB.sigteCronogramaDetalle != null and !procesoListMB.subActividad}"/>
 								<p:commandButton value="Finalizar Proceso" id="finalizar" onclick="dlgFinalizarActividad.show()"
 											icon="ui-icon-stop" update=":form:messages,:form2:actividades" 
 											rendered="#{procesoListMB.sigteCronogramaDetalle == null and !procesoListMB.subActividad}"/>
-								<p:commandButton value="Crear Sub Actividad" id="subActividad" onclick="dlgSubActividad.show()"
+								<p:commandButton value="Crear Sub Actividad" id="subActividad" oncomplete="dlgSubActividad.show()"
 											icon="ui-icon-newwin" update=":form:messages,:formSubActividad:panelSubActividad"
 											rendered="#{!procesoListMB.subActividad}"/>
 								<p:commandButton value="Devolver Actividad" id="devolverActividad" onclick="dlgDevolverActividad.show()"
@@ -360,7 +360,7 @@
 					<p:panel style="width:400px"  >
 						<h:panelGrid columns="2" id="panelSubActividad" cellpadding="5" >
 							<h:outputText value="Descripcion " />
-							<p:inputTextarea rows="1" cols="50" maxlength="50" value="#{procesoListMB.actividadSeleccionada.descripcion}" />
+							<p:inputTextarea rows="1" cols="50" maxlength="50" value="#{procesoListMB.actividadSeleccionada.descripcion}" id="descripcionSubActividad"/>
 
 							<h:outputText value="Responsable " />
 							<p:selectOneMenu id="selectResponsable" value="#{procesoListMB.actividadSeleccionada.responsable}" converter="usuarioConverter"  >

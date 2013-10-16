@@ -745,6 +745,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		} else {
 			Actividad actividad = actividadSeleccionada;
 			if (!validarSiPuedeResolverActividad()){
+				elegirProceso();
 				return;
 			}
 
