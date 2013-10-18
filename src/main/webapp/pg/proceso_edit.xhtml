@@ -25,7 +25,7 @@
                             <h:panelGrid columns="2" cellpadding="3">
                             
                             	<h:outputText value="Tipo de Proceso " />
-                                <p:inputText value="#{procesoEditMB.bean.cronograma.nombre}" disabled="true" rendered="#{procesoEditMB.updateMode}" />                                
+                                <p:inputText value="#{procesoEditMB.bean.cronograma.nombre}" readonly="true" rendered="#{procesoEditMB.updateMode}" />                                
                                 <p:selectOneMenu required="true" id="tipoProceso" value="#{procesoEditMB.bean.cronograma}" rendered="#{!procesoEditMB.updateMode}" converter="cronogramaConverter" >                                	
                                 	<f:selectItem itemLabel="---Seleccione---" itemValue="" /> 
                                 	<f:selectItems value="#{procesoEditMB.cronogramas}" var="cronograma" itemLabel="#{cronograma.nombre}" itemValue="#{cronograma}" />
@@ -33,7 +33,7 @@
 			                    </p:selectOneMenu>
 			                    
                                 <h:outputText value="NroProceso " />
-                                <p:inputText id="txt_nro_proceso" required="true" value="#{procesoEditMB.bean.nroProceso}" disabled="true" />
+                                <p:inputText id="txt_nro_proceso" required="true" value="#{procesoEditMB.bean.nroProceso}" readonly="true" />
                                 
                                 <h:outputText value="Responsable " />
                                 <p:selectOneMenu required="true" id="selectResponsable" value="#{procesoEditMB.bean.responsable}"  converter="usuarioConverter" > 
@@ -70,6 +70,12 @@
                                 
                                 <h:outputText value="Motivo Reprogramación " rendered="#{procesoEditMB.updateMode}"/>
                                 <p:inputTextarea rows="3" cols="20" value="#{procesoEditMB.bean.motivoReprogramacion}" rendered="#{procesoEditMB.updateMode}"/>                             
+
+			                    <h:outputText value="Cliente Notificado " rendered="#{procesoEditMB.updateMode}"/>
+                                <p:selectOneMenu id="SelectRespuesta" value="#{procesoEditMB.bean.clienteNotificado}" rendered="#{procesoEditMB.updateMode}">
+									<f:selectItem itemLabel="Si" itemValue="Si" />
+									<f:selectItem itemLabel="No" itemValue="No" />
+			                    </p:selectOneMenu> 
                             </h:panelGrid>
                         </p:panel> 
                         <br></br>

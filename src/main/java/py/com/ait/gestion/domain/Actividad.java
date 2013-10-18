@@ -3,462 +3,473 @@ package py.com.ait.gestion.domain;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * The persistent class for the actividad database table.
  * 
  */
 @Entity
-@Table(name="actividad")
-public class Actividad  extends Base implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@SequenceGenerator(name="ACTIVIDAD_SEQ", sequenceName="actividad_id_seq", allocationSize=1)
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="ACTIVIDAD_SEQ")
-	@Column(name="id")
-	private Long actividadId;
-	
-	@Column(name="nro_actividad")
-	private String nroActividad;
-	
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="cronograma_detalle")
-	private CronogramaDetalle cronogramaDetalle;
-	
-	@Column(name="descripcion")
-	private String descripcion;
-	
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="responsable")
-	private Usuario responsable;
-	
-	@Column(name="fecha_creacion")
-	private Date fechaCreacion;
-	
-	@Column(name="fecha_inicio_previsto")
-	private Date fechaInicioPrevisto;
-	
-	@Column(name="fecha_inicio_reprogramado")
-	private Date fechaInicioReprogramado;
-	
-	@Column(name="motivo_reprogramacion_inicio")
-	private String motivoReprogramacionInicio;
-		
-	@Column(name="fecha_fin_prevista")
-	private Date fechaFinPrevista;
-	
-	@Column(name="fecha_fin_reprogramada")
-	private Date fechaFinReprogramada;
-	
-	@Column(name="motivo_reprogramacion")
-	private String motivoReprogramacion;
-	
-	@Column(name="fecha_devuelta")
-	private Date fechaDevuelta;
-		
-	@Column(name="fecha_resuelta")
-	private Date fechaResuelta;
-	
-	@Column(name="fecha_cancelacion")
-	private Date fechaCancelacion;
-	
-	@Column(name="pregunta")
-	private String pregunta;
-	
-	@Column(name="respuesta")
-	private String respuesta;
-	
-	@Column(name="estado")
-	private String estado;
-	
-	@Column(name="checklist_completo")
-	private String checklistCompleto;
-	
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="actividad_anterior")
-	private Actividad actividadAnterior;	
-	
-	@OneToMany(mappedBy="actividadAnterior")
-    private List<Actividad> actividadAA;
-	
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="alerta")
-	private TipoAlarma alerta;	
-	
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="alarma")
-	private TipoAlarma alarma;	
-	
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="super_tarea")
-	private Actividad superTarea;
-	
-	@OneToMany(mappedBy="superTarea")
-    private List<Actividad> actividadST;
+@Table(name = "actividad")
+public class Actividad extends Base implements Serializable {
 
-	@ManyToOne(fetch=FetchType.EAGER,optional=true)
-	@JoinColumn(name="proceso")
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@SequenceGenerator(name = "ACTIVIDAD_SEQ", sequenceName = "actividad_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACTIVIDAD_SEQ")
+	@Column(name = "id")
+	private Long actividadId;
+
+	@Column(name = "nro_actividad")
+	private String nroActividad;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "cronograma_detalle")
+	private CronogramaDetalle cronogramaDetalle;
+
+	@Column(name = "descripcion")
+	private String descripcion;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "responsable")
+	private Usuario responsable;
+
+	@Column(name = "fecha_creacion")
+	private Date fechaCreacion;
+
+	@Column(name = "fecha_inicio_previsto")
+	private Date fechaInicioPrevisto;
+
+	@Column(name = "fecha_inicio_reprogramado")
+	private Date fechaInicioReprogramado;
+
+	@Column(name = "motivo_reprogramacion_inicio")
+	private String motivoReprogramacionInicio;
+
+	@Column(name = "fecha_fin_prevista")
+	private Date fechaFinPrevista;
+
+	@Column(name = "fecha_fin_reprogramada")
+	private Date fechaFinReprogramada;
+
+	@Column(name = "motivo_reprogramacion")
+	private String motivoReprogramacion;
+
+	@Column(name = "fecha_devuelta")
+	private Date fechaDevuelta;
+
+	@Column(name = "fecha_resuelta")
+	private Date fechaResuelta;
+
+	@Column(name = "fecha_cancelacion")
+	private Date fechaCancelacion;
+
+	@Column(name = "pregunta")
+	private String pregunta;
+
+	@Column(name = "respuesta")
+	private String respuesta;
+
+	@Column(name = "estado")
+	private String estado;
+
+	@Column(name = "checklist_completo")
+	private String checklistCompleto;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "actividad_anterior")
+	private Actividad actividadAnterior;
+
+	@OneToMany(mappedBy = "actividadAnterior")
+	private List<Actividad> actividadAA;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "alerta")
+	private TipoAlarma alerta;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "alarma")
+	private TipoAlarma alarma;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "super_tarea")
+	private Actividad superTarea;
+
+	@OneToMany(mappedBy = "superTarea")
+	private List<Actividad> actividadST;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "proceso")
 	private Proceso master;
-	
-	@Column(name="fecha_cobro")
+
+	@Column(name = "fecha_cobro")
 	private Date fechaCobro;
-	
-	@Column(name="nro_factura")
+
+	@Column(name = "nro_factura")
 	private String nroFactura;
-	
-	@Column(name="cheque_nro")
+
+	@Column(name = "cheque_nro")
 	private String chequeNro;
-	
-	@Column(name="cheque_banco")
+
+	@Column(name = "cheque_banco")
 	private String chequeBanco;
-	
-	@OneToMany(fetch=FetchType.EAGER, mappedBy="actividad")
-    private List<ActividadChecklistDetalle> checklistDetalle;
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "actividad")
+	private List<ActividadChecklistDetalle> checklistDetalle;
 
 	@Transient
 	private boolean tieneChecklist;
-	
+
 	public Actividad() {
+
 		super();
-    }
-
-
-	public List<Actividad> getActividadAA() {
-		return actividadAA;
 	}
 
+	public List<Actividad> getActividadAA() {
+
+		return this.actividadAA;
+	}
 
 	public void setActividadAA(List<Actividad> actividadAA) {
+
 		this.actividadAA = actividadAA;
 	}
 
-
 	public List<Actividad> getActividadST() {
-		return actividadST;
+
+		return this.actividadST;
 	}
 
-
 	public void setActividadST(List<Actividad> actividadST) {
+
 		this.actividadST = actividadST;
 	}
 
-
 	public Long getActividadId() {
-		return actividadId;
+
+		return this.actividadId;
 	}
 
-
 	public void setActividadId(Long actividadId) {
+
 		this.actividadId = actividadId;
 	}
 
-
 	public String getNroActividad() {
-		return nroActividad;
+
+		return this.nroActividad;
 	}
 
-
 	public void setNroActividad(String nroActividad) {
+
 		this.nroActividad = nroActividad;
 	}
 
-
 	public CronogramaDetalle getCronogramaDetalle() {
-		return cronogramaDetalle;
+
+		return this.cronogramaDetalle;
 	}
 
-
 	public void setCronogramaDetalle(CronogramaDetalle cronogramaDetalle) {
+
 		this.cronogramaDetalle = cronogramaDetalle;
 	}
 
-
 	public String getDescripcion() {
-		return descripcion;
+
+		return this.descripcion;
 	}
 
-
 	public void setDescripcion(String descripcion) {
+
 		this.descripcion = descripcion;
 	}
 
-
 	public Usuario getResponsable() {
-		return responsable;
+
+		return this.responsable;
 	}
 
-
 	public void setResponsable(Usuario responsable) {
+
 		this.responsable = responsable;
 	}
 
-
 	public Date getFechaCreacion() {
-		return fechaCreacion;
+
+		return this.fechaCreacion;
 	}
 
-
 	public void setFechaCreacion(Date fechaCreacion) {
+
 		this.fechaCreacion = fechaCreacion;
 	}
 
-
 	public Date getFechaInicioPrevisto() {
-		return fechaInicioPrevisto;
+
+		return this.fechaInicioPrevisto;
 	}
 
-
 	public void setFechaInicioPrevisto(Date fechaInicioPrevisto) {
+
 		this.fechaInicioPrevisto = fechaInicioPrevisto;
 	}
 
-
 	public Date getFechaInicioReprogramado() {
-		return fechaInicioReprogramado;
+
+		return this.fechaInicioReprogramado;
 	}
 
-
 	public void setFechaInicioReprogramado(Date fechaInicioReprogramado) {
+
 		this.fechaInicioReprogramado = fechaInicioReprogramado;
 	}
 
-
 	public String getMotivoReprogramacionInicio() {
-		return motivoReprogramacionInicio;
+
+		return this.motivoReprogramacionInicio;
 	}
 
-
 	public void setMotivoReprogramacionInicio(String motivoReprogramacionInicio) {
+
 		this.motivoReprogramacionInicio = motivoReprogramacionInicio;
 	}
 
-
 	public Date getFechaFinPrevista() {
-		return fechaFinPrevista;
+
+		return this.fechaFinPrevista;
 	}
 
-
 	public void setFechaFinPrevista(Date fechaFinPrevista) {
+
 		this.fechaFinPrevista = fechaFinPrevista;
 	}
 
-
 	public Date getFechaFinReprogramada() {
-		return fechaFinReprogramada;
+
+		return this.fechaFinReprogramada;
 	}
 
-
 	public void setFechaFinReprogramada(Date fechaFinReprogramada) {
+
 		this.fechaFinReprogramada = fechaFinReprogramada;
 	}
 
-
 	public String getMotivoReprogramacion() {
-		return motivoReprogramacion;
+
+		return this.motivoReprogramacion;
 	}
 
-
 	public void setMotivoReprogramacion(String motivoReprogramacion) {
+
 		this.motivoReprogramacion = motivoReprogramacion;
 	}
 
-
 	public Date getFechaDevuelta() {
-		return fechaDevuelta;
+
+		return this.fechaDevuelta;
 	}
 
-
 	public void setFechaDevuelta(Date fechaDevuelta) {
+
 		this.fechaDevuelta = fechaDevuelta;
 	}
 
-
 	public Date getFechaResuelta() {
-		return fechaResuelta;
+
+		return this.fechaResuelta;
 	}
 
-
 	public void setFechaResuelta(Date fechaResuelta) {
+
 		this.fechaResuelta = fechaResuelta;
 	}
 
-
 	public Date getFechaCancelacion() {
-		return fechaCancelacion;
+
+		return this.fechaCancelacion;
 	}
 
-
 	public void setFechaCancelacion(Date fechaCancelacion) {
+
 		this.fechaCancelacion = fechaCancelacion;
 	}
 
-
 	public String getPregunta() {
-		return pregunta;
+
+		return this.pregunta;
 	}
 
-
 	public void setPregunta(String pregunta) {
+
 		this.pregunta = pregunta;
 	}
 
-
 	public String getRespuesta() {
-		return respuesta;
-	}
 
+		return this.respuesta;
+	}
 
 	public void setRespuesta(String respuesta) {
-		if(respuesta != null && respuesta.equals(""))
-			this.respuesta = null;
-		else
-			this.respuesta = respuesta;
-	}
 
+		if (respuesta != null && respuesta.equals("")) {
+			this.respuesta = null;
+		} else {
+			this.respuesta = respuesta;
+		}
+	}
 
 	public String getEstado() {
-		return estado;
-	}
 
+		return this.estado;
+	}
 
 	public void setEstado(String estado) {
-		if(estado != null && estado.equals(""))
-			this.estado = null;
-		else
-			this.estado = estado;
-	}
 
+		if (estado != null && estado.equals("")) {
+			this.estado = null;
+		} else {
+			this.estado = estado;
+		}
+	}
 
 	public String getChecklistCompleto() {
-		return checklistCompleto;
+
+		return this.checklistCompleto;
 	}
 
-
 	public void setChecklistCompleto(String checklistCompleto) {
+
 		this.checklistCompleto = checklistCompleto;
 	}
 
-
 	public Actividad getActividadAnterior() {
-		return actividadAnterior;
+
+		return this.actividadAnterior;
 	}
 
-
 	public void setActividadAnterior(Actividad actividadAnterior) {
+
 		this.actividadAnterior = actividadAnterior;
 	}
 
-
 	public TipoAlarma getAlerta() {
-		return alerta;
+
+		return this.alerta;
 	}
 
-
 	public void setAlerta(TipoAlarma alerta) {
+
 		this.alerta = alerta;
 	}
 
-
 	public TipoAlarma getAlarma() {
-		return alarma;
+
+		return this.alarma;
 	}
 
-
 	public void setAlarma(TipoAlarma alarma) {
+
 		this.alarma = alarma;
 	}
 
-
 	public Actividad getSuperTarea() {
-		return superTarea;
+
+		return this.superTarea;
 	}
 
-
 	public void setSuperTarea(Actividad superTarea) {
+
 		this.superTarea = superTarea;
 	}
 
-
 	public Proceso getMaster() {
-		return master;
+
+		return this.master;
 	}
 
-
 	public void setMaster(Proceso master) {
+
 		this.master = master;
 	}
 
-
 	public Date getFechaCobro() {
-		return fechaCobro;
+
+		return this.fechaCobro;
 	}
 
-
 	public void setFechaCobro(Date fechaCobro) {
+
 		this.fechaCobro = fechaCobro;
 	}
 
-
 	public String getNroFactura() {
-		return nroFactura;
+
+		return this.nroFactura;
 	}
 
-
 	public void setNroFactura(String nroFactura) {
+
 		this.nroFactura = nroFactura;
 	}
 
-
 	public String getChequeNro() {
-		return chequeNro;
+
+		return this.chequeNro;
 	}
 
-
 	public void setChequeNro(String chequeNro) {
+
 		this.chequeNro = chequeNro;
 	}
 
-
 	public String getChequeBanco() {
-		return chequeBanco;
-	}
 
+		return this.chequeBanco;
+	}
 
 	public void setChequeBanco(String chequeBanco) {
-		this.chequeBanco = chequeBanco;
-	}
 
+		this.chequeBanco = chequeBanco.trim();
+	}
 
 	public List<ActividadChecklistDetalle> getChecklistDetalle() {
-		return checklistDetalle;
+
+		return this.checklistDetalle;
 	}
 
+	public void setChecklistDetalle(
+			List<ActividadChecklistDetalle> checklistDetalle) {
 
-	public void setChecklistDetalle(List<ActividadChecklistDetalle> checklistDetalle) {
 		this.checklistDetalle = checklistDetalle;
 	}
 
-
 	public boolean isTieneChecklist() {
-		boolean aRet=false;
-		if (this.checklistDetalle != null){
-			if (this.checklistDetalle.size()>0){
-				aRet=true;
+
+		boolean aRet = false;
+		if (this.checklistDetalle != null) {
+			if (this.checklistDetalle.size() > 0) {
+				aRet = true;
 			}
 		}
 		return aRet;
 	}
 
-
 	public void setTieneChecklist(boolean tieneChecklist) {
+
 		this.tieneChecklist = tieneChecklist;
 	}
-	
-	
-   	
 
 }

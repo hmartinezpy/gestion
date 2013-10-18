@@ -256,10 +256,10 @@
                         <p:panel style="width:900px" id="panel4" >
                          <h:panelGrid columns="4" cellpadding="7" >
                         		<h:outputText value="Nroactividad " />
-                                <p:inputText required="true" value="#{procesoListMB.actividadSeleccionada.nroActividad}" disabled="true"/>
+                                <p:inputText required="true" value="#{procesoListMB.actividadSeleccionada.nroActividad}" readonly="true"/>
                                 			                    
 			                    <h:outputText value="CronogramaDetalle " />
-			                    <p:inputText value="#{procesoListMB.actividadSeleccionada.cronogramaDetalle.tarea}" disabled="true" />
+			                    <p:inputText value="#{procesoListMB.actividadSeleccionada.cronogramaDetalle.tarea}" readonly="true" />
 			                    
 			                    <h:outputText value="Estado " />
                                 <p:selectOneMenu id="selectEstado" value="#{procesoListMB.actividadSeleccionada.estado}"  rendered="#{!procesoListMB.subActividad}">
@@ -292,7 +292,7 @@
                                 <p:calendar id="cal_fechaFinPrevista" value="#{procesoListMB.actividadSeleccionada.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm" /> 
                                 
                                 <h:outputText value="Pregunta " rendered="#{procesoListMB.mostrarCampoRespuesta}"/>
-                                <p:inputTextarea rows="2" cols="50" value="#{procesoListMB.actividadSeleccionada.pregunta}" disabled="true" rendered="#{procesoListMB.mostrarCampoRespuesta}" /> 
+                                <p:inputTextarea rows="2" cols="50" value="#{procesoListMB.actividadSeleccionada.pregunta}" readonly="true" rendered="#{procesoListMB.mostrarCampoRespuesta}" /> 
 			                    
 			                    <h:outputText value="Respuesta " rendered="#{procesoListMB.mostrarCampoRespuesta}"/>
                                 <p:selectOneMenu id="SelectRespuesta" value="#{procesoListMB.actividadSeleccionada.respuesta}" rendered="#{procesoListMB.mostrarCampoRespuesta}"  >  			                        
@@ -438,7 +438,7 @@
 						<h:panelGrid columns="2" cellpadding="5" >
 
 							<h:outputText value="Descripcion " />
-							<p:inputTextarea rows="3" cols="40" value="#{procesoListMB.checklistDetalle.descripcion}" disabled="true"/>
+							<p:inputTextarea rows="3" cols="40" value="#{procesoListMB.checklistDetalle.descripcion}" readonly="true"/>
 
 
 							<h:outputText value="Respuesta " />

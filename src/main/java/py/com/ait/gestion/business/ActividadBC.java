@@ -4,15 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.ticpy.tekoporu.message.MessageContext;
 import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
-
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.ActividadChecklistDetalle;
@@ -60,34 +57,38 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 	@Inject
 	ChecklistDetalleBC checklistDetalleBC;
-	
+
 	@Inject
 	ActividadChecklistDetalleBC actividadChecklistDetalleBC;
-	
+
 	@Inject
 	private NotificacionDAO notificacionDAO;
-	
+
 	public List<Actividad> listar() {
-		return actividadDAO.findAll();
+
+		return this.actividadDAO.findAll();
 	}
 
 	public Actividad recuperar(Long id) {
-		return actividadDAO.load(id);
+
+		return this.actividadDAO.load(id);
 	}
 
 	/***************** Auditoria **************************/
 	@Transactional
 	public void registrar(Actividad actividad) {
+
 		if (actividad.getNroActividad() == null
 				|| actividad.getNroActividad().equals("")) {
 
-			actividad.setNroActividad(getSiguienteNroActividad(null));
+			actividad.setNroActividad(this.getSiguienteNroActividad(null));
 		}
 		super.insert(actividad);
 
 		try {
-			audLogDAO.log(null, actividad, usuarioDAO.getUsuarioActual(),
-					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
+			this.audLogDAO.log(null, actividad, this.usuarioDAO
+					.getUsuarioActual(), this.sesionLogDAO
+					.ObtenerIp(this.usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Insert, actividad.getActividadId());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,7 +96,8 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	}
 
 	public String getSiguienteNroActividad(Actividad a) {
-		String nroActividadActual = getNumeroActividadActual(a);
+
+		String nroActividadActual = this.getNumeroActividadActual(a);
 		StringBuilder sb = new StringBuilder();
 		// int year = Calendar.getInstance().get(Calendar.YEAR);
 		String nroActividad = sb.append(
@@ -110,7 +112,8 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 		// Si se modifica el estado a Resuelta, validar la respuesta a la
 		// pregunta (SI o NO)
-		logger.info("ActividadBC.editar() Se está resolviendo la actividad");
+		this.logger
+				.info("ActividadBC.editar() Se está resolviendo la actividad");
 
 		if (actividad.getPregunta() != null
 				&& !actividad.getPregunta().equals("")
@@ -123,7 +126,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 			// + actividad.getRespuesta();
 			// messageContext.add(mensaje);
 			System.out.println("ActividadBC.editar() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 
 		} else if (actividad.getRespuesta() != null
@@ -133,36 +136,38 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 			String mensaje = "La respuesta debe ser SI o NO.";
 			// messageContext.add(mensaje);
 			System.out.println("ActividadBC.editar() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 
-		} else if (validarChecklistDetalles(actividad) == false) {
+		} else if (this.validarChecklistDetalles(actividad) == false) {
 
 			String mensaje = "No puede pasar a la siguiente actividad sin cumplir con todo el checklist.";
 			// messageContext.add(mensaje);
 			System.out.println("ActividadBC.editar() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
-		} else if (existenFacturasSinCobro(actividad.getMaster())){
-			String mensaje = "No puede pasar a la siguiente actividad con Factura y sin fecha de cobro.";
-			System.out.println("ActividadBC.editar() " + mensaje);
-			logger.error(">>>> " + mensaje);
-			throw new RuntimeException(mensaje);
+			// } else if (existenFacturasSinCobro(actividad.getMaster())){
+			// String mensaje =
+			// "No puede pasar a la siguiente actividad con Factura y sin fecha de cobro.";
+			// System.out.println("ActividadBC.editar() " + mensaje);
+			// logger.error(">>>> " + mensaje);
+			// throw new RuntimeException(mensaje);
 		} else {
-			logger.info("ActividadBC.editar() Resolver la actividad! pregunta: "
-					+ actividad.getPregunta()
-					+ " respuesta: "
-					+ actividad.getRespuesta());
-			if (responsable != null){
-				responsable = usuarioDAO.load(responsable.getUsuarioId());
+			this.logger
+					.info("ActividadBC.editar() Resolver la actividad! pregunta: "
+							+ actividad.getPregunta()
+							+ " respuesta: "
+							+ actividad.getRespuesta());
+			if (responsable != null) {
+				responsable = this.usuarioDAO.load(responsable.getUsuarioId());
 			}
-			resolveActividadAndInsertNext(actividad, responsable);
+			this.resolveActividadAndInsertNext(actividad, responsable);
 		}
 		System.out
 				.println("ActividadBC.resolveActividad() Marcando actividad como resuelta <<<<<<<");
 		actividad.setEstado(Definiciones.EstadoActividad.Resuelta);
 		actividad.setFechaResuelta(new Date());
-		update(actividad);
+		this.update(actividad);
 
 	}
 
@@ -170,9 +175,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	public boolean validarChecklistDetalles(Actividad actividad) {
-		if (actividad.isTieneChecklist()){
-			Long cantIncumplido = actividadChecklistDetalleBC.validarCumplimiento(actividad);
-			if (cantIncumplido > 0){
+
+		if (actividad.isTieneChecklist()) {
+			Long cantIncumplido = this.actividadChecklistDetalleBC
+					.validarCumplimiento(actividad);
+			if (cantIncumplido > 0) {
 				return false;
 			}
 		}
@@ -183,39 +190,47 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	public void editar(Actividad actividad) {
 
 		Actividad viejo = this.load(actividad.getActividadId());
-		if (Definiciones.EstadoActividad.Cancelada.equals(actividad.getEstado())){
+		if (Definiciones.EstadoActividad.Cancelada
+				.equals(actividad.getEstado())) {
 			actividad.setFechaCancelacion(new Date());
 		}
-		if (Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())){
+		if (Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())) {
 			actividad.setFechaResuelta(new Date());
 		}
-		if (actividad.getSuperTarea()!=null &&
-				actividad.getNroFactura() != null && !"".equals(actividad.getNroFactura()) 
-				&& actividad.getFechaCobro()==null
-				&& Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())){
+		if (actividad.getSuperTarea() != null
+				&& actividad.getNroFactura() != null
+				&& !"".equals(actividad.getNroFactura())
+				&& actividad.getFechaCobro() == null
+				&& Definiciones.EstadoActividad.Resuelta.equals(actividad
+						.getEstado())) {
 			String mensaje = "No puede marcar como resuelta la subactividad con Factura y sin fecha de cobro.";
 			System.out.println("ActividadBC.editar() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 		}
 		super.update(actividad);
 
-		if (actividad.getSuperTarea()!=null &&
-				Definiciones.EstadoActividad.Resuelta.equals(actividad.getEstado())) {
-			
-			String titulo = "SubActividad Finalizada " + actividad.getActividadId()
-					+ "-" + actividad.getMaster().getNroProceso();
+		if (actividad.getSuperTarea() != null
+				&& Definiciones.EstadoActividad.Resuelta.equals(actividad
+						.getEstado())) {
+
+			String titulo = "SubActividad Finalizada "
+					+ actividad.getActividadId() + "-"
+					+ actividad.getMaster().getNroProceso();
 			String descripcion = "SUBACTIVIDAD FINALIZADA!!<br>"
-				+ "SUBACTIVIDAD: " + actividad.getDescripcion() + "<br>"
-				+ "PROCESO: " + actividad.getMaster().getDescripcion() + "<br>"
-				+ "RESPONSABLE: " + actividad.getResponsable().getUsuario();
-			notificacionDAO.insertarNotificacion(titulo, descripcion, actividad, 
-					actividad.getSuperTarea().getResponsable(), Definiciones.TipoNotificacion.AlertaSubActividadFinalizada);
+					+ "SUBACTIVIDAD: " + actividad.getDescripcion() + "<br>"
+					+ "PROCESO: " + actividad.getMaster().getDescripcion()
+					+ "<br>" + "RESPONSABLE: "
+					+ actividad.getResponsable().getUsuario();
+			this.notificacionDAO.insertarNotificacion(titulo, descripcion,
+					actividad, actividad.getSuperTarea().getResponsable(),
+					Definiciones.TipoNotificacion.AlertaSubActividadFinalizada);
 		}
-		
+
 		try {
-			audLogDAO.log(viejo, actividad, usuarioDAO.getUsuarioActual(),
-					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
+			this.audLogDAO.log(viejo, actividad, this.usuarioDAO
+					.getUsuarioActual(), this.sesionLogDAO
+					.ObtenerIp(this.usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Update, actividad.getActividadId());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -229,8 +244,9 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		super.delete(id);
 
 		try {
-			audLogDAO.log(actividad, null, usuarioDAO.getUsuarioActual(),
-					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
+			this.audLogDAO.log(actividad, null, this.usuarioDAO
+					.getUsuarioActual(), this.sesionLogDAO
+					.ObtenerIp(this.usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Delete, actividad.getActividadId());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -240,8 +256,9 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	@Transactional
 	public void insertActividadFromCronogramaDetalle(CronogramaDetalle cd,
 			Actividad actividadAnterior, Proceso proceso) {
-		insertActividadFromCronogramaDetalle(cd,
-				actividadAnterior, proceso, null);
+
+		this.insertActividadFromCronogramaDetalle(cd, actividadAnterior,
+				proceso, null);
 	}
 
 	@Transactional
@@ -250,8 +267,9 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 		Actividad actividad = new Actividad();
 		actividad.setMaster(proceso);
-		if (actividadAnterior != null){
-			actividad.setNroActividad(getSiguienteNroActividad(actividadAnterior));
+		if (actividadAnterior != null) {
+			actividad.setNroActividad(this
+					.getSiguienteNroActividad(actividadAnterior));
 		} else {
 			actividad.setNroActividad("1");
 		}
@@ -262,8 +280,9 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setFechaInicioPrevisto(cal.getTime());
 		cal.add(Calendar.DATE, cd.getDuracionTarea().intValue());
 		actividad.setFechaFinPrevista(cal.getTime());
-		if (cd.getPregunta() != null)
+		if (cd.getPregunta() != null) {
 			actividad.setPregunta(cd.getPregunta().getDescripcion());
+		}
 		actividad.setEstado(Definiciones.EstadoActividad.Nueva);
 		Actividad actAnterior = null;
 		if (actividadAnterior != null) {
@@ -275,20 +294,22 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setAlarma(cd.getAlarma());
 		actividad.setResponsable(responsable);
 
-		insert(actividad);
-		String titulo = "Nueva Actividad " + actividad.getActividadId()
-				+ "-" + actividad.getMaster().getNroProceso();
-		String descripcion = "NUEVA ACTIVIDAD!!<br>"
-			+ "ACTIVIDAD: " + actividad.getDescripcion() + "<br>"
-			+ "PROCESO: " + actividad.getMaster().getDescripcion() + "<br>"
-			+ "RESPONSABLE: " + actividad.getResponsable().getUsuario() + "<br>"
-			+ "FECHA INICIO: " + actividad.getFechaInicioPrevisto();
-		notificacionDAO.insertarNotificacion(titulo, descripcion, actividad,
-				actividad.getResponsable(), Definiciones.TipoNotificacion.AlertaActividadFinalizada);
-		
-		//Checklist
-		if (cd.getChecklist() != null){
-			insertActividadChecklistDetalle(actividad, cd.getChecklist());
+		this.insert(actividad);
+		String titulo = "Nueva Actividad " + actividad.getActividadId() + "-"
+				+ actividad.getMaster().getNroProceso();
+		String descripcion = "NUEVA ACTIVIDAD!!<br>" + "ACTIVIDAD: "
+				+ actividad.getDescripcion() + "<br>" + "PROCESO: "
+				+ actividad.getMaster().getDescripcion() + "<br>"
+				+ "RESPONSABLE: " + actividad.getResponsable().getUsuario()
+				+ "<br>" + "FECHA INICIO: "
+				+ actividad.getFechaInicioPrevisto();
+		this.notificacionDAO.insertarNotificacion(titulo, descripcion,
+				actividad, actividad.getResponsable(),
+				Definiciones.TipoNotificacion.AlertaActividadFinalizada);
+
+		// Checklist
+		if (cd.getChecklist() != null) {
+			this.insertActividadChecklistDetalle(actividad, cd.getChecklist());
 		}
 	}
 
@@ -298,43 +319,51 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 */
 	private void insertActividadChecklistDetalle(Actividad actividad,
 			Checklist checklist) {
-		List<ChecklistDetalle> detalles = checklistDetalleBC.findByChecklist(checklist);
-		for (ChecklistDetalle cd : detalles){
+
+		List<ChecklistDetalle> detalles = this.checklistDetalleBC
+				.findByChecklist(checklist);
+		for (ChecklistDetalle cd : detalles) {
 			ActividadChecklistDetalle acd = new ActividadChecklistDetalle();
 			acd.setActividad(actividad);
 			acd.setDescripcion(cd.getDescripcion());
 			acd.setFechaHora(new Date());
 			acd.setRespuesta("NO");
 
-			actividadChecklistDetalleBC.insert(acd);
+			this.actividadChecklistDetalleBC.insert(acd);
 		}
 	}
 
 	public Long getMaxId() {
-		return actividadDAO.getMaxId();
+
+		return this.actividadDAO.getMaxId();
 	}
 
 	public String getNumeroActividadActual(Actividad a) {
-		return actividadDAO.getLastNroActividadByActividad(a);
+
+		return this.actividadDAO.getLastNroActividadByActividad(a);
 	}
 
 	public String getNumeroSubActividadByActividad(Actividad actividad) {
-		return actividadDAO.getCurrentNumeroSubActividadByActividad(actividad);
+
+		return this.actividadDAO
+				.getCurrentNumeroSubActividadByActividad(actividad);
 	}
 
 	@Transactional
 	private void resolveActividadAndInsertNext(Actividad a, Usuario responsable) {
 
-		CronogramaDetalle cd = cronogramaDetalleBC.getNextCronogramaDetalle(
-				a.getCronogramaDetalle(), a.getRespuesta());
+		CronogramaDetalle cd = this.cronogramaDetalleBC
+				.getNextCronogramaDetalle(a.getCronogramaDetalle(),
+						a.getRespuesta());
 
 		if (cd == null) { // ya no hay siguiente cronograma detalle
-			//Debemos marcar el proceso como finalizado
-			if (validarFinalizacion(a.getMaster())){
-				finalizarProceso(a.getMaster());
+			// Debemos marcar el proceso como finalizado
+			if (this.validarFinalizacion(a.getMaster())) {
+				this.finalizarProceso(a.getMaster());
 			}
 		} else {
-			insertActividadFromCronogramaDetalle(cd, a, a.getMaster(), responsable);
+			this.insertActividadFromCronogramaDetalle(cd, a, a.getMaster(),
+					responsable);
 		}
 	}
 
@@ -343,22 +372,23 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	private boolean validarFinalizacion(Proceso proc) {
-		if (existenSubActividadesAbiertas(proc)){
+
+		if (this.existenSubActividadesAbiertas(proc)) {
 			String mensaje = "No se puede finalizar un proceso con SubActividades en estado NUEVA o EN PROCESO.";
 			System.out.println("ActividadBC.validarFinalizacion() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 		}
-		if (existenActividadesAbiertas(proc)){
+		if (this.existenActividadesAbiertas(proc)) {
 			String mensaje = "No se puede finalizar un proceso con Actividades en estado NUEVA o EN PROCESO.";
 			System.out.println("ActividadBC.validarFinalizacion() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 		}
-		if (existenFacturasSinCobro(proc)){
+		if (this.existenFacturasSinCobro(proc)) {
 			String mensaje = "No se puede finalizar un proceso con Actividades con Factura y sin fecha de cobro.";
 			System.out.println("ActividadBC.validarFinalizacion() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 		}
 		return true;
@@ -369,9 +399,12 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	public boolean existenFacturasSinCobro(Proceso proc) {
-		Long cantActividadesSinCobro = actividadDAO.cantActividadesSinCobro(proc);
-		if (cantActividadesSinCobro > 0){
-			//Si se consignó una factura, y no tiene fecha de cobro, emitir mensaje
+
+		Long cantActividadesSinCobro = this.actividadDAO
+				.cantActividadesSinCobro(proc);
+		if (cantActividadesSinCobro > 0) {
+			// Si se consignó una factura, y no tiene fecha de cobro, emitir
+			// mensaje
 			return true;
 		}
 		return false;
@@ -382,9 +415,11 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	private boolean existenSubActividadesAbiertas(Proceso proc) {
-		Long cantSubActividadesAbiertas = actividadDAO.cantActividadesAbiertas(proc, true);
-		if (cantSubActividadesAbiertas > 0){
-			//no puede haber ninguna subActividad abierta
+
+		Long cantSubActividadesAbiertas = this.actividadDAO
+				.cantActividadesAbiertas(proc, true);
+		if (cantSubActividadesAbiertas > 0) {
+			// no puede haber ninguna subActividad abierta
 			return true;
 		}
 		return false;
@@ -395,26 +430,31 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	private boolean existenActividadesAbiertas(Proceso proc) {
-		Long cantSubActividadesAbiertas = actividadDAO.cantActividadesAbiertas(proc, false);
-		if (cantSubActividadesAbiertas > 1){
-			//Si se llega desde la ultima actividad, esa debe ser la unica abierta
+
+		Long cantSubActividadesAbiertas = this.actividadDAO
+				.cantActividadesAbiertas(proc, false);
+		if (cantSubActividadesAbiertas > 1) {
+			// Si se llega desde la ultima actividad, esa debe ser la unica
+			// abierta
 			return true;
 		}
 		return false;
 	}
 
 	private void finalizarProceso(Proceso proceso) {
+
 		proceso.setEstado(Definiciones.EstadoProceso.Resuelto);
-		procesoDAO.update(proceso);
+		this.procesoDAO.update(proceso);
 	}
 
 	@Transactional
 	public Actividad crearSubActividad(Actividad padre, String descripcion,
 			Usuario responsable, TipoAlarma alerta, TipoAlarma alarma) {
+
 		Actividad result = new Actividad();
 
 		result.setMaster(padre.getMaster());
-		result.setNroActividad(getNextNroSubActividad(padre));
+		result.setNroActividad(this.getNextNroSubActividad(padre));
 		result.setCronogramaDetalle(null);
 		result.setDescripcion(descripcion);
 		result.setResponsable(responsable);
@@ -424,21 +464,24 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		result.setAlarma(alarma);
 		result.setSuperTarea(padre);
 
-		insert(result);
-		String titulo = "Nueva SubActividad " + result.getActividadId()
-				+ "-" + result.getMaster().getNroProceso();
-		String descripcionNotif = "NUEVA SUBACTIVIDAD!!<br>"
-			+ "SUBACTIVIDAD: " + result.getDescripcion() + "<br>"
-			+ "PROCESO: " + result.getMaster().getDescripcion() + "<br>"
-			+ "RESPONSABLE: " + result.getResponsable().getUsuario();
-		notificacionDAO.insertarNotificacion(titulo, descripcionNotif, result, 
-				result.getResponsable(), Definiciones.TipoNotificacion.AlertaSubActividadNueva);
+		this.insert(result);
+		String titulo = "Nueva SubActividad " + result.getActividadId() + "-"
+				+ result.getMaster().getNroProceso();
+		String descripcionNotif = "NUEVA SUBACTIVIDAD!!<br>" + "SUBACTIVIDAD: "
+				+ result.getDescripcion() + "<br>" + "PROCESO: "
+				+ result.getMaster().getDescripcion() + "<br>"
+				+ "RESPONSABLE: " + result.getResponsable().getUsuario();
+		this.notificacionDAO.insertarNotificacion(titulo, descripcionNotif,
+				result, result.getResponsable(),
+				Definiciones.TipoNotificacion.AlertaSubActividadNueva);
 
 		return result;
 	}
 
 	private String getNextNroSubActividad(Actividad actividad) {
-		String NroSubActividadActual = getNumeroSubActividadByActividad(actividad);
+
+		String NroSubActividadActual = this
+				.getNumeroSubActividadByActividad(actividad);
 		System.out
 				.println("ActividadBC.getNextNroSubActividad() NroSubActividadActual = "
 						+ NroSubActividadActual);
@@ -454,13 +497,14 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 
 	@Transactional
 	public Actividad devolverActividad(Actividad aDevolver) {
-		Actividad anterior = load(aDevolver.getActividadAnterior()
+
+		Actividad anterior = this.load(aDevolver.getActividadAnterior()
 				.getActividadId());
 
 		if (anterior.getEstado() == Definiciones.EstadoActividad.Resuelta) {
 			String mensaje = "No se puede devolver una actividad que ya está RESUELTA";
 			System.out.println("ActividadBC.devolverActividad() " + mensaje);
-			logger.error(">>>> " + mensaje);
+			this.logger.error(">>>> " + mensaje);
 			throw new RuntimeException(mensaje);
 		}
 
@@ -482,37 +526,47 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividadDevuelta.setFechaCreacion(new Date());
 		actividadDevuelta.setFechaInicioPrevisto(new Date());
 		actividadDevuelta.setMaster(anterior.getMaster());
-		actividadDevuelta.setNroActividad(getSiguienteNroActividad(aDevolver));
+		actividadDevuelta.setNroActividad(this
+				.getSiguienteNroActividad(aDevolver));
 
 		aDevolver.setEstado(Definiciones.EstadoActividad.Devuelta);
 		aDevolver.setFechaDevuelta(new Date());
 
-		update(aDevolver);
-		System.out.println("ActividadBC.devolverActividad() Se marcó como devuelta la actividad con id: "+aDevolver.getActividadId());
-		insert(actividadDevuelta);
-		String titulo = "Actividad Devuelta " + actividadDevuelta.getActividadId()
-				+ "-" + actividadDevuelta.getMaster().getNroProceso();
-		String descripcion = "ACTIVIDAD DEVUELTA!!<br>"
-			+ "ACTIVIDAD: " + actividadDevuelta.getDescripcion() + "<br>"
-			+ "PROCESO: " + actividadDevuelta.getMaster().getDescripcion() + "<br>"
-			+ "RESPONSABLE: " + actividadDevuelta.getResponsable().getUsuario() + "<br>"
-			+ "FECHA INICIO: " + actividadDevuelta.getFechaInicioPrevisto();
-		notificacionDAO.insertarNotificacion(titulo, descripcion, actividadDevuelta, 
-				actividadDevuelta.getResponsable(), Definiciones.TipoNotificacion.AlertaActividadFinalizada);
-		
-		System.out.println("ActividadBC.devolverActividad() Se insertó la actividad con id: "+actividadDevuelta.getActividadId());
+		this.update(aDevolver);
+		System.out
+				.println("ActividadBC.devolverActividad() Se marcó como devuelta la actividad con id: "
+						+ aDevolver.getActividadId());
+		this.insert(actividadDevuelta);
+		String titulo = "Actividad Devuelta "
+				+ actividadDevuelta.getActividadId() + "-"
+				+ actividadDevuelta.getMaster().getNroProceso();
+		String descripcion = "ACTIVIDAD DEVUELTA!!<br>" + "ACTIVIDAD: "
+				+ actividadDevuelta.getDescripcion() + "<br>" + "PROCESO: "
+				+ actividadDevuelta.getMaster().getDescripcion() + "<br>"
+				+ "RESPONSABLE: "
+				+ actividadDevuelta.getResponsable().getUsuario() + "<br>"
+				+ "FECHA INICIO: " + actividadDevuelta.getFechaInicioPrevisto();
+		this.notificacionDAO.insertarNotificacion(titulo, descripcion,
+				actividadDevuelta, actividadDevuelta.getResponsable(),
+				Definiciones.TipoNotificacion.AlertaActividadFinalizada);
 
-		//XXX: esto pio anda?!
-		List<ActividadChecklistDetalle> detalles = anterior.getChecklistDetalle();
-		for (ActividadChecklistDetalle detalle: detalles){
+		System.out
+				.println("ActividadBC.devolverActividad() Se insertó la actividad con id: "
+						+ actividadDevuelta.getActividadId());
+
+		// XXX: esto pio anda?!
+		List<ActividadChecklistDetalle> detalles = anterior
+				.getChecklistDetalle();
+		for (ActividadChecklistDetalle detalle : detalles) {
 			ActividadChecklistDetalle nuevoDetalle = new ActividadChecklistDetalle();
 			nuevoDetalle.setActividad(actividadDevuelta);
 			nuevoDetalle.setDescripcion(detalle.getDescripcion());
 			nuevoDetalle.setFechaHora(new Date());
 			nuevoDetalle.setRespuesta("NO");
-			actividadChecklistDetalleBC.insert(nuevoDetalle);
+			this.actividadChecklistDetalleBC.insert(nuevoDetalle);
 		}
-		System.out.println("ActividadBC.devolverActividad() Se insertaron checklists");
+		System.out
+				.println("ActividadBC.devolverActividad() Se insertaron checklists");
 
 		return actividadDevuelta;
 	}
@@ -522,7 +576,8 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	public String getLastActividad(Proceso proc) {
-		return actividadDAO.getLastActividad(proc);
+
+		return this.actividadDAO.getLastActividad(proc);
 	}
 
 	/**
@@ -530,6 +585,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 	 * @return
 	 */
 	public List<Actividad> getSubtareas(Actividad actividad) {
-		return actividadDAO.getSubtareas(actividad);
+
+		return this.actividadDAO.getSubtareas(actividad);
 	}
 }

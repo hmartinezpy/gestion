@@ -12,12 +12,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
-
 import org.primefaces.event.DateSelectEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -27,7 +25,6 @@ import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
 import org.ticpy.tekoporu.template.AbstractListPageBean;
-
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
@@ -63,7 +60,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	@Inject
 	private ProcesoBC procesoBC;
-	
+
 	@Inject
 	private RolBC rolBC;
 
@@ -83,146 +80,168 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private List<Observacion> observaciones;
 	private List<Documento> documentos;
 	private List<ActividadChecklistDetalle> checklist;
-	
+
 	private String carpetaFileUpload;
 	private List<String> carpetas;
 
 	private String filtroEstadoProceso = "A";
-	
+
 	public Proceso getProcesoSeleccionado() {
-		return procesoSeleccionado;
+
+		return this.procesoSeleccionado;
 	}
 
 	public void setProcesoSeleccionado(Proceso procesoSeleccionado) {
+
 		this.procesoSeleccionado = procesoSeleccionado;
 	}
 
 	public List<Observacion> getObservaciones() {
-		return observaciones;
+
+		return this.observaciones;
 	}
 
 	public void setObservacion(List<Observacion> observaciones) {
+
 		this.observaciones = observaciones;
 	}
 
 	public List<Documento> getDocumentos() {
-		return documentos;
+
+		return this.documentos;
 	}
 
 	public void setDocumentos(List<Documento> documentos) {
+
 		this.documentos = documentos;
 	}
 
 	public void elegirProceso() {
-		
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-				.getUserPrincipal().getName();
-		setActividades(procesoBC.getActividadesByProceso(procesoSeleccionado, currentUser));
+
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+		this.setActividades(this.procesoBC.getActividadesByProceso(
+				this.procesoSeleccionado, currentUser));
 		// setCronogramaDetallesporCronograma(procesoSeleccionado.getCronograma().getCronogramaDetalles());
-		String numeroProceso = procesoSeleccionado.getNroProceso();
-		agregarMensaje("Proceso seleccionado: " + numeroProceso);
+		String numeroProceso = this.procesoSeleccionado.getNroProceso();
+		this.agregarMensaje("Proceso seleccionado: " + numeroProceso);
 	}
 
 	public void mostrarObsProceso() {
-		
 
-		this.setObservacion(observacionBC.getObsProceso(procesoSeleccionado
-				.getProcesoId()));
+		this.setObservacion(this.observacionBC
+				.getObsProceso(this.procesoSeleccionado.getProcesoId()));
 
-		elegirProceso();
+		this.elegirProceso();
 	}
 
 	public void mostrarFileProceso() {
 
-		elegirProceso();
-		
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-				.getUserPrincipal().getName();
-		this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
-				.getProcesoId(), currentUser));
+		this.elegirProceso();
 
-		updateCarpetas();
-		elegirProceso();
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+		this.setDocumentos(this.documentoBC.getFileProceso(
+				this.procesoSeleccionado.getProcesoId(), currentUser));
+
+		this.updateCarpetas();
+		this.elegirProceso();
 	}
 
 	public void mostrarFileActividad() {
 
-		this.setDocumentos(documentoBC.getFileActividad(actividadSeleccionada
-				.getActividadId()));
+		this.setDocumentos(this.documentoBC
+				.getFileActividad(this.actividadSeleccionada.getActividadId()));
 
-		String numeroActividad = actividadSeleccionada.getNroActividad();
-		agregarMensaje("Actividad seleccionada: " + numeroActividad);
+		String numeroActividad = this.actividadSeleccionada.getNroActividad();
+		this.agregarMensaje("Actividad seleccionada: " + numeroActividad);
 	}
 
 	public void mostrarChecklist() {
 
-		this.setChecklist(actividadChecklistDetalleBC.getChecklistByActividad(actividadSeleccionada));
+		this.setChecklist(this.actividadChecklistDetalleBC
+				.getChecklistByActividad(this.actividadSeleccionada));
 
-		agregarMensaje("Actividad seleccionada: " + actividadSeleccionada.getNroActividad());
+		this.agregarMensaje("Actividad seleccionada: "
+				+ this.actividadSeleccionada.getNroActividad());
 	}
 
 	public List<ActividadChecklistDetalle> getChecklist() {
-		return checklist;
+
+		return this.checklist;
 	}
 
 	public void setChecklist(List<ActividadChecklistDetalle> checklist) {
+
 		this.checklist = checklist;
 	}
 
 	public List<Actividad> getActividades() {
-		return actividades;
+
+		return this.actividades;
 	}
 
 	public void setActividades(List<Actividad> actividades) {
+
 		this.actividades = actividades;
 	}
 
 	public List<Proceso> getProcesos() {
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-				.getUserPrincipal().getName();		
-		procesos = procesoBC.listar(filtroEstadoProceso, currentUser);
-		return procesos;
+
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+		this.procesos = this.procesoBC.listar(this.filtroEstadoProceso,
+				currentUser);
+		return this.procesos;
 	}
-	
+
 	public void updateFiltroEstadoProceso() {
-		
+
 		this.actividades = null;
-		getProcesos();
+		this.getProcesos();
 	}
 
 	public String getFiltroEstadoProceso() {
-		return filtroEstadoProceso;
+
+		return this.filtroEstadoProceso;
 	}
 
 	public void setFiltroEstadoProceso(String filtroEstadoProceso) {
+
 		this.filtroEstadoProceso = filtroEstadoProceso;
 	}
 
 	public void setProcesos(List<Proceso> procesos) {
+
 		this.procesos = procesos;
 	}
 
 	public void eliminar(ActionEvent actionEvent) {
-		procesoBC.eliminar(procesoSeleccionado.getProcesoId());
-		procesoSeleccionado = new Proceso();
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-				.getUserPrincipal().getName();
-		setProcesos(procesoBC.listar(getFiltroEstadoProceso(), currentUser));
-		agregarMensaje("Proceso eliminado");
+
+		this.procesoBC.eliminar(this.procesoSeleccionado.getProcesoId());
+		this.procesoSeleccionado = new Proceso();
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+		this.setProcesos(this.procesoBC.listar(this.getFiltroEstadoProceso(),
+				currentUser));
+		this.agregarMensaje("Proceso eliminado");
 	}
 
 	@Override
 	protected List<Proceso> handleResultList() {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void agregarMensaje(String mensaje) {
-		facesContext.addMessage("suceso", new FacesMessage(mensaje));
+
+		this.facesContext.addMessage("suceso", new FacesMessage(mensaje));
 	}
 
 	public void agregarMensajeError(String mensaje) {
-		facesContext.addMessage("error", new FacesMessage(
+
+		this.facesContext.addMessage("error", new FacesMessage(
 				FacesMessage.SEVERITY_ERROR, mensaje, null));
 	}
 
@@ -277,350 +296,410 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	public void mostrarObsActividad() {
 
-		this.setObservacion(observacionBC.getObsActividad(actividadSeleccionada
-				.getActividadId()));
+		this.setObservacion(this.observacionBC
+				.getObsActividad(this.actividadSeleccionada.getActividadId()));
 
-		String numeroActividad = actividadSeleccionada.getNroActividad();
-		agregarMensaje("Actividad seleccionada: " + numeroActividad);
+		String numeroActividad = this.actividadSeleccionada.getNroActividad();
+		this.agregarMensaje("Actividad seleccionada: " + numeroActividad);
 	}
 
 	public Actividad getActividadSeleccionada() {
-		return actividadSeleccionada;
+
+		return this.actividadSeleccionada;
 	}
 
 	public void setActividadSeleccionada(Actividad actividadSeleccionada) {
+
 		this.actividadSeleccionada = actividadSeleccionada;
 	}
 
 	public Long getIdResponsable() {
-		return idResponsable;
+
+		return this.idResponsable;
 	}
 
 	public void setIdResponsable(Long idResponsable) {
+
 		this.idResponsable = idResponsable;
 	}
 
 	public Long getIdCronogramaDetalle() {
-		return idCronogramaDetalle;
+
+		return this.idCronogramaDetalle;
 	}
 
 	public void setIdCronogramaDetalle(Long idCronogramaDetalle) {
+
 		this.idCronogramaDetalle = idCronogramaDetalle;
 	}
 
 	public Long getIdActividadAnterior() {
-		return idActividadAnterior;
+
+		return this.idActividadAnterior;
 	}
 
 	public void setIdActividadAnterior(Long idActividadAnterior) {
+
 		this.idActividadAnterior = idActividadAnterior;
 	}
 
 	public Long getIdAlarma() {
-		return idAlarma;
+
+		return this.idAlarma;
 	}
 
 	public void setIdAlarma(Long idAlarma) {
+
 		this.idAlarma = idAlarma;
 	}
 
 	public Long getIdAlerta() {
-		return idAlerta;
+
+		return this.idAlerta;
 	}
 
 	public void setIdAlerta(Long idAlerta) {
+
 		this.idAlerta = idAlerta;
 	}
 
 	public Long getIdSuperTarea() {
-		return idSuperTarea;
+
+		return this.idSuperTarea;
 	}
 
 	public void setIdSuperTarea(Long idSuperTarea) {
+
 		this.idSuperTarea = idSuperTarea;
 	}
 
 	public String getNroActividad() {
-		return nroActividad;
+
+		return this.nroActividad;
 	}
 
 	public void setNroActividad(String nroActividad) {
+
 		this.nroActividad = nroActividad;
 	}
 
 	public String getDescripcion() {
-		return descripcion;
+
+		return this.descripcion;
 	}
 
 	public void setDescripcion(String descripcion) {
+
 		this.descripcion = descripcion;
 	}
 
 	public Date getFechaCreacion() {
-		return fechaCreacion;
+
+		return this.fechaCreacion;
 	}
 
 	public void setFechaCreacion(Date fechaCreacion) {
+
 		this.fechaCreacion = fechaCreacion;
 	}
 
 	public Date getFechaInicioPrevisto() {
-		return fechaInicioPrevisto;
+
+		return this.fechaInicioPrevisto;
 	}
 
 	public void setFechaInicioPrevisto(Date fechaInicioPrevisto) {
+
 		this.fechaInicioPrevisto = fechaInicioPrevisto;
 	}
 
 	public Date getFechaInicioReprogramado() {
-		return fechaInicioReprogramado;
+
+		return this.fechaInicioReprogramado;
 	}
 
 	public void setFechaInicioReprogramado(Date fechaInicioReprogramado) {
+
 		this.fechaInicioReprogramado = fechaInicioReprogramado;
 	}
 
 	public String getMotivoReprogramacionInicio() {
-		return motivoReprogramacionInicio;
+
+		return this.motivoReprogramacionInicio;
 	}
 
 	public void setMotivoReprogramacionInicio(String motivoReprogramacionInicio) {
+
 		this.motivoReprogramacionInicio = motivoReprogramacionInicio;
 	}
 
 	public Date getFechaFinPrevista() {
-		return fechaFinPrevista;
+
+		return this.fechaFinPrevista;
 	}
 
 	public void setFechaFinPrevista(Date fechaFinPrevista) {
+
 		this.fechaFinPrevista = fechaFinPrevista;
 	}
 
 	public Date getFechaFinReprogramada() {
-		return fechaFinReprogramada;
+
+		return this.fechaFinReprogramada;
 	}
 
 	public void setFechaFinReprogramada(Date fechaFinReprogramada) {
+
 		this.fechaFinReprogramada = fechaFinReprogramada;
 	}
 
 	public String getMotivoReprogramacion() {
-		return motivoReprogramacion;
+
+		return this.motivoReprogramacion;
 	}
 
 	public void setMotivoReprogramacion(String motivoReprogramacion) {
+
 		this.motivoReprogramacion = motivoReprogramacion;
 	}
 
 	public Date getFechaDevuelta() {
-		return fechaDevuelta;
+
+		return this.fechaDevuelta;
 	}
 
 	public void setFechaDevuelta(Date fechaDevuelta) {
+
 		this.fechaDevuelta = fechaDevuelta;
 	}
 
 	public Date getFechaResuelta() {
-		return fechaResuelta;
+
+		return this.fechaResuelta;
 	}
 
 	public void setFechaResuelta(Date fechaResuelta) {
+
 		this.fechaResuelta = fechaResuelta;
 	}
 
 	public Date getFechaCancelacion() {
-		return fechaCancelacion;
+
+		return this.fechaCancelacion;
 	}
 
 	public void setFechaCancelacion(Date fechaCancelacion) {
+
 		this.fechaCancelacion = fechaCancelacion;
 	}
 
 	public String getPregunta() {
-		return pregunta;
+
+		return this.pregunta;
 	}
 
 	public void setPregunta(String pregunta) {
+
 		this.pregunta = pregunta;
 	}
 
 	public String getRespuesta() {
-		return respuesta;
+
+		return this.respuesta;
 	}
 
 	public void setRespuesta(String respuesta) {
+
 		this.respuesta = respuesta;
 	}
 
 	public String getEstado() {
-		return estado;
+
+		return this.estado;
 	}
 
 	public void setEstado(String estado) {
+
 		this.estado = estado;
 	}
 
 	public String getChecklistCompleto() {
-		return checklistCompleto;
+
+		return this.checklistCompleto;
 	}
 
 	public void setChecklistCompleto(String checklistCompleto) {
+
 		this.checklistCompleto = checklistCompleto;
 	}
 
 	public List<Usuario> getUsuariosPorRol() {
 
-		if (actividadSeleccionada != null) {
+		if (this.actividadSeleccionada != null) {
 
-			if (actividadSeleccionada.getCronogramaDetalle() == null
-					&& actividadSeleccionada.getSuperTarea() != null) {
+			if (this.actividadSeleccionada.getCronogramaDetalle() == null
+					&& this.actividadSeleccionada.getSuperTarea() != null) {
 				// Es una subActividad, listar todos los usuarios posibles.
-				usuariosPorRol = usuarioBC.findAll();
+				this.usuariosPorRol = this.usuarioBC.findAll();
 			} else {
 				// Listar los usuarios de acuerdo al rol del cronogramaDetalle
-				usuariosPorRol = usuarioBC
-						.getUsuariosByRol(actividadSeleccionada
+				this.usuariosPorRol = this.usuarioBC
+						.getUsuariosByRol(this.actividadSeleccionada
 								.getCronogramaDetalle().getRolResponsable()
 								.getRolId());
 			}
 		}
 
-		return usuariosPorRol;
+		return this.usuariosPorRol;
 	}
 
 	public void nextActividadUsuariosPorRol() {
 
-		if (actividadSeleccionada != null) {
-			// Obtener siguiente cronograma detalle para filtrar posibles responsables
-			CronogramaDetalle cd = cronogramaDetalleBC
+		if (this.actividadSeleccionada != null) {
+			// Obtener siguiente cronograma detalle para filtrar posibles
+			// responsables
+			CronogramaDetalle cd = this.cronogramaDetalleBC
 					.getNextCronogramaDetalle(
-							actividadSeleccionada.getCronogramaDetalle(),
-							actividadSeleccionada.getRespuesta());
+							this.actividadSeleccionada.getCronogramaDetalle(),
+							this.actividadSeleccionada.getRespuesta());
 
 			// Listar los usuarios de acuerdo al rol del cronogramaDetalle
 			// siguiente
-			setSigteUsuariosPorRol(usuarioBC.getUsuariosByRol(cd.getRolResponsable()
-					.getRolId()));
+			this.setSigteUsuariosPorRol(this.usuarioBC.getUsuariosByRol(cd
+					.getRolResponsable().getRolId()));
 		}
 
 	}
 
 	public List<Usuario> getSigteUsuariosPorRol() {
-		return sigteUsuariosPorRol;
+
+		return this.sigteUsuariosPorRol;
 	}
 
 	public void setSigteUsuariosPorRol(List<Usuario> sigteUsuariosPorRol) {
+
 		this.sigteUsuariosPorRol = sigteUsuariosPorRol;
 	}
 
 	public Usuario getSigteUsuario() {
-		return sigteUsuario;
+
+		return this.sigteUsuario;
 	}
 
 	public void setSigteUsuario(Usuario sigteUsuario) {
+
 		this.sigteUsuario = sigteUsuario;
 	}
 
 	public List<Usuario> getAllUsuarios() {
 
-		if (actividadSeleccionada != null) {
+		if (this.actividadSeleccionada != null) {
 
 			// Listar todos los usuarios posibles.
-			allUsuarios = usuarioBC.findAll();
+			this.allUsuarios = this.usuarioBC.findAll();
 		}
 
-		return allUsuarios;
+		return this.allUsuarios;
 	}
 
 	public void setUsuariosPorRol(List<Usuario> usuariosPorRol) {
+
 		this.usuariosPorRol = usuariosPorRol;
 	}
 
 	public List<CronogramaDetalle> getCronogramaDetallesporCronograma() {
-		cronogramaDetallesporCronograma = cronogramaDetalleBC.listar();
-		return cronogramaDetallesporCronograma;
+
+		this.cronogramaDetallesporCronograma = this.cronogramaDetalleBC
+				.listar();
+		return this.cronogramaDetallesporCronograma;
 	}
 
 	public void setCronogramaDetallesporCronograma(
 			List<CronogramaDetalle> cronogramaDetallesporCronograma) {
+
 		this.cronogramaDetallesporCronograma = cronogramaDetallesporCronograma;
 	}
 
 	public List<Actividad> getActividadesPorProceso() {
-		actividadesPorProceso = actividadBC.listar();
-		return actividadesPorProceso;
+
+		this.actividadesPorProceso = this.actividadBC.listar();
+		return this.actividadesPorProceso;
 	}
 
 	public void setActividadesPorProceso(List<Actividad> actividadesPorProceso) {
+
 		this.actividadesPorProceso = actividadesPorProceso;
 	}
 
 	private Usuario getResponsable() {
 
-		return usuarioBC.load(getIdResponsable());
+		return this.usuarioBC.load(this.getIdResponsable());
 	}
 
 	private CronogramaDetalle getCronogramaDetalle() {
 
-		return cronogramaDetalleBC.load(getIdCronogramaDetalle());
+		return this.cronogramaDetalleBC.load(this.getIdCronogramaDetalle());
 	}
 
 	private Actividad getActividadAnterior() {
 
-		return actividadBC.load(getIdActividadAnterior());
+		return this.actividadBC.load(this.getIdActividadAnterior());
 	}
 
 	private Actividad getSuperTarea() {
 
-		return actividadBC.load(getIdSuperTarea());
+		return this.actividadBC.load(this.getIdSuperTarea());
 	}
 
 	public void registrarActividad() {
-		if (procesoSeleccionado == null) {
-			agregarMensaje("ERROR: Proceso NO seleccionado");
-			limpiarCamposNuevo();
+
+		if (this.procesoSeleccionado == null) {
+			this.agregarMensaje("ERROR: Proceso NO seleccionado");
+			this.limpiarCamposNuevo();
 		} else {
-			Proceso procesoSelec = procesoSeleccionado;
+			Proceso procesoSelec = this.procesoSeleccionado;
 
 			Actividad actividad = new Actividad();
 
-			actividad.setNroActividad(getNroActividad());
-			actividad.setDescripcion(getDescripcion());
-			actividad.setFechaCreacion(getFechaCreacion());
-			actividad.setFechaInicioPrevisto(getFechaInicioPrevisto());
-			actividad.setFechaInicioReprogramado(getFechaInicioReprogramado());
-			actividad
-					.setMotivoReprogramacionInicio(getMotivoReprogramacionInicio());
-			actividad.setFechaFinPrevista(getFechaFinPrevista());
-			actividad.setFechaFinReprogramada(getFechaFinReprogramada());
-			actividad.setMotivoReprogramacion(getMotivoReprogramacion());
-			actividad.setFechaDevuelta(getFechaDevuelta());
-			actividad.setFechaResuelta(getFechaResuelta());
-			actividad.setFechaCancelacion(getFechaCancelacion());
-			actividad.setPregunta(getPregunta());
-			actividad.setRespuesta(getRespuesta());
-			actividad.setEstado(getEstado());
-			actividad.setChecklistCompleto(getChecklistCompleto());
+			actividad.setNroActividad(this.getNroActividad());
+			actividad.setDescripcion(this.getDescripcion());
+			actividad.setFechaCreacion(this.getFechaCreacion());
+			actividad.setFechaInicioPrevisto(this.getFechaInicioPrevisto());
+			actividad.setFechaInicioReprogramado(this
+					.getFechaInicioReprogramado());
+			actividad.setMotivoReprogramacionInicio(this
+					.getMotivoReprogramacionInicio());
+			actividad.setFechaFinPrevista(this.getFechaFinPrevista());
+			actividad.setFechaFinReprogramada(this.getFechaFinReprogramada());
+			actividad.setMotivoReprogramacion(this.getMotivoReprogramacion());
+			actividad.setFechaDevuelta(this.getFechaDevuelta());
+			actividad.setFechaResuelta(this.getFechaResuelta());
+			actividad.setFechaCancelacion(this.getFechaCancelacion());
+			actividad.setPregunta(this.getPregunta());
+			actividad.setRespuesta(this.getRespuesta());
+			actividad.setEstado(this.getEstado());
+			actividad.setChecklistCompleto(this.getChecklistCompleto());
 
-			actividad.setResponsable(getResponsable());
-			actividad.setCronogramaDetalle(getCronogramaDetalle());
-			actividad.setActividadAnterior(getActividadAnterior());
-			actividad.setSuperTarea(getSuperTarea());
+			actividad.setResponsable(this.getResponsable());
+			actividad.setCronogramaDetalle(this.getCronogramaDetalle());
+			actividad.setActividadAnterior(this.getActividadAnterior());
+			actividad.setSuperTarea(this.getSuperTarea());
 
 			/*
 			 * actividad.setAlarma(getCronogramaDetalle().getAlarma());
 			 * actividad.setAlerta(getCronogramaDetalle().getAlerta());
 			 */
 			actividad.setMaster(procesoSelec);
-			actividadBC.registrar(actividad);
-			actividades.add(actividad);
-			agregarMensaje("Actividad creada");
-			limpiarCamposNuevo();
+			this.actividadBC.registrar(actividad);
+			this.actividades.add(actividad);
+			this.agregarMensaje("Actividad creada");
+			this.limpiarCamposNuevo();
 
 		}
 	}
 
 	private void limpiarCamposNuevo() {
+
 		this.setNroActividad("");
 		this.setDescripcion("");
 		this.setFechaCreacion(null);
@@ -641,50 +720,58 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void eliminarActividad(ActionEvent actionEvent) {
-		actividadBC.eliminar(actividadSeleccionada.getActividadId());
-		int index = actividades.indexOf(actividadSeleccionada);
-		actividades.remove(index);
+
+		this.actividadBC.eliminar(this.actividadSeleccionada.getActividadId());
+		int index = this.actividades.indexOf(this.actividadSeleccionada);
+		this.actividades.remove(index);
 		// detalleSeleccionado = new CronogramaDetalle();
 
-		agregarMensaje("Actividad eliminada");
+		this.agregarMensaje("Actividad eliminada");
 	}
 
 	public void elegirActividad() {
-		Actividad actividad = actividadSeleccionada;
 
-		if (actividadSeleccionada.getCronogramaDetalle() != null){
-			setSigteCronogramaDetalle(cronogramaDetalleBC.getNextCronogramaDetalle(
-					actividadSeleccionada.getCronogramaDetalle(), actividadSeleccionada.getRespuesta()));
-			setSubActividad(false);
-		}else {
-			setSubActividad(true);
+		Actividad actividad = this.actividadSeleccionada;
+
+		if (this.actividadSeleccionada.getCronogramaDetalle() != null) {
+			this.setSigteCronogramaDetalle(this.cronogramaDetalleBC
+					.getNextCronogramaDetalle(
+							this.actividadSeleccionada.getCronogramaDetalle(),
+							this.actividadSeleccionada.getRespuesta()));
+			this.setSubActividad(false);
+		} else {
+			this.setSubActividad(true);
 		}
 
-		agregarMensaje("Actividad seleccionada: " + actividad.getNroActividad());
+		this.agregarMensaje("Actividad seleccionada: "
+				+ actividad.getNroActividad());
 
 	}
 
 	public void elegirChecklistDetalle() {
+
 		ActividadChecklistDetalle actividadCheklistDetalle = this.checklistDetalle;
 
-		agregarMensaje("Item de Checklist seleccionado: " + actividadCheklistDetalle.getDescripcion());
+		this.agregarMensaje("Item de Checklist seleccionado: "
+				+ actividadCheklistDetalle.getDescripcion());
 
 	}
 
 	public void editarActividad() {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("Actividad no seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("Actividad no seleccionada");
 		} else {
-			Actividad actividad = actividadSeleccionada;
+			Actividad actividad = this.actividadSeleccionada;
 			if (actividad.getResponsable() != null) {
-				actividad.setResponsable(usuarioBC.load(actividad
+				actividad.setResponsable(this.usuarioBC.load(actividad
 						.getResponsable().getUsuarioId()));
 			}
-			try{
-				actividadBC.editar(actividad);
-				agregarMensaje("Actividad editada");
-			} catch(Exception ex){
-				agregarMensajeError(ex.getMessage());
+			try {
+				this.actividadBC.editar(actividad);
+				this.agregarMensaje("Actividad editada");
+			} catch (Exception ex) {
+				this.agregarMensajeError(ex.getMessage());
 			}
 		}
 	}
@@ -707,9 +794,11 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public Long getActividadSeleccionadaResponsable() {
 
 		Long usuario = null;
-		if (actividadSeleccionada != null
-				&& actividadSeleccionada.getResponsable() != null)
-			usuario = actividadSeleccionada.getResponsable().getUsuarioId();
+		if (this.actividadSeleccionada != null
+				&& this.actividadSeleccionada.getResponsable() != null) {
+			usuario = this.actividadSeleccionada.getResponsable()
+					.getUsuarioId();
+		}
 
 		return usuario;
 	}
@@ -717,53 +806,60 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public Date calculoFechaFin(DateSelectEvent event) {
 
 		Calendar cal = new GregorianCalendar();
-		cal.setTime((Date) event.getDate());
-		cal.add(Calendar.DATE, actividadSeleccionada.getCronogramaDetalle()
-				.getDuracionTarea().intValue());
-		actividadSeleccionada.setFechaFinPrevista(cal.getTime());
+		cal.setTime(event.getDate());
+		cal.add(Calendar.DATE, this.actividadSeleccionada
+				.getCronogramaDetalle().getDuracionTarea().intValue());
+		this.actividadSeleccionada.setFechaFinPrevista(cal.getTime());
 		return cal.getTime();
 	}
 
 	public CronogramaDetalle getSigteCronogramaDetalle() {
-		return sigteCronogramaDetalle;
+
+		return this.sigteCronogramaDetalle;
 	}
 
-	public void setSigteCronogramaDetalle(CronogramaDetalle sigteCronogramaDetalle) {
+	public void setSigteCronogramaDetalle(
+			CronogramaDetalle sigteCronogramaDetalle) {
+
 		this.sigteCronogramaDetalle = sigteCronogramaDetalle;
 	}
+
 	public boolean isSubActividad() {
-		return subActividad;
+
+		return this.subActividad;
 	}
 
 	public void setSubActividad(boolean subActividad) {
+
 		this.subActividad = subActividad;
 	}
 
 	public void resolverActividad() {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("Actividad no seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("Actividad no seleccionada");
 		} else {
-			Actividad actividad = actividadSeleccionada;
-			if (!validarSiPuedeResolverActividad()){
-				elegirProceso();
+			Actividad actividad = this.actividadSeleccionada;
+			if (!this.validarSiPuedeResolverActividad()) {
+				this.elegirProceso();
 				return;
 			}
 
 			try {
-				actividadBC.resolveActividad(actividad,
-						getSigteUsuario());
+				this.actividadBC.resolveActividad(actividad,
+						this.getSigteUsuario());
 				if (actividad.getChecklistDetalle() != null) {
 					actividad.setTieneChecklist(true);
 				}
-				elegirProceso();
-				registrarObsP();
-				agregarMensaje("Ha pasado a la siguiente Actividad");
+				this.elegirProceso();
+				this.registrarObsP();
+				this.agregarMensaje("Ha pasado a la siguiente Actividad");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
-				agregarMensajeError(ex.getMessage());
+				this.agregarMensajeError(ex.getMessage());
 			}
 			if (actividad.getResponsable() != null) {
-				actividad.setResponsable(usuarioBC.load(actividad
+				actividad.setResponsable(this.usuarioBC.load(actividad
 						.getResponsable().getUsuarioId()));
 			}
 		}
@@ -773,7 +869,8 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	 * @return
 	 */
 	private boolean validarSiPuedeResolverActividad() {
-		Actividad actividad = actividadSeleccionada;
+
+		Actividad actividad = this.actividadSeleccionada;
 		boolean aret = true;
 		if (actividad.getPregunta() != null
 				&& !actividad.getPregunta().equals("")
@@ -782,7 +879,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 			String mensaje = "No se puede resolver una actividad con pregunta y sin respuesta.";
 			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
-			agregarMensajeError(mensaje);
+			this.agregarMensajeError(mensaje);
 			aret = false;
 
 		} else if (actividad.getRespuesta() != null
@@ -791,28 +888,31 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 			String mensaje = "La respuesta debe ser SI o NO.";
 			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
-			agregarMensajeError(mensaje);
+			this.agregarMensajeError(mensaje);
 			aret = false;
 
-		} else if (actividadBC.validarChecklistDetalles(actividad) == false) {
+		} else if (this.actividadBC.validarChecklistDetalles(actividad) == false) {
 
 			String mensaje = "No puede pasar a la siguiente actividad sin cumplir con todo el checklist.";
 			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
-			agregarMensajeError(mensaje);
+			this.agregarMensajeError(mensaje);
 			aret = false;
 
-		} else if (actividadBC.existenFacturasSinCobro(actividad.getMaster())){
+			// } else if
+			// (actividadBC.existenFacturasSinCobro(actividad.getMaster())){
+			//
+			// String mensaje =
+			// "No puede pasar a la siguiente actividad con Factura y sin fecha de cobro.";
+			// System.out.println("validarSiPuedeResolverActividad() " +
+			// mensaje);
+			// agregarMensajeError(mensaje);
+			// aret = false;
 
-			String mensaje = "No puede pasar a la siguiente actividad con Factura y sin fecha de cobro.";
-			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
-			agregarMensajeError(mensaje);
-			aret = false;
-
-		} else if  (procesoBC.existenSubTareasAbiertas(actividad)){
+		} else if (this.procesoBC.existenSubTareasAbiertas(actividad)) {
 
 			String mensaje = "No puede pasar a la siguiente actividad con subtareas no administrativas abiertas!";
 			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
-			agregarMensajeError(mensaje);
+			this.agregarMensajeError(mensaje);
 			aret = false;
 
 		}
@@ -820,46 +920,48 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void finalizarProceso() {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("Actividad no seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("Actividad no seleccionada");
 		} else {
 			try {
-				Actividad actividad = actividadSeleccionada;
+				Actividad actividad = this.actividadSeleccionada;
 				if (actividad.getResponsable() != null) {
-					actividad.setResponsable(usuarioBC.load(actividad
+					actividad.setResponsable(this.usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
 				}
-				actividadBC.resolveActividad(actividad,
-						getSigteUsuario());
-				elegirProceso();
-				agregarMensaje("Ha finalizado el Proceso");
+				this.actividadBC.resolveActividad(actividad,
+						this.getSigteUsuario());
+				this.elegirProceso();
+				this.agregarMensaje("Ha finalizado el Proceso");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
-				agregarMensajeError(ex.getMessage());
+				this.agregarMensajeError(ex.getMessage());
 			}
 		}
 	}
 
 	public void devolverActividad() {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("Actividad no seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("Actividad no seleccionada");
 		} else {
 			try {
-				if (!validarSiPuedeDevolverActividad()){
+				if (!this.validarSiPuedeDevolverActividad()) {
 					return;
 				}
 
-				Actividad actividad = actividadSeleccionada;
+				Actividad actividad = this.actividadSeleccionada;
 				if (actividad.getResponsable() != null) {
-					actividad.setResponsable(usuarioBC.load(actividad
+					actividad.setResponsable(this.usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
 				}
-				actividadBC.devolverActividad(actividad);
-				elegirProceso();
-				agregarMensaje("Actividad devuelta");
+				this.actividadBC.devolverActividad(actividad);
+				this.elegirProceso();
+				this.agregarMensaje("Actividad devuelta");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
-				agregarMensajeError(ex.getMessage());
+				this.agregarMensajeError(ex.getMessage());
 			}
 		}
 	}
@@ -868,13 +970,14 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	 * @return
 	 */
 	private boolean validarSiPuedeDevolverActividad() {
-		Actividad actividad = actividadSeleccionada;
+
+		Actividad actividad = this.actividadSeleccionada;
 		boolean aret = true;
-		if  (procesoBC.existenSubTareas(actividad)){
+		if (this.procesoBC.existenSubTareas(actividad)) {
 
 			String mensaje = "No puede devolver la actividad si cuenta con subtareas!";
 			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
-			agregarMensajeError(mensaje);
+			this.agregarMensajeError(mensaje);
 			aret = false;
 
 		}
@@ -882,23 +985,26 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void crearSubActividad() {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("Actividad no seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("Actividad no seleccionada");
 		} else {
 			try {
-				Actividad actividad = actividadSeleccionada;
+				Actividad actividad = this.actividadSeleccionada;
 				if (actividad.getResponsable() != null) {
-					actividad.setResponsable(usuarioBC.load(actividad
+					actividad.setResponsable(this.usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
 				}
-				actividadBC.crearSubActividad(actividad,
-						actividadSeleccionada.getDescripcion(),
-						actividadSeleccionada.getResponsable(), null, null);
-				elegirProceso();
-				agregarMensaje("SubActividad creada");
+				this.actividadBC
+						.crearSubActividad(actividad,
+								this.actividadSeleccionada.getDescripcion(),
+								this.actividadSeleccionada.getResponsable(),
+								null, null);
+				this.elegirProceso();
+				this.agregarMensaje("SubActividad creada");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
-				agregarMensajeError(ex.getMessage());
+				this.agregarMensajeError(ex.getMessage());
 			}
 		}
 	}
@@ -906,10 +1012,10 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public boolean getMostrarCampoRespuesta() {
 
 		boolean show = false;
-		if (actividadSeleccionada != null) {
+		if (this.actividadSeleccionada != null) {
 
-			if (actividadSeleccionada.getPregunta() != null
-					&& !actividadSeleccionada.getPregunta().equals("")) {
+			if (this.actividadSeleccionada.getPregunta() != null
+					&& !this.actividadSeleccionada.getPregunta().equals("")) {
 
 				show = true;
 			}
@@ -923,10 +1029,12 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private String descripcionObsA;
 
 	public String getDescripcionObsA() {
-		return descripcionObsA;
+
+		return this.descripcionObsA;
 	}
 
 	public void setDescripcionObsA(String descripcionObsA) {
+
 		this.descripcionObsA = descripcionObsA;
 	}
 
@@ -937,151 +1045,167 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	private ActividadChecklistDetalle checklistDetalle;
 
 	public Documento getDocumentoSeleccionado() {
-		return documentoSeleccionado;
+
+		return this.documentoSeleccionado;
 	}
 
 	public void setDocumentoSeleccionado(Documento documentoSeleccionado) {
+
 		this.documentoSeleccionado = documentoSeleccionado;
 	}
 
 	public ActividadChecklistDetalle getChecklistDetalle() {
-		return checklistDetalle;
+
+		return this.checklistDetalle;
 	}
 
 	public void setChecklistDetalle(ActividadChecklistDetalle checklistDetalle) {
+
 		this.checklistDetalle = checklistDetalle;
 	}
 
 	public String getDescripcionObsP() {
-		return descripcionObsP;
+
+		return this.descripcionObsP;
 	}
 
 	public Observacion getObservacionSeleccionada() {
-		return observacionSeleccionada;
+
+		return this.observacionSeleccionada;
 	}
 
 	public void setObservacionSeleccionada(Observacion observacionSeleccionada) {
+
 		this.observacionSeleccionada = observacionSeleccionada;
 	}
 
 	public void setDescripcionObsP(String descripcion) {
+
 		this.descripcionObsP = descripcion;
 	}
 
 	public void registrarObsP() {
-		if (procesoSeleccionado == null) {
-			agregarMensaje("ERROR: Proceso NO seleccionado");
+
+		if (this.procesoSeleccionado == null) {
+			this.agregarMensaje("ERROR: Proceso NO seleccionado");
 			this.setDescripcionObsP("");
 		} else {
-			Proceso procesoSelec = procesoSeleccionado;
+			Proceso procesoSelec = this.procesoSeleccionado;
 
 			Observacion obs = new Observacion();
 
-			obs.setDescripcion(getDescripcionObsP());
+			obs.setDescripcion(this.getDescripcionObsP());
 
-			String nombreUsu = usuarioBC.getUsuarioActual();
-			Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+			String nombreUsu = this.usuarioBC.getUsuarioActual();
+			Usuario actual = this.usuarioBC.findSpecificUser(nombreUsu);
 
 			obs.setUsuario(actual);
 			obs.setFechaHora(new Date());
 			obs.setEntidad("Proceso");
 			obs.setIdEntidad(procesoSelec.getProcesoId());
 
-			observacionBC.registrar(obs);
-			if (observaciones != null){
+			this.observacionBC.registrar(obs);
+			if (this.observaciones != null) {
 				List<Observacion> nuevasObservaciones = new ArrayList<Observacion>();
 				nuevasObservaciones.add(obs);
-				nuevasObservaciones.addAll(observaciones);
-				observaciones = nuevasObservaciones;
+				nuevasObservaciones.addAll(this.observaciones);
+				this.observaciones = nuevasObservaciones;
 			}
-			agregarMensaje("Observacion creada");
+			this.agregarMensaje("Observacion creada");
 			this.setDescripcionObsP("");
 
 		}
 	}
 
 	public void registrarObsA() {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("ERROR: Actividad NO seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("ERROR: Actividad NO seleccionada");
 			this.setDescripcionObsP("");
 		} else {
-			Actividad actividadSelec = actividadSeleccionada;
+			Actividad actividadSelec = this.actividadSeleccionada;
 
 			Observacion obs = new Observacion();
 
-			obs.setDescripcion(getDescripcionObsA());
+			obs.setDescripcion(this.getDescripcionObsA());
 
-			String nombreUsu = usuarioBC.getUsuarioActual();
-			Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+			String nombreUsu = this.usuarioBC.getUsuarioActual();
+			Usuario actual = this.usuarioBC.findSpecificUser(nombreUsu);
 
 			obs.setUsuario(actual);
 			obs.setFechaHora(new Date());
 			obs.setEntidad("Actividad");
 			obs.setIdEntidad(actividadSelec.getActividadId());
 
-			observacionBC.registrar(obs);
-			observaciones.add(obs);
-			agregarMensaje("Observacion creada");
+			this.observacionBC.registrar(obs);
+			this.observaciones.add(obs);
+			this.agregarMensaje("Observacion creada");
 			this.setDescripcionObsA("");
 
 		}
 	}
 
 	public void elegirObservacion() {
-		Observacion obs = observacionSeleccionada;
 
-		agregarMensaje("Observacion seleccionada: " + obs.getDescripcion());
+		Observacion obs = this.observacionSeleccionada;
+
+		this.agregarMensaje("Observacion seleccionada: " + obs.getDescripcion());
 
 	}
 
 	public void editarChecklistDetalle() {
-		if (checklistDetalle == null) {
-			agregarMensaje("Item de Checklist no seleccionado");
+
+		if (this.checklistDetalle == null) {
+			this.agregarMensaje("Item de Checklist no seleccionado");
 		} else {
-			ActividadChecklistDetalle edited = checklistDetalle;
-			actividadChecklistDetalleBC.editar(edited);
-			agregarMensaje("Item de Checklist editado");
+			ActividadChecklistDetalle edited = this.checklistDetalle;
+			this.actividadChecklistDetalleBC.editar(edited);
+			this.agregarMensaje("Item de Checklist editado");
 		}
 	}
 
 	public void editarObservacion() {
-		if (observacionSeleccionada == null) {
-			agregarMensaje("Observacion no seleccionada");
+
+		if (this.observacionSeleccionada == null) {
+			this.agregarMensaje("Observacion no seleccionada");
 		} else {
-			String actual = usuarioBC.getUsuarioActual();
-			String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
+			String actual = this.usuarioBC.getUsuarioActual();
+			String obsUsu = this.observacionSeleccionada.getUsuario()
+					.getUsuario();
 			if (obsUsu.equals(actual)) {
-				Observacion obs = observacionSeleccionada;
+				Observacion obs = this.observacionSeleccionada;
 				obs.setFechaHora(new Date());
-				observacionBC.editar(obs);
-				agregarMensaje("Observacion editada");
+				this.observacionBC.editar(obs);
+				this.agregarMensaje("Observacion editada");
 
 			} else {
-				agregarMensaje("No tiene permisos para realizar esta operación");
+				this.agregarMensaje("No tiene permisos para realizar esta operación");
 			}
 		}
 	}
 
 	public void eliminarObservacion(ActionEvent actionEvent) {
 
-		if (observacionSeleccionada == null) {
-			agregarMensaje("Observacion no seleccionada");
+		if (this.observacionSeleccionada == null) {
+			this.agregarMensaje("Observacion no seleccionada");
 		} else {
-			//String actual = usuarioBC.getUsuarioActual();
-			//String obsUsu = observacionSeleccionada.getUsuario().getUsuario();
-			//if (obsUsu.equals(actual)) {
+			// String actual = usuarioBC.getUsuarioActual();
+			// String obsUsu =
+			// observacionSeleccionada.getUsuario().getUsuario();
+			// if (obsUsu.equals(actual)) {
 
-				observacionBC.eliminar(observacionSeleccionada
-						.getObservacionId());
-				int index = observaciones.indexOf(observacionSeleccionada);
-				observaciones.remove(index);
+			this.observacionBC.eliminar(this.observacionSeleccionada
+					.getObservacionId());
+			int index = this.observaciones
+					.indexOf(this.observacionSeleccionada);
+			this.observaciones.remove(index);
 
-				agregarMensaje("Observacion eliminada");
+			this.agregarMensaje("Observacion eliminada");
 
-			//} 
-			//else {
-			//	agregarMensaje("No tiene permisos para realizar esta operación");
-			//}
+			// }
+			// else {
+			// agregarMensaje("No tiene permisos para realizar esta operación");
+			// }
 		}
 
 	}
@@ -1094,7 +1218,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		// " is uploaded.");
 		// Do what you want with the file
 		try {
-			copyFile(event.getFile().getFileName(), event.getFile()
+			this.copyFile(event.getFile().getFileName(), event.getFile()
 					.getInputstream());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1102,37 +1226,43 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void copyFile(String fileName, InputStream in) {
-		if (procesoSeleccionado == null) {
-			agregarMensaje("ERROR: Proceso NO seleccionado");
+
+		if (this.procesoSeleccionado == null) {
+			this.agregarMensaje("ERROR: Proceso NO seleccionado");
 		} else {
 
 			try {
-				
-				String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-						.getUserPrincipal().getName();
-				Usuario usuarioActual = usuarioBC.findSpecificUser(currentUser);
-				
-				//get folder name
+
+				String currentUser = FacesContext.getCurrentInstance()
+						.getExternalContext().getUserPrincipal().getName();
+				Usuario usuarioActual = this.usuarioBC
+						.findSpecificUser(currentUser);
+
+				// get folder name
 				String folder = this.carpetaFileUpload;
-				if(folder == null) folder = "";
-				else if(folder.equals("---Sin carpeta---")) folder = "";
-				else if(folder.trim().equals("")) folder = "";
-				else folder += '/';
-				
-				String nombreCliente = procesoSeleccionado.getCliente()
+				if (folder == null) {
+					folder = "";
+				} else if (folder.equals("---Sin carpeta---")) {
+					folder = "";
+				} else if (folder.trim().equals("")) {
+					folder = "";
+				} else {
+					folder += '/';
+				}
+
+				String nombreCliente = this.procesoSeleccionado.getCliente()
 						.getNombre();
-				String descCronog = procesoSeleccionado.getCronograma()
+				String descCronog = this.procesoSeleccionado.getCronograma()
 						.getNombre();
-				String nroProceso = procesoSeleccionado.getNroProceso();
+				String nroProceso = this.procesoSeleccionado.getNroProceso();
 				String anho = "";
-				
 
 				int k = nroProceso.lastIndexOf('/');
 				if (k > 0) {
 					anho = nroProceso.substring(k - 4, k);
 					nroProceso = nroProceso.substring(k + 1);
 				}
-				
+
 				String extension = "";
 				String nombreArchivo = "";
 				int i = fileName.lastIndexOf('.');
@@ -1140,79 +1270,100 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					extension = fileName.substring(i + 1);
 					nombreArchivo = fileName.substring(0, i);
 				}
-				
-				String filePath = appProperties.getDocumentPath()
+
+				String filePath = this.appProperties.getDocumentPath()
 						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
 						+ nroProceso + '/' + folder;
-				
-				Documento documentoOrig = documentoBC.getDocumentoByFileName(nombreArchivo, filePath, extension);				
-				boolean puedoVer = documentoBC.puedoVer(documentoOrig, usuarioActual);				
-				if(!puedoVer){
-					
-					//error, el archivo ya existe y el usuario actual no posee privilegios para verlo
-					agregarMensajeError("Error, no posee privilegios sobre el archivo: " + fileName + " !!");
-				} else if(documentoOrig != null && documentoOrig.getBloqueado().equals("Si")
-					&& !documentoOrig.getUsuarioBloqueo().getUsuario().equals(currentUser)) {
-					
-					//error, el archivoya existe y está bloqueado por otro usuario
-					agregarMensajeError("Error, el archivo: " + fileName + " está bloqueado para edición!!\n" +
-										"Usuario que bloquéo: " + documentoOrig.getUsuarioBloqueo().getUsuario() + "\n" +
-										"Fecha de bloqueo: " + documentoOrig.getFechaBloqueo().toString());
+
+				Documento documentoOrig = this.documentoBC
+						.getDocumentoByFileName(nombreArchivo, filePath,
+								extension);
+				boolean puedoVer = this.documentoBC.puedoVer(documentoOrig,
+						usuarioActual);
+				if (!puedoVer) {
+
+					// error, el archivo ya existe y el usuario actual no posee
+					// privilegios para verlo
+					this.agregarMensajeError("Error, el archivo ya existe y no posee privilegios sobre el mismo: "
+							+ fileName + " !!");
+				} else if (documentoOrig != null
+						&& documentoOrig.getBloqueado().equals("Si")
+						&& !documentoOrig.getUsuarioBloqueo().getUsuario()
+								.equals(currentUser)) {
+
+					// error, el archivoya existe y está bloqueado por otro
+					// usuario
+					this.agregarMensajeError("Error, el archivo: " + fileName
+							+ " está bloqueado para edición!!\n"
+							+ "Usuario que bloquéo: "
+							+ documentoOrig.getUsuarioBloqueo().getUsuario()
+							+ "\n" + "Fecha de bloqueo: "
+							+ documentoOrig.getFechaBloqueo().toString());
 				} else {
 
-					//copiar el archivo
-					File rootFolder = new File(appProperties.getDocumentPath());
+					// copiar el archivo
+					File rootFolder = new File(
+							this.appProperties.getDocumentPath());
 					if (!rootFolder.exists()) {
 						rootFolder.mkdir();
 					}
-	
-					File clienteFolder = new File(appProperties.getDocumentPath()
-							+ nombreCliente + '/');
+
+					File clienteFolder = new File(
+							this.appProperties.getDocumentPath()
+									+ nombreCliente + '/');
 					if (!clienteFolder.exists()) {
 						clienteFolder.mkdir();
 					}
-	
-					File anhoFolder = new File(appProperties.getDocumentPath()
-							+ nombreCliente + '/' + anho + '/');
+
+					File anhoFolder = new File(
+							this.appProperties.getDocumentPath()
+									+ nombreCliente + '/' + anho + '/');
 					if (!anhoFolder.exists()) {
 						anhoFolder.mkdir();
 					}
-	
-					File cronogFolder = new File(appProperties.getDocumentPath()
-							+ nombreCliente + '/' + anho + '/' + descCronog + '/');
+
+					File cronogFolder = new File(
+							this.appProperties.getDocumentPath()
+									+ nombreCliente + '/' + anho + '/'
+									+ descCronog + '/');
 					if (!cronogFolder.exists()) {
 						cronogFolder.mkdir();
 					}
-	
-					File procesoFolder = new File(appProperties.getDocumentPath()
-							+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-							+ nroProceso + '/');
+
+					File procesoFolder = new File(
+							this.appProperties.getDocumentPath()
+									+ nombreCliente + '/' + anho + '/'
+									+ descCronog + '/' + nroProceso + '/');
 					if (!procesoFolder.exists()) {
 						procesoFolder.mkdir();
 					}
-					
-					File procesoSubFolder = new File(appProperties.getDocumentPath() + nombreCliente + '/'
-							+ anho + '/' + descCronog + '/' + nroProceso + '/' + folder);
+
+					File procesoSubFolder = new File(
+							this.appProperties.getDocumentPath()
+									+ nombreCliente + '/' + anho + '/'
+									+ descCronog + '/' + nroProceso + '/'
+									+ folder);
 					if (!procesoSubFolder.exists()) {
 						procesoSubFolder.mkdir();
 					}
-					
-					OutputStream out = new FileOutputStream(new File(filePath + fileName));
+
+					OutputStream out = new FileOutputStream(new File(filePath
+							+ fileName));
 					int read = 0;
 					byte[] bytes = new byte[1024];
-	
+
 					while ((read = in.read(bytes)) != -1) {
 						out.write(bytes, 0, read);
 					}
-	
+
 					in.close();
 					out.flush();
-					out.close();					
-	
-					Proceso procesoSelec = procesoSeleccionado;
-					if(documentoOrig == null) {
-						
-						//nuevo documento, insertar						
+					out.close();
+
+					Proceso procesoSelec = this.procesoSeleccionado;
+					if (documentoOrig == null) {
+
+						// nuevo documento, insertar
 						Documento doc = new Documento();
 						doc.setFilename(nombreArchivo);
 						doc.setFileExtension(extension);
@@ -1220,31 +1371,34 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 						doc.setFilepath(filePath);
 						doc.setEntidad("Proceso");
 						doc.setIdEntidad(procesoSelec.getProcesoId());
-						doc.setFechaUltimoUpdate(new Date());						
+						doc.setFechaUltimoUpdate(new Date());
 						doc.setUsuarioCreacion(usuarioActual);
-		
-						documentoBC.registrar(doc);
-						documentos.add(doc);
-						agregarMensaje("Archivo subido correctamente");
+
+						this.documentoBC.registrar(doc);
+						this.documentos.add(doc);
+						this.agregarMensaje("Archivo subido correctamente");
 					} else {
-						
-						//documento ya existente, actualizar
+
+						// documento ya existente, actualizar
 						documentoOrig.setFechaUltimoUpdate(new Date());
-						documentoBC.editar(documentoOrig);
-						documentos = documentoBC.getFileProceso(procesoSeleccionado.getProcesoId(), currentUser);
-						agregarMensaje("Archivo subido y actualizado correctamente");
-					}					
+						this.documentoBC.editar(documentoOrig);
+						this.documentos = this.documentoBC.getFileProceso(
+								this.procesoSeleccionado.getProcesoId(),
+								currentUser);
+						this.agregarMensaje("Archivo subido y actualizado correctamente");
+					}
 				}
 
 			} catch (IOException e) {
-				agregarMensaje("Error subiendo el archivo");
+				this.agregarMensaje("Error subiendo el archivo");
 				// System.out.println(e.getMessage());
 			}
 		}
 	}
 
 	public void elegirDocumento() {
-		Documento doc = documentoSeleccionado;
+
+		Documento doc = this.documentoSeleccionado;
 
 		try {
 			String downloadPath = doc.getFilepath();
@@ -1256,13 +1410,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 			StreamedContent archivo = new DefaultStreamedContent(stream,
 					"application/octet-stream", downloadName + "."
 							+ downloadExt);
-			setFile(archivo);
-			agregarMensaje("Archivo seleccionado :" + downloadName + "."
+			this.setFile(archivo);
+			this.agregarMensaje("Archivo seleccionado :" + downloadName + "."
 					+ downloadExt);
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			agregarMensaje("Error seleccionando el archivo");
+			this.agregarMensaje("Error seleccionando el archivo");
 		}
 
 	}
@@ -1276,7 +1430,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	public StreamedContent getFile() {
 
-		return file;
+		return this.file;
 	}
 
 	public void handleFileUploadA(FileUploadEvent event) {
@@ -1285,7 +1439,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		// " is uploaded.");
 		// Do what you want with the file
 		try {
-			copyFileA(event.getFile().getFileName(), event.getFile()
+			this.copyFileA(event.getFile().getFileName(), event.getFile()
 					.getInputstream());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1293,19 +1447,20 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	}
 
 	public void copyFileA(String fileName, InputStream in) {
-		if (actividadSeleccionada == null) {
-			agregarMensaje("ERROR: Actividad NO seleccionada");
+
+		if (this.actividadSeleccionada == null) {
+			this.agregarMensaje("ERROR: Actividad NO seleccionada");
 		} else {
 
 			try {
 
-				String nombreCliente = procesoSeleccionado.getCliente()
+				String nombreCliente = this.procesoSeleccionado.getCliente()
 						.getNombre();
-				String descCronog = procesoSeleccionado.getCronograma()
+				String descCronog = this.procesoSeleccionado.getCronograma()
 						.getNombre();
-				String nroProceso = procesoSeleccionado.getNroProceso();
+				String nroProceso = this.procesoSeleccionado.getNroProceso();
 				String anho = "";
-				String nroActiv = actividadSeleccionada.getNroActividad();
+				String nroActiv = this.actividadSeleccionada.getNroActividad();
 
 				int k = nroProceso.lastIndexOf('/');
 				if (k > 0) {
@@ -1318,48 +1473,52 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					nroActiv = nroActiv.substring(0, h);
 				}
 
-				File rootFolder = new File(appProperties.getDocumentPath());
+				File rootFolder = new File(this.appProperties.getDocumentPath());
 				if (!rootFolder.exists()) {
 					rootFolder.mkdir();
 				}
 
-				File clienteFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/');
+				File clienteFolder = new File(
+						this.appProperties.getDocumentPath() + nombreCliente
+								+ '/');
 				if (!clienteFolder.exists()) {
 					clienteFolder.mkdir();
 				}
 
-				File anhoFolder = new File(appProperties.getDocumentPath()
+				File anhoFolder = new File(this.appProperties.getDocumentPath()
 						+ nombreCliente + '/' + anho + '/');
 				if (!anhoFolder.exists()) {
 					anhoFolder.mkdir();
 				}
 
-				File cronogFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/');
+				File cronogFolder = new File(
+						this.appProperties.getDocumentPath() + nombreCliente
+								+ '/' + anho + '/' + descCronog + '/');
 				if (!cronogFolder.exists()) {
 					cronogFolder.mkdir();
 				}
 
-				File procesoFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-						+ nroProceso + '/');
+				File procesoFolder = new File(
+						this.appProperties.getDocumentPath() + nombreCliente
+								+ '/' + anho + '/' + descCronog + '/'
+								+ nroProceso + '/');
 				if (!procesoFolder.exists()) {
 					procesoFolder.mkdir();
 				}
 
-				File activFolder = new File(appProperties.getDocumentPath()
-						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-						+ nroProceso + '/' + nroActiv + '/');
+				File activFolder = new File(
+						this.appProperties.getDocumentPath() + nombreCliente
+								+ '/' + anho + '/' + descCronog + '/'
+								+ nroProceso + '/' + nroActiv + '/');
 				if (!activFolder.exists()) {
 					activFolder.mkdir();
 				}
 
 				// write the inputStream to a FileOutputStream
 				OutputStream out = new FileOutputStream(new File(
-						appProperties.getDocumentPath() + nombreCliente + '/'
-								+ anho + '/' + descCronog + '/' + nroProceso
-								+ '/' + nroActiv + '/' + fileName));
+						this.appProperties.getDocumentPath() + nombreCliente
+								+ '/' + anho + '/' + descCronog + '/'
+								+ nroProceso + '/' + nroActiv + '/' + fileName));
 
 				int read = 0;
 				byte[] bytes = new byte[1024];
@@ -1381,7 +1540,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 					nombreArchivo = fileName.substring(0, i);
 				}
 
-				Actividad activSelec = actividadSeleccionada;
+				Actividad activSelec = this.actividadSeleccionada;
 
 				Documento doc = new Documento();
 
@@ -1390,24 +1549,24 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				doc.setBloqueado("No");
 				doc.setFechaBloqueo(new Date());
 				doc.setFechaDesbloqueo(new Date());
-				doc.setFilepath(appProperties.getDocumentPath() + nombreCliente
-						+ '/' + anho + '/' + descCronog + '/' + nroProceso
-						+ '/' + nroActiv + '/');
+				doc.setFilepath(this.appProperties.getDocumentPath()
+						+ nombreCliente + '/' + anho + '/' + descCronog + '/'
+						+ nroProceso + '/' + nroActiv + '/');
 
-				String nombreUsu = usuarioBC.getUsuarioActual();
-				Usuario actual = usuarioBC.findSpecificUser(nombreUsu);
+				String nombreUsu = this.usuarioBC.getUsuarioActual();
+				Usuario actual = this.usuarioBC.findSpecificUser(nombreUsu);
 				doc.setUsuarioBloqueo(actual);
 				doc.setUsuarioDesbloqueo(actual);
 
 				doc.setEntidad("Actividad");
 				doc.setIdEntidad(activSelec.getActividadId());
 
-				documentoBC.registrar(doc);
-				documentos.add(doc);
-				agregarMensaje("Archivo subido");
+				this.documentoBC.registrar(doc);
+				this.documentos.add(doc);
+				this.agregarMensaje("Archivo subido");
 
 			} catch (IOException e) {
-				agregarMensaje("Error subiendo el archivo");
+				this.agregarMensaje("Error subiendo el archivo");
 				// System.out.println(e.getMessage());
 			}
 		}
@@ -1416,140 +1575,155 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	public void eliminarDocumento(ActionEvent actionEvent) {
 
 		try {
-			if (documentoSeleccionado == null) {
-				agregarMensaje("Documento no seleccionado");
+			if (this.documentoSeleccionado == null) {
+				this.agregarMensaje("Documento no seleccionado");
 			} else {
-				documentoBC.eliminar(documentoSeleccionado.getDocumentoId());
-				int index = documentos.indexOf(documentoSeleccionado);
-				documentos.remove(index);
+				this.documentoBC.eliminar(this.documentoSeleccionado
+						.getDocumentoId());
+				int index = this.documentos.indexOf(this.documentoSeleccionado);
+				this.documentos.remove(index);
 
-				agregarMensaje("Documento eliminado");
+				this.agregarMensaje("Documento eliminado");
 
 			}
 		} catch (RuntimeException ex) {
 			ex.printStackTrace();
-			agregarMensajeError(ex.getMessage());
+			this.agregarMensajeError(ex.getMessage());
 		}
 	}
-	
+
 	public boolean getIsAdminUser() {
-		 
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-									.getUserPrincipal().getName();
-		
-		return usuarioBC.isAdminUser(currentUser);
+
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+
+		return this.usuarioBC.isAdminUser(currentUser);
 	}
-	
+
 	public Long getUsuarioId() {
-		 
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-									.getUserPrincipal().getName();
-		Usuario usuario = usuarioBC.findSpecificUser(currentUser);		
+
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
 		return usuario.getUsuarioId();
 	}
-	
+
 	public boolean getCanCreateProcess() {
-		 
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-									.getUserPrincipal().getName();
-		
-		return procesoBC.canCreateProcess(currentUser);
+
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+
+		return this.procesoBC.canCreateProcess(currentUser);
 	}
-	
+
 	public boolean getCanControlFactura() {
-		 
-		String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-									.getUserPrincipal().getName();
-		
-		return procesoBC.canControlFactura(currentUser);
+
+		String currentUser = FacesContext.getCurrentInstance()
+				.getExternalContext().getUserPrincipal().getName();
+
+		return this.procesoBC.canControlFactura(currentUser);
 	}
-	
+
 	public String getCarpetaFileUpload() {
-		
+
 		return this.carpetaFileUpload;
 	}
-	
+
 	public void setCarpetaFileUpload(String carpetaFileUpload) {
-		
+
 		this.carpetaFileUpload = carpetaFileUpload;
 	}
-	
+
 	public void updateCarpetas() {
-		
+
 		this.carpetas = null;
 		this.carpetaFileUpload = "";
-		if(procesoSeleccionado != null) {
-			
-			this.carpetas = procesoBC.getCarpetas(procesoSeleccionado);
+		if (this.procesoSeleccionado != null) {
+
+			this.carpetas = this.procesoBC
+					.getCarpetas(this.procesoSeleccionado);
 		}
 	}
-	
+
 	public List<String> getCarpetas() {
-		
+
 		return this.carpetas;
 	}
-	
+
 	/*
-	 * Manejo de roles para documentos 
-	 */	
-	//Lista dual para el pick list
+	 * Manejo de roles para documentos
+	 */
+	// Lista dual para el pick list
 	private DualListModel<String> listaDual;
-	
+
 	public DualListModel<String> getListaDual() {
-		
-		listaDual = new DualListModel<String>();
-		if(documentoSeleccionado != null) {
-			List<String> documentoRoles = procesoBC.getDocumentoRoles(documentoSeleccionado.getDocumentoId());
-			List<String> rolesFiltrado = rolBC.getRolesFiltradosAsString(documentoRoles);
-			listaDual = new DualListModel<String>(rolesFiltrado, documentoRoles);
+
+		this.listaDual = new DualListModel<String>();
+		if (this.documentoSeleccionado != null) {
+			List<String> documentoRoles = this.procesoBC
+					.getDocumentoRoles(this.documentoSeleccionado
+							.getDocumentoId());
+			List<String> rolesFiltrado = this.rolBC
+					.getRolesFiltradosAsString(documentoRoles);
+			this.listaDual = new DualListModel<String>(rolesFiltrado,
+					documentoRoles);
 		}
-		return listaDual;
+		return this.listaDual;
 	}
 
 	public void setListaDual(DualListModel<String> listaDual) {
+
 		this.listaDual = listaDual;
 	}
-	
-	//Manejo de roles
+
+	// Manejo de roles
 	public void guardarRoles() {
-		
+
 		try {
-			
-			if(documentoSeleccionado != null) {
+
+			if (this.documentoSeleccionado != null) {
 				List<String> roles = this.listaDual.getTarget();
-				procesoBC.guardarRoles(documentoSeleccionado, roles);
-				agregarMensaje("Cambios guardados correctamente");
+				this.procesoBC.guardarRoles(this.documentoSeleccionado, roles);
+				this.agregarMensaje("Cambios guardados correctamente");
 			}
-		} catch(RuntimeException ex) {
-			
-			agregarMensajeError(ex.getMessage());
+		} catch (RuntimeException ex) {
+
+			this.agregarMensajeError(ex.getMessage());
 		}
 	}
-	
+
 	public void bloquearDocumento() {
-		
-		if(documentoSeleccionado != null) {
-			
-			documentoBC.updateBloqueoDocumento(documentoSeleccionado, true);
-			//String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-			//		.getUserPrincipal().getName();
-			//this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
-			//		.getProcesoId(), currentUser));
-			agregarMensaje("Documento: " + documentoSeleccionado.getFilename() + " bloqueado correctamente");
+
+		if (this.documentoSeleccionado != null) {
+
+			this.documentoBC.updateBloqueoDocumento(this.documentoSeleccionado,
+					true);
+			// String currentUser =
+			// FacesContext.getCurrentInstance().getExternalContext()
+			// .getUserPrincipal().getName();
+			// this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
+			// .getProcesoId(), currentUser));
+			this.agregarMensaje("Documento: "
+					+ this.documentoSeleccionado.getFilename()
+					+ " bloqueado correctamente");
 		}
 	}
 
 	public void desbloquearDocumento() {
-		
-		if(documentoSeleccionado != null) {
-			
-			documentoBC.updateBloqueoDocumento(documentoSeleccionado, false);
-			//String currentUser = FacesContext.getCurrentInstance().getExternalContext()
-			//		.getUserPrincipal().getName();
-			//this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
-			//		.getProcesoId(), currentUser));
-			agregarMensaje("Documento: " + documentoSeleccionado.getFilename() + " desbloqueado correctamente");
+
+		if (this.documentoSeleccionado != null) {
+
+			this.documentoBC.updateBloqueoDocumento(this.documentoSeleccionado,
+					false);
+			// String currentUser =
+			// FacesContext.getCurrentInstance().getExternalContext()
+			// .getUserPrincipal().getName();
+			// this.setDocumentos(documentoBC.getFileProceso(procesoSeleccionado
+			// .getProcesoId(), currentUser));
+			this.agregarMensaje("Documento: "
+					+ this.documentoSeleccionado.getFilename()
+					+ " desbloqueado correctamente");
 		}
-	}	
-	
+	}
+
 }
