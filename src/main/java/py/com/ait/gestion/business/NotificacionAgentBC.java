@@ -85,7 +85,7 @@ public class NotificacionAgentBC extends DelegateCrud<Notificacion, Long, Notifi
 			logger.debug(">>>>>Notificacion Usuario: " + notificacion.getUsuario().getUsuario());
 			logger.debug(">>>>>Notificacion Tipo: " + notificacion.getTipo());
 			inserted = notificacionDAO.insertar(notificacion);
-			
+			logger.debug(">>>>>Notificacion Inserted: " + inserted);
 			if(inserted) {
 				if(notificacion.getUsuario().getEmail() != null
 					&& !notificacion.getUsuario().getEmail().trim().equals("")) {

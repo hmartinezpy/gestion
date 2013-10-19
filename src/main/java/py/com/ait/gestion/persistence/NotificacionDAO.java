@@ -112,7 +112,8 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 				// alertar responsable de la actividad
 				titulo = "Alerta de Inicio - Actividad " + a.getNroActividad() 
-							+ "-" + a.getMaster().getNroProceso();
+							+ "-" + a.getMaster().getNroProceso() 
+							+ "- Cliente: " + a.getMaster().getCliente().getNombre();
 				descripcion = "INICIO DE ACTIVIDAD TRANSCURRIDO Y AUN EN ESTADO NUEVO!!<br>"
 						+ "ACTIVIDAD: " + a.getDescripcion() + "<br>"
 						+ "PROCESO: " + a.getMaster().getDescripcion() + "<br>"
@@ -141,13 +142,13 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 		for (Proceso p : listProc) {
 
 			// alertar responsable del proceso
-			titulo = "Alarma de Reprogramación de Fin - Proceso " + p.getNroProceso();
+			titulo = "Alarma de Reprogramación de Fin - Proceso " + p.getNroProceso()
+						+ "- Cliente: " + p.getCliente().getNombre();
 			descripcion = "FECHA DE FIN DE PROCESO REPROGRAMADA Y CLIENTE NO FUE NOTIFICADO AUN!!<br>"
 					+ "PROCESO: " + p.getDescripcion() + "<br>"
 					+ "RESPONSABLE: " + p.getResponsable().getUsuario() + "<br>"
 					+ "FECHA FIN REPROGRAMADA: " + p.getFechaFinReprogramada().toString();
 			list.add(crearNotificacion(titulo, descripcion, p, p.getResponsable(), Definiciones.TipoNotificacion.AlertaReprogramacionProceso));
-
 		}// end for proceso
 		return list;
 	}
@@ -157,7 +158,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 		List<Notificacion> list = new ArrayList<Notificacion>();
 		Query q = em
-				.createQuery("select a from Actividad a where a.estado = 'PRO' and a.alerta is not null");
+				.createQuery("select a from Actividad a where a.estado = 'PRO' and a.alerta is not null and a.fechaFinPrevista is not null");
 		List<Actividad> listAct = (List<Actividad>) q.getResultList();
 		Calendar fechaFinCal = Calendar.getInstance();
 		Date fechaFin;
@@ -180,7 +181,8 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 				// alertar responsable de la actividad
 				titulo = "Alerta de Actividad " + a.getActividadId()
-							+ "-" + a.getMaster().getNroProceso();
+							+ "-" + a.getMaster().getNroProceso()
+							+ "- Cliente: " + a.getMaster().getCliente().getNombre();
 				descripcion = "FIN DE ACTIVIDAD CERCANO Y AUN EN ESTADO EN PROCESO!!<br>"
 						+ "ACTIVIDAD: " + a.getDescripcion() + "<br>"
 						+ "PROCESO: " + a.getMaster().getDescripcion() + "<br>"
@@ -215,7 +217,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 		List<Notificacion> list = new ArrayList<Notificacion>();
 		Query q = em
-				.createQuery("select a from Actividad a where a.estado = 'PRO' and a.alarma is not null");
+				.createQuery("select a from Actividad a where a.estado = 'PRO' and a.alarma is not null and a.fechaFinPrevista is not null");
 		List<Actividad> listAct = (List<Actividad>) q.getResultList();
 		Calendar fechaFinCal = Calendar.getInstance();
 		Date fechaFin;
@@ -238,7 +240,8 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 
 				// alertar responsable de la actividad
 				titulo = "Alarma de Actividad " + a.getActividadId()
-							+ "-" + a.getMaster().getNroProceso();
+							+ "-" + a.getMaster().getNroProceso()
+							+ "- Cliente: " + a.getMaster().getCliente().getNombre();
 				descripcion = "FIN DE ACTIVIDAD TRANSCURRIDO Y AUN EN ESTADO EN PROCESO!!<br>"
 						+ "ACTIVIDAD: " + a.getDescripcion() + "<br>"
 						+ "PROCESO: " + a.getMaster().getDescripcion() + "<br>"
