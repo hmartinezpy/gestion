@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
-
 import py.com.ait.gestion.constant.AppProperties;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
@@ -38,7 +35,7 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 	@Inject
 	private AppProperties appProperties;
-	
+
 	@Inject
 	private ProcesoDAO procesoDAO;
 
@@ -47,10 +44,10 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 	@Inject
 	private UsuarioDAO usuarioDAO;
-	
-	@Inject 
+
+	@Inject
 	SesionLogDAO sesionLogDAO;
-	
+
 	@Inject
 	private ActividadBC actividadBC;
 
@@ -59,55 +56,62 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 	@Inject
 	private CronogramaDAO cronogramaDAO;
-	
+
 	@Inject
 	private RolBC rolBC;
-	
+
 	@Inject
 	private DocumentoRolDAO documentoRolDAO;
-	
+
 	@Inject
 	private UsuarioBC usuarioBC;
-	
+
 	@Inject
 	private UsuarioRolPermisoBC usuarioRolPermisoBC;
-	
+
 	@Inject
 	private PermisoBC permisoBC;
 
 	public List<Proceso> listar(String filtroEstadoProceso, String currentUser) {
-		
-		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
-		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
-		List<Proceso> result = procesoDAO.getProcesos(filtroEstadoProceso, isAdminUser, usuario.getUsuarioId());
-		for (Proceso proc : result){
-			proc.setLastActividad(actividadBC.getLastActividad(proc));
+
+		boolean isAdminUser = this.usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
+		List<Proceso> result = this.procesoDAO.getProcesos(filtroEstadoProceso,
+				isAdminUser, usuario.getUsuarioId());
+		for (Proceso proc : result) {
+			proc.setLastActividad(this.actividadBC.getLastActividad(proc));
 		}
+		List<Proceso> procesosSinActividades = this.procesoDAO
+				.getProcesosSinActividades(isAdminUser, usuario.getUsuarioId());
+
+		result.addAll(procesosSinActividades);
 		return result;
 	}
 
 	public Proceso recuperar(Long id) {
-		return procesoDAO.load(id);
+
+		return this.procesoDAO.load(id);
 	}
 
 	/***************** Auditoria **************************/
 	@Transactional
 	public void registrar(Proceso proceso) {
-		/*if (proceso.getNroProceso() == null
-				|| proceso.getNroProceso().equals("")) {
-			
-			proceso.setNroProceso(getSiguienteNroProceso());
-		}*/
+
+		/*
+		 * if (proceso.getNroProceso() == null ||
+		 * proceso.getNroProceso().equals("")) {
+		 * 
+		 * proceso.setNroProceso(getSiguienteNroProceso()); }
+		 */
+		String usuarioActual = this.usuarioDAO.getUsuarioActual();
+		Usuario responsable = this.usuarioBC.findSpecificUser(usuarioActual);
+		proceso.setResponsable(responsable);
 		super.insert(proceso);
 
-		//crear primera actividad
-		CronogramaDetalle cd = cronogramaDetalleDAO.getFirstCronogramaDetalleByCronograma(
-									proceso.getCronograma());
-		actividadBC.insertActividadFromCronogramaDetalle(cd, null, proceso, proceso.getResponsable());
-		
 		try {
-			audLogDAO.log(null, proceso, usuarioDAO.getUsuarioActual(),
-					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
+			this.audLogDAO.log(null, proceso, this.usuarioDAO
+					.getUsuarioActual(), this.sesionLogDAO
+					.ObtenerIp(this.usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Insert, proceso.getProcesoId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -115,33 +119,46 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		}
 	}
 
+	@Transactional
+	public void empezarActividades(Proceso proceso, Usuario responsable) {
+
+		// Actualizar responsable;
+		proceso.setResponsable(responsable);
+		this.editar(proceso);
+
+		// crear primera actividad
+		CronogramaDetalle cd = this.cronogramaDetalleDAO
+				.getFirstCronogramaDetalleByCronograma(proceso.getCronograma());
+		this.actividadBC.insertActividadFromCronogramaDetalle(cd, null,
+				proceso, proceso.getResponsable());
+
+	}
+
 	public String getSiguienteNroProceso(Long cronogramaId) {
-		String nroProcesoActual = getNumeroProcesoAnual(cronogramaId);
+
+		String nroProcesoActual = this.getNumeroProcesoAnual(cronogramaId);
 		String nroProcesoSgte = (Integer.parseInt(nroProcesoActual) + 1) + "";
-		Cronograma cronograma = cronogramaDAO.load(cronogramaId);
+		Cronograma cronograma = this.cronogramaDAO.load(cronogramaId);
 		StringBuilder sb = new StringBuilder();
 		int year = Calendar.getInstance().get(Calendar.YEAR);
-		String nroProceso = sb
-				.append(cronograma.getSigla())
-				.append("_")
-				.append(year)
-				.append("/")
-				.append(rellenarCerosIzquierda(nroProcesoSgte, 3))
-				.toString();				
+		String nroProceso = sb.append(cronograma.getSigla()).append("_")
+				.append(year).append("/")
+				.append(this.rellenarCerosIzquierda(nroProcesoSgte, 3))
+				.toString();
 		return nroProceso;
 	}
-	
-	public String rellenarCerosIzquierda(String num, int tamanhoTotal){
-		
+
+	public String rellenarCerosIzquierda(String num, int tamanhoTotal) {
+
 		String result = num;
-		if(result.length() < tamanhoTotal) {
-			
-			do{
-				
+		if (result.length() < tamanhoTotal) {
+
+			do {
+
 				result = "0" + result;
-			}while (result.length() < tamanhoTotal);
+			} while (result.length() < tamanhoTotal);
 		}
-		
+
 		return result;
 	}
 
@@ -151,8 +168,9 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		Proceso viejo = this.recuperar(proceso.getProcesoId());
 		super.update(proceso);
 		try {
-			audLogDAO.log(viejo, proceso, usuarioDAO.getUsuarioActual(),
-					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
+			this.audLogDAO.log(viejo, proceso, this.usuarioDAO
+					.getUsuarioActual(), this.sesionLogDAO
+					.ObtenerIp(this.usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Update, proceso.getProcesoId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -168,8 +186,9 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		super.delete(id);
 
 		try {
-			audLogDAO.log(proceso, null, usuarioDAO.getUsuarioActual(),
-					sesionLogDAO.ObtenerIp(usuarioDAO.getUsuarioActual()),
+			this.audLogDAO.log(proceso, null, this.usuarioDAO
+					.getUsuarioActual(), this.sesionLogDAO
+					.ObtenerIp(this.usuarioDAO.getUsuarioActual()),
 					Definiciones.Operacion.Delete, proceso.getProcesoId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -178,26 +197,30 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	}
 
 	public long getMaxId() {
-		return procesoDAO.getMaxId();
+
+		return this.procesoDAO.getMaxId();
 	}
 
 	public String getNumeroProcesoAnual(Long cronogramaId) {
-		return procesoDAO.getLastSequence(cronogramaId);
+
+		return this.procesoDAO.getLastSequence(cronogramaId);
 	}
 
-	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado, String currentUser) {
-		
-		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
-		Usuario usuario = usuarioBC.findSpecificUser(currentUser);	
-		return procesoDAO.getActividadesByProceso(procesoSeleccionado, isAdminUser, usuario.getUsuarioId());
+	public List<Actividad> getActividadesByProceso(Proceso procesoSeleccionado,
+			String currentUser) {
+
+		boolean isAdminUser = this.usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
+		return this.procesoDAO.getActividadesByProceso(procesoSeleccionado,
+				isAdminUser, usuario.getUsuarioId());
 	}
 
 	public List<String> getCarpetas(Proceso proceso) {
-		
+
 		List<String> carpetas = new ArrayList<String>();
-		
+
 		try {
-			//obtener path del proceso
+			// obtener path del proceso
 			String nombreCliente = proceso.getCliente().getNombre();
 			String descCronog = proceso.getCronograma().getNombre();
 			String nroProceso = proceso.getNroProceso();
@@ -207,126 +230,117 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 				anho = nroProceso.substring(k - 4, k);
 				nroProceso = nroProceso.substring(k + 1);
 			}
-			String path = appProperties.getDocumentPath()
-					+ nombreCliente + '/' + anho + '/' + descCronog + '/'
-					+ nroProceso + '/';
-		
-			//obtener lista de carpetas del path del proceso 			
+			String path = this.appProperties.getDocumentPath() + nombreCliente
+					+ '/' + anho + '/' + descCronog + '/' + nroProceso + '/';
+
+			// obtener lista de carpetas del path del proceso
 			File file = new File(path);
 			File[] list = file.listFiles();
-			if(list != null) {
-				for(File listItem : list) {
-					
-					if(listItem.isDirectory()) {
-						
+			if (list != null) {
+				for (File listItem : list) {
+
+					if (listItem.isDirectory()) {
+
 						carpetas.add(listItem.getName());
 					}
 				}
 			}
-			
-		} catch(Exception ex) {
-			
-			throw new RuntimeException(ex.getMessage()); 
+
+		} catch (Exception ex) {
+
+			throw new RuntimeException(ex.getMessage());
 		}
-		
+
 		return carpetas;
 	}
-	
+
 	@Transactional
 	public void guardarRoles(Documento documento, List<String> roles) {
-		
-		
-		try{
+
+		try {
 
 			long documentoId = documento.getDocumentoId();
-		
-			//verificar los nuevos
+
+			// verificar los nuevos
 			Iterator<String> nuevo = roles.iterator();
-					
-			while (nuevo.hasNext())
-			{
+
+			while (nuevo.hasNext()) {
 				Boolean existe = false;
-				String ins= nuevo.next();
-				List<String> lista = documentoRolDAO.getRolesByDocumentoAsString(documentoId);
+				String ins = nuevo.next();
+				List<String> lista = this.documentoRolDAO
+						.getRolesByDocumentoAsString(documentoId);
 				Iterator<String> original = lista.iterator();
-				while(original.hasNext())
-				{
-					if(original.next().equals(ins))
-					{
+				while (original.hasNext()) {
+					if (original.next().equals(ins)) {
 						existe = true;
 						break;
 					}
 				}
-				if(!existe)
-				{
-					Rol rol = rolBC.getRol(ins);
-					if(rol!=null)
-					{
-						//insertar
+				if (!existe) {
+					Rol rol = this.rolBC.getRol(ins);
+					if (rol != null) {
+						// insertar
 						DocumentoRol dr = new DocumentoRol();
 						dr.setDocumento(documento);
 						dr.setRol(rol);
-						documentoRolDAO.insert(dr);
+						this.documentoRolDAO.insert(dr);
 					}
-					
-					
+
 				}
 			}
-			//se buscan los borrados
-			Iterator<String> original2 = documentoRolDAO.getRolesByDocumentoAsString(documentoId).iterator();
-			
-			while(original2.hasNext())
-			{
+			// se buscan los borrados
+			Iterator<String> original2 = this.documentoRolDAO
+					.getRolesByDocumentoAsString(documentoId).iterator();
+
+			while (original2.hasNext()) {
 				Boolean existe2 = false;
 				Iterator<String> nuevo2 = roles.iterator();
-				String dl= original2.next();
-				
-				while(nuevo2.hasNext())
-				{
-					if(dl.equals(nuevo2.next()))
-					{
-						existe2=true;
+				String dl = original2.next();
+
+				while (nuevo2.hasNext()) {
+					if (dl.equals(nuevo2.next())) {
+						existe2 = true;
 						break;
 					}
 				}
-				if(!existe2)
-				{
-					//delete
-					Rol rol = rolBC.getRol(dl);
-					if(rol!=null)
-					{
-						//eliminar
-						documentoRolDAO.deleteByDocumentoRol(documento.getDocumentoId(), rol.getRolId());					
+				if (!existe2) {
+					// delete
+					Rol rol = this.rolBC.getRol(dl);
+					if (rol != null) {
+						// eliminar
+						this.documentoRolDAO.deleteByDocumentoRol(
+								documento.getDocumentoId(), rol.getRolId());
 					}
 				}
-				
+
 			}
-		}catch(Exception ex) {
-			
+		} catch (Exception ex) {
+
 			ex.printStackTrace();
-			throw new RuntimeException("Ocurrió un error al guardar, intente de nuevo");
+			throw new RuntimeException(
+					"Ocurrió un error al guardar, intente de nuevo");
 		}
 	}
-	
+
 	public List<String> getDocumentoRoles(Long documentoId) {
-		
-		return documentoRolDAO.getRolesByDocumentoAsString(documentoId);
+
+		return this.documentoRolDAO.getRolesByDocumentoAsString(documentoId);
 	}
-	
 
 	@Transactional
 	public void finalizarProceso(Proceso proceso) {
+
 		proceso.setEstado(Definiciones.EstadoProceso.Resuelto);
-		update(proceso);
-		
+		this.update(proceso);
+
 	}
-	
-	public boolean canCreateProcess(String currentUser){
-		
-		boolean isAdminUser = usuarioBC.isAdminUser(currentUser);
-		Usuario usuario = usuarioBC.findSpecificUser(currentUser);
-		Permiso permiso = permisoBC.getPermiso("crear procesos");
-		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);
+
+	public boolean canCreateProcess(String currentUser) {
+
+		boolean isAdminUser = this.usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
+		Permiso permiso = this.permisoBC.getPermiso("crear procesos");
+		boolean tienePermiso = this.usuarioRolPermisoBC.tiene(permiso, usuario);
 		return (isAdminUser || tienePermiso);
 	}
 
@@ -335,28 +349,34 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	 * @return
 	 */
 	public boolean canControlFactura(String user) {
-		boolean isAdminUser = usuarioBC.isAdminUser(user);
-		Usuario usuario = usuarioBC.findSpecificUser(user);
-		Permiso permiso = permisoBC.getPermiso("controlar facturas");
-		boolean tienePermiso = usuarioRolPermisoBC.tiene(permiso, usuario);
+
+		boolean isAdminUser = this.usuarioBC.isAdminUser(user);
+		Usuario usuario = this.usuarioBC.findSpecificUser(user);
+		Permiso permiso = this.permisoBC.getPermiso("controlar facturas");
+		boolean tienePermiso = this.usuarioRolPermisoBC.tiene(permiso, usuario);
 		return (isAdminUser || tienePermiso);
-	}	
+	}
 
 	/**
 	 * @param actividad
 	 * @return
 	 */
 	public boolean existenSubTareasAbiertas(Actividad actividad) {
-		// Validar que no posea subtareas abiertas, asignadas a usuarios sin el permiso "controlar facturas"
 
-		List<Actividad> subtareas = actividadBC.getSubtareas(actividad);
-		if (subtareas != null && subtareas.size()> 0){
-			for (Actividad subtarea:subtareas){
-				boolean esAdministrativa = canControlFactura(subtarea.getResponsable().getUsuario());
+		// Validar que no posea subtareas abiertas, asignadas a usuarios sin el
+		// permiso "controlar facturas"
 
-				if (!esAdministrativa){
-					if (Definiciones.EstadoActividad.Nueva.equals(subtarea.getEstado())
-							|| Definiciones.EstadoActividad.EnProceso.equals(subtarea.getEstado())){
+		List<Actividad> subtareas = this.actividadBC.getSubtareas(actividad);
+		if (subtareas != null && subtareas.size() > 0) {
+			for (Actividad subtarea : subtareas) {
+				boolean esAdministrativa = this.canControlFactura(subtarea
+						.getResponsable().getUsuario());
+
+				if (!esAdministrativa) {
+					if (Definiciones.EstadoActividad.Nueva.equals(subtarea
+							.getEstado())
+							|| Definiciones.EstadoActividad.EnProceso
+									.equals(subtarea.getEstado())) {
 						// Esta es una subtarea "no administrativa" abierta!
 						return true;
 					}
@@ -371,9 +391,10 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 	 * @return
 	 */
 	public boolean existenSubTareas(Actividad actividad) {
-		List<Actividad> subtareas = actividadBC.getSubtareas(actividad);
 
-		if (subtareas != null && subtareas.size()> 0){
+		List<Actividad> subtareas = this.actividadBC.getSubtareas(actividad);
+
+		if (subtareas != null && subtareas.size() > 0) {
 			return true;
 		}
 

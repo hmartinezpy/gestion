@@ -34,13 +34,7 @@
 			                    
                                 <h:outputText value="NroProceso " />
                                 <p:inputText id="txt_nro_proceso" required="true" value="#{procesoEditMB.bean.nroProceso}" readonly="true" />
-                                
-                                <h:outputText value="Responsable " />
-                                <p:selectOneMenu required="true" id="selectResponsable" value="#{procesoEditMB.bean.responsable}"  converter="usuarioConverter" > 
-                                 	<f:selectItem itemLabel="---Seleccione---" itemValue="" />
-			                        <f:selectItems value="#{procesoEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />                                  
-			                    </p:selectOneMenu>		
-			                    
+                                			                    
                                 <h:outputText value="Cliente " />
                                 <p:selectOneMenu required="true" id="selectCliente" value="#{procesoEditMB.bean.cliente}"  converter="clienteConverter" >                                	
                                 	<f:selectItem itemLabel="---Seleccione---" itemValue="" /> 
@@ -86,9 +80,31 @@
 									rendered="#{procesoEditMB.updateMode}" ajax="true" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);"/>
 								<p:button value="Volver" image="ui-icon-arrowreturnthick-1-w" 
 									outcome="#{procesoEditMB.previousView}" />
+								<p:commandButton value="Empezar Actividades" id="resolver" onclick="dlgSigteActividad.show()"
+											icon="ui-icon-play" update=":formSigteActividad:selectSigteActividadResponsable" 
+											action="#{procesoEditMB.nextActividadUsuariosPorRol}" 
+											rendered="#{procesoEditMB.updateMode and !procesoEditMB.tieneActividades}"/>
 							</p:toolbarGroup>
                     </h:form>
   
+  			<p:dialog header="Siguiente Actividad" widgetVar="dlgSigteActividad"  resizable="false" modal="true">
+				<h:form id="formSigteActividad">
+					<p:panel style="width:400px"  >
+						<h:panelGrid columns="2" id="panelSubActividad" cellpadding="5" >
+							<h:outputText value="Responsable " />
+							<p:selectOneMenu id="selectSigteActividadResponsable" value="#{procesoEditMB.sigteUsuario}" converter="usuarioConverter"  >
+								<f:selectItem itemLabel="---Seleccione---" itemValue="" />
+								<f:selectItems value="#{procesoEditMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
+							</p:selectOneMenu>
+
+							<p:commandButton onclick="dlgSigteActividad.hide(), dlg2.hide()" value="Confirmar" ajax="false"
+								icon="ui-icon-circle-check" action="#{procesoEditMB.empezarActividades()}">
+								<f:setPropertyActionListener value="#{responsable}" target="#{procesoEditMB.bean.responsable}" />
+							</p:commandButton>
+						</h:panelGrid>
+					</p:panel>
+				</h:form>
+			</p:dialog>
   
 			
 		</div>

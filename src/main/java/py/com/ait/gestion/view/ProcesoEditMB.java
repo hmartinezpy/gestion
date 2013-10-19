@@ -15,8 +15,10 @@ import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Cliente;
 import py.com.ait.gestion.domain.Cronograma;
+import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Usuario;
+import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
@@ -37,6 +39,9 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 	@Inject
 	private CronogramaBC cronogramaBC;
 
+	@Inject
+	private CronogramaDetalleDAO cronogramaDetalleDAO;
+
 	private Long idResponsable;
 	private Long idCliente = null;
 	private Long idCronograma;
@@ -44,6 +49,8 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 	private List<Usuario> usuarios;
 	private List<Cliente> clientes;
 	private List<Cronograma> cronogramas;
+	private List<Usuario> sigteUsuariosPorRol;
+	private Usuario sigteUsuario;
 
 	public Long getIdResponsable() {
 
@@ -212,5 +219,56 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 		}
 		proceso.setNroProceso(nroProceso);
 		return nroProceso;
+	}
+
+	public void nextActividadUsuariosPorRol() {
+
+		// Obtener siguiente cronograma detalle para filtrar posibles
+		// responsables
+		CronogramaDetalle cd = this.cronogramaDetalleDAO
+				.getFirstCronogramaDetalleByCronograma(this.getBean()
+						.getCronograma());
+
+		// Listar los usuarios de acuerdo al rol del cronogramaDetalle
+		// siguiente
+		this.setSigteUsuariosPorRol(this.usuarioBC.getUsuariosByRol(cd
+				.getRolResponsable().getRolId()));
+
+	}
+
+	public List<Usuario> getSigteUsuariosPorRol() {
+
+		return this.sigteUsuariosPorRol;
+	}
+
+	public void setSigteUsuariosPorRol(List<Usuario> sigteUsuariosPorRol) {
+
+		this.sigteUsuariosPorRol = sigteUsuariosPorRol;
+	}
+
+	public Usuario getSigteUsuario() {
+
+		return this.sigteUsuario;
+	}
+
+	public void setSigteUsuario(Usuario sigteUsuario) {
+
+		this.sigteUsuario = sigteUsuario;
+	}
+
+	public String empezarActividades() {
+
+		this.procesoBC.empezarActividades(this.getBean(), this.sigteUsuario);
+		return this.getPreviousView();
+	}
+
+	public boolean isTieneActividades() {
+
+		boolean result = true;
+		if (this.getBean().getActividades() == null
+				|| this.getBean().getActividades().size() < 1) {
+			result = false;
+		}
+		return result;
 	}
 }
