@@ -73,6 +73,13 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<type>jar</type>
 		</dependency>
+		<!-- Agregamos el componente report -->
+        <dependency>
+            <groupId>org.ticpy.tekoporu.component</groupId>
+            <artifactId>tekoporu-report</artifactId>
+            <version>2.0.5-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
 	</dependencies>
 
 	<repositories>

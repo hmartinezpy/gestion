@@ -1,0 +1,156 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de documentos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center" >Procesos</h1>
+		<div class="entry" style="line-height:200%;margin-left:100px">		
+			
+			<p:ajaxStatus style="width:16px;height:16px;">
+                <f:facet name="start">
+                    <h:graphicImage value="../design/ajaxloading.gif" />
+                </f:facet>
+
+                <f:facet name="complete">
+                    <h:outputText value="" />
+                </f:facet>
+            </p:ajaxStatus>
+            
+		<h:form id="formFiltro" >
+			<p:toolbar style="margin-top:-20px;width:905px;" >  
+			    <p:toolbarGroup align="right">  
+			        
+			        <p:commandButton value="Todos" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="T" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton>  
+			        
+			        <p:commandButton value="Abiertos" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="A" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton>
+			        
+			        <p:commandButton value="Cerrados" update=":form:procesos,:form2:actividades" 
+			        		actionListener="#{procesoListMB.updateFiltroEstadoProceso}">
+			        	<f:setPropertyActionListener value="C" target="#{procesoListMB.filtroEstadoProceso}" />
+			        </p:commandButton> 
+			        
+			    </p:toolbarGroup> 
+	       	</p:toolbar>
+	    </h:form>
+
+        <h:form id="form" >        	
+        	
+        	<p:growl id="messages"/>
+        	
+            <p:dataTable style="width:910px;" var="proceso" value="#{procesoListMB.procesos}"  id="procesos" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
+                <p:column headerText="#Proceso" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{proceso.nroProceso}" />                                              
+                </p:column>
+                <p:column headerText="Responsable"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.responsable.usuario}" />
+                </p:column>
+                <p:column headerText="Cliente" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.cliente.nombre}" />
+                </p:column>
+                
+                <p:column headerText="Estado"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.estado}" />
+                </p:column>
+                <p:column headerText="Descripcion" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.descripcion}" />
+                </p:column>
+                <p:column headerText="Cronograma"  style="font-weight:bold;">
+                <h:outputText  style="font-weight:normal;" value="#{proceso.cronograma.nombre}">
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" /> -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechIniReal"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.fechaInicioReal}" >
+                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="FechFinPrev"  style="font-weight:bold;">
+                <h:outputText style="font-weight:normal;" value="#{proceso.fechaFinPrevista}" >
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="Actividad Actual" style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{proceso.lastActividad}" />
+                </p:column>
+
+               
+                <p:column style="width:50px;" headerText="" >
+                    <p:commandLink update=":form:messages,:form2:actividades"  action="#{procesoListMB.elegirProceso}" >
+                        <span class="ui-icon ui-icon-calculator" title="Ver Actividades">  </span> 
+                        <f:setPropertyActionListener value="#{proceso}" target="#{procesoListMB.procesoSeleccionado}" />
+                    </p:commandLink>
+                </p:column>
+
+                 
+            </p:dataTable>
+            
+            <br></br>
+				<p:toolbarGroup >
+
+					<p:commandButton value ="Reporte" action="#{procesoListMB.printPdfProc}"
+						actionListener="#{procesoListMB.clear}" ajax="false" image="ui-icon-document" />
+ 				</p:toolbarGroup>
+        </h:form>
+			
+		<br></br>
+		<br></br>
+		<br></br>
+		
+		
+        <h:form id="form2" >
+        
+        	<p:dataTable style="width:910px;" var="actividad" value="#{procesoListMB.actividades}"  id="actividades" editable="true" paginator="true" paginatorPosition="bottom" rows="10">				        
+				<f:facet name="header">  
+		            Actividades - #{procesoListMB.procesoSeleccionado.descripcion} - #{procesoListMB.procesoSeleccionado.cliente.nombre} - #{procesoListMB.procesoSeleccionado.fechaFinFormateada}
+		        </f:facet> 
+		        
+                <p:column headerText="#Actividad" style="font-weight:bold;" >
+                     <h:outputText style="font-weight:normal;" value="#{actividad.nroActividad}" />                                              
+                </p:column>
+                
+                <p:column headerText="Descripción"  style="font-weight:bold;" width="150" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Responsable"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.responsable.usuario}" />
+                </p:column>
+                
+                <p:column headerText="Estado"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.estado}" />
+                </p:column>
+                
+                <p:column headerText="Fecha Creación"  style="font-weight:bold;">
+                <h:outputText  style="font-weight:normal;" value="#{actividad.fechaCreacion}">
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" /> -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="Fecha Ini. Prevista"  style="font-weight:bold;" >
+                <h:outputText style="font-weight:normal;" value="#{actividad.fechaInicioPrevisto}" >
+                	<!-- <f:convertDateTime pattern="dd/MM/yyyy" />  -->
+                </h:outputText>
+                </p:column>
+                <p:column headerText="Fech Fin Prevista"  style="font-weight:bold;">
+                <h:outputText style="font-weight:normal;" value="#{actividad.fechaFinPrevista}" >
+                	<!--<f:convertDateTime pattern="dd/MM/yyyy" />-->
+                </h:outputText>
+                </p:column>
+                
+            </p:dataTable>
+            <br></br>
+
+         </h:form>
+
+
+		</div>
+	</ui:define>
+</ui:composition>

@@ -11,11 +11,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
+import net.sf.jasperreports.engine.JRException;
 import org.primefaces.event.DateSelectEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -23,8 +26,12 @@ import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
+import org.ticpy.tekoporu.report.Report;
+import org.ticpy.tekoporu.report.Type;
+import org.ticpy.tekoporu.report.annotation.Path;
 import org.ticpy.tekoporu.stereotype.ViewController;
 import org.ticpy.tekoporu.template.AbstractListPageBean;
+import org.ticpy.tekoporu.util.FileRenderer;
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
@@ -72,6 +79,14 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	@Inject
 	ActividadChecklistDetalleBC actividadChecklistDetalleBC;
+
+	// Reportes
+	@Inject
+	@Path("reports/reportProc.jasper")
+	private Report reporte;
+
+	@Inject
+	private FileRenderer renderer;
 
 	private List<Proceso> procesos;
 	private Proceso procesoSeleccionado;
@@ -1726,4 +1741,14 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		}
 	}
 
+	public String printPdfProc() throws JRException {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		byte[] buffer = this.reporte
+				.export(this.getProcesos(), param, Type.PDF);
+		this.renderer.render(buffer, FileRenderer.ContentType.PDF,
+				"reporteProc.pdf");
+		return this.getNextView();
+
+	}
 }
