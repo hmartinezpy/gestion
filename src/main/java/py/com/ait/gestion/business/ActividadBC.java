@@ -215,7 +215,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 						.getEstado())) {
 
 			String titulo = "SubActividad Finalizada "
-					+ actividad.getActividadId() + "-"
+					+ actividad.getNroActividad() + "-"
 					+ actividad.getMaster().getNroProceso();
 			String descripcion = "SUBACTIVIDAD FINALIZADA!!<br>"
 					+ "SUBACTIVIDAD: " + actividad.getDescripcion() + "<br>"
@@ -295,7 +295,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		actividad.setResponsable(responsable);
 
 		this.insert(actividad);
-		String titulo = "Nueva Actividad " + actividad.getActividadId() + "-"
+		String titulo = "Nueva Actividad " + actividad.getNroActividad() + "-"
 				+ actividad.getMaster().getNroProceso();
 		String descripcion = "NUEVA ACTIVIDAD!!<br>" + "ACTIVIDAD: "
 				+ actividad.getDescripcion() + "<br>" + "PROCESO: "
@@ -465,7 +465,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 		result.setSuperTarea(padre);
 
 		this.insert(result);
-		String titulo = "Nueva SubActividad " + result.getActividadId() + "-"
+		String titulo = "Nueva SubActividad " + result.getNroActividad() + "-"
 				+ result.getMaster().getNroProceso();
 		String descripcionNotif = "NUEVA SUBACTIVIDAD!!<br>" + "SUBACTIVIDAD: "
 				+ result.getDescripcion() + "<br>" + "PROCESO: "
@@ -538,7 +538,7 @@ public class ActividadBC extends DelegateCrud<Actividad, Long, ActividadDAO> {
 						+ aDevolver.getActividadId());
 		this.insert(actividadDevuelta);
 		String titulo = "Actividad Devuelta "
-				+ actividadDevuelta.getActividadId() + "-"
+				+ actividadDevuelta.getNroActividad() + "-"
 				+ actividadDevuelta.getMaster().getNroProceso();
 		String descripcion = "ACTIVIDAD DEVUELTA!!<br>" + "ACTIVIDAD: "
 				+ actividadDevuelta.getDescripcion() + "<br>" + "PROCESO: "

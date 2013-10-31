@@ -180,7 +180,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 			if (fechaActual.after(fechaFinCal.getTime())) {
 
 				// alertar responsable de la actividad
-				titulo = "Alerta de Actividad " + a.getActividadId()
+				titulo = "Alerta de Actividad " + a.getNroActividad()
 							+ "-" + a.getMaster().getNroProceso()
 							+ "- Cliente: " + a.getMaster().getCliente().getNombre();
 				descripcion = "FIN DE ACTIVIDAD CERCANO Y AUN EN ESTADO EN PROCESO!!<br>"
@@ -239,7 +239,7 @@ public class NotificacionDAO extends JPACrud<Notificacion, Long> {
 			if (fechaActual.after(fechaFinCal.getTime())) {
 
 				// alertar responsable de la actividad
-				titulo = "Alarma de Actividad " + a.getActividadId()
+				titulo = "Alarma de Actividad " + a.getNroActividad()
 							+ "-" + a.getMaster().getNroProceso()
 							+ "- Cliente: " + a.getMaster().getCliente().getNombre();
 				descripcion = "FIN DE ACTIVIDAD TRANSCURRIDO Y AUN EN ESTADO EN PROCESO!!<br>"

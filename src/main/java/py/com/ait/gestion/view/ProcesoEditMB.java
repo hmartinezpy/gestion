@@ -258,6 +258,7 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 
 	public String empezarActividades() {
 
+		this.sigteUsuario = usuarioBC.load(this.sigteUsuario.getUsuarioId());
 		this.procesoBC.empezarActividades(this.getBean(), this.sigteUsuario);
 		return this.getPreviousView();
 	}
