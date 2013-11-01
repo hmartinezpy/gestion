@@ -84,7 +84,7 @@
 									<p:menuitem value="Preguntas" icon="ui-icon-pencil" style="FONT-SIZE: 12px;" url="/pg/pregunta_list.jsf" />
 									<p:menuitem value="Checklist" icon="ui-icon-check" style="FONT-SIZE: 12px;" url="/pg/checklist_list.jsf" />
                                 </p:submenu>
-								<p:submenu label="INFORMES" icon="ui-icon-note" rendered="#{rolListMB.verMenuAdmin}">
+								<p:submenu label="INFORMES" icon="ui-icon-note" rendered="false">
 									<p:menuitem value="Informe de Auditoría" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;"/>
 									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf"  rendered="#{rolListMB.verMenuArchivos}"/>
 									<p:menuitem value="Reportes" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/pg/reportes.jsf"  rendered="#{rolListMB.verMenuAdmin}"/>

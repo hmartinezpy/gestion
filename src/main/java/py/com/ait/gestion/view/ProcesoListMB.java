@@ -14,11 +14,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
+
 import net.sf.jasperreports.engine.JRException;
+
 import org.primefaces.event.DateSelectEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -32,6 +35,7 @@ import org.ticpy.tekoporu.report.annotation.Path;
 import org.ticpy.tekoporu.stereotype.ViewController;
 import org.ticpy.tekoporu.template.AbstractListPageBean;
 import org.ticpy.tekoporu.util.FileRenderer;
+
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
@@ -50,7 +54,9 @@ import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Documento;
 import py.com.ait.gestion.domain.Observacion;
 import py.com.ait.gestion.domain.Proceso;
+import py.com.ait.gestion.domain.ReportePendienteBean;
 import py.com.ait.gestion.domain.Usuario;
+import py.com.ait.gestion.persistence.ReporteDAO;
 
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
@@ -84,6 +90,13 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	@Inject
 	@Path("reports/reportProc.jasper")
 	private Report reporte;
+	
+	@Inject
+	@Path("reports/repPendientes.jasper")
+	private Report reportePendientes;
+	
+	@Inject
+	private ReporteDAO reporteDAO;
 
 	@Inject
 	private FileRenderer renderer;
@@ -1750,5 +1763,16 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 				"reporteProc.pdf");
 		return this.getNextView();
 
+	}
+	
+	public String printPdfPendientes() throws JRException {
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		List<ReportePendienteBean> list = reporteDAO.getDatosReportePendientes();
+		byte[] buffer = this.reportePendientes
+				.export(list, param, Type.PDF);
+		this.renderer.render(buffer, FileRenderer.ContentType.PDF,
+				"reportePendientes.pdf");
+		return this.getNextView();
 	}
 }
