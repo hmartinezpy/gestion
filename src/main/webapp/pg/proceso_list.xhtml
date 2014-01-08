@@ -709,7 +709,8 @@
 		              	<br></br>
 		                <p:toolbarGroup>
 							<p:fileUpload update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}" 
-							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt"/>
+							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt" 
+							invalidSizeMessage="Archivo de tamaño invalido" />
 		 				</p:toolbarGroup>
 		 				<div style="margin-top:10px;">
 		 					<h:outputText value="Carpeta: " style="vertical-align:top;" />
@@ -810,7 +811,8 @@
 		              	<br></br>
 		                <p:toolbarGroup>
 							<p:fileUpload update=":form:messages,:formfileA:fileA" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUploadA}"
-							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt2"/>
+							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt2"
+							invalidSizeMessage="Archivo de tamaño invalido" />
 						</p:toolbarGroup>
                         
 				</h:form>
