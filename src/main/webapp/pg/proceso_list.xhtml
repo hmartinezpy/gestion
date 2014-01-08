@@ -708,7 +708,8 @@
 		                </p:dataTable>		                
 		              	<br></br>
 		                <p:toolbarGroup>
-							<p:fileUpload update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}" />							
+							<p:fileUpload update=":form:messages,:formfileP:fileP,:formfileP:selectCarpeta" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUpload}" 
+							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt"/>
 		 				</p:toolbarGroup>
 		 				<div style="margin-top:10px;">
 		 					<h:outputText value="Carpeta: " style="vertical-align:top;" />
@@ -809,8 +810,8 @@
 		              	<br></br>
 		                <p:toolbarGroup>
 							<p:fileUpload update=":form:messages,:formfileA:fileA" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{procesoListMB.handleFileUploadA}"
-						  />
-		 				</p:toolbarGroup> 
+							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt2"/>
+						</p:toolbarGroup>
                         
 				</h:form>
             </p:dialog> 
