@@ -92,4 +92,8 @@ public class Cronograma extends Base implements Serializable  {
 		return comparacion;
 	}
 	
+	@Override
+	public String toString(){
+		return getNombre();
+	}
 }

@@ -76,8 +76,10 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 		boolean isAdminUser = this.usuarioBC.isAdminUser(currentUser);
 		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
+
 		List<Proceso> result = this.procesoDAO.getProcesos(filtroEstadoProceso,
 				isAdminUser, usuario.getUsuarioId());
+		
 		for (Proceso proc : result) {
 			proc.setLastActividad(this.actividadBC.getLastActividad(proc));
 		}
@@ -399,6 +401,13 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		}
 
 		return false;
+	}
+
+	public List<Proceso> getProcesosByCronograma(Long cronogramaId, String currentUser) {
+
+		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
+		
+		return this.procesoDAO.getProcesosByCronograma(cronogramaId, usuario.getUsuarioId());
 	}
 
 }

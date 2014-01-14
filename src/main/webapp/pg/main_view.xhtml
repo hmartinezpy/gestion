@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <f:view contentType="text/html">
+<h:head>
+	<title>
+		<ui:insert name="title">PrimeFaces ShowCase</ui:insert>
+	</title>
+	<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+	<style type="text/css">
+		.ui-widget {
+			font-size: 75%;
+		}
+
+        .nestedUnit {
+            border:0px none !important
+        }
+
+        .ui-layout-center .ui-layout-resizer {
+            border:1px solid #A8A8A8;
+        }
+
+        .ui-tree-item span {
+            float:left;
+        }
+
+        .ui-tree {
+            border:0px none;
+        }
+
+        .ui-tabs {
+            border:0px none;
+        }
+	</style>
+</h:head>
+
+<h:body>
+
+	<p:layout fullPage="true" id="mainLayout">
+
+		<p:growl id="messages" showDetail="true" />
+
+        <p:layoutUnit position="west" size="200" resizable="true" collapsible="true" header="Cronogramas" id="leftPane">
+            <h:form>
+                <p:tree value="#{mainViewMB.items}" var="box" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
+                	<p:ajax event="select" update=":dataForm:procesosList :messages" listener="#{mainViewMB.onNodeSelect}" />
+                    <p:treeNode icon="ui-icon ui-icon-note">
+                        <h:outputText value="#{box}"/>
+                    </p:treeNode>
+                </p:tree>
+            </h:form>
+        </p:layoutUnit>
+        
+		<p:layoutUnit position="center" id="centerMainPane">
+
+			<p:layout id="rightLayout">
+
+				<p:layoutUnit position="north" size="50%" resizable="true" styleClass="nestedUnit" id="centerNorthPane">
+					<h:form id="dataForm">
+
+						<p:dataTable id="procesosList" var="proceso" value="#{mainViewMB.procesos}"
+						             selection="#{mainViewMB.proceso}" selectionMode="single"
+						             onRowSelectUpdate=":procesoViewer" rowKey="#{proceso.procesoId}">
+						             
+							<p:ajax event="rowSelect" listener="#{mainViewMB.onRowSelect}"   
+								update=":procesoViewer :messages" />
+
+							<p:column headerText="Nro Proceso" sortBy="#{proceso.nroProceso}">
+							    #{proceso.nroProceso}
+							</p:column>
+							
+							<p:column headerText="Descripcion" sortBy="#{proceso.descripcion}">
+							    #{proceso.descripcion}
+							</p:column>
+							
+							<p:column headerText="Fecha Fin" sortBy="#{proceso.fechaFinFormateada}">
+							    #{proceso.fechaFinFormateada}
+							</p:column>
+							
+						</p:dataTable>
+					
+					</h:form>
+
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center" styleClass="nestedUnit" id="centerSouthPane">
+
+                    <p:outputPanel id="procesoViewer">
+                        <h:outputText value="#{mainViewMB.proceso.descripcion}" rendered="#{not empty mainViewMB.proceso}" />
+                    </p:outputPanel>
+
+                </p:layoutUnit>
+                
+            </p:layout>
+
+        </p:layoutUnit>
+
+    </p:layout>
+
+    <p:ajaxStatus style="width:32px;height:32px;display:block;position:fixed;right:0;top:0;z-index:100">
+        <f:facet name="start">
+            <p:graphicImage value="/images/loading.gif" />
+        </f:facet>
+
+        <f:facet name="complete">
+            <h:outputText value="" />
+        </f:facet>
+    </p:ajaxStatus>
+	
+</h:body>
+
+</f:view>
+
+</html>
+

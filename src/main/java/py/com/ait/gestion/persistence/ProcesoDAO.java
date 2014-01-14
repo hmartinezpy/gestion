@@ -125,4 +125,27 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 
 		return (q.getResultList());
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Proceso> getProcesosByCronograma(Long cronogramaId,
+			Long usuarioId) {
+
+		String filtro = "where p.procesoId = a.master.procesoId";
+
+		filtro += " and p.estado not in ("
+				+ Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+		filtro += " and a.estado not in ("
+				+ Definiciones.EstadoActividad.getEstadosCerrados() + ")";
+
+		filtro += " and p.cronograma.cronogramaId = :cronogramaId";
+
+		Query q = this.em
+				.createQuery("select distinct p from Proceso p, Actividad a "
+						+ filtro + " order by p.nroProceso");
+
+		q.setParameter("cronogramaId", cronogramaId);
+
+		return (q.getResultList());
+
+	}
 }
