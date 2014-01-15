@@ -1,8 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="repPendientes" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.6105100000000008"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="New Dataset 1">
+		<queryString language="SQL">
+			<![CDATA[select coalesce(ua.usuario, up.usuario) as responsable,
+cr.nombre as tipo_proceso, c.nombre as cliente, p.nro_proceso,
+p.descripcion as proceso, a.nro_actividad, a.descripcion as actividad,
+coalesce(a.estado,p.estado) as estado,
+case when a.super_tarea is not null then 'SubActividad'
+when a.id is not null then 'Actividad'
+else 'Proceso' end as tipo,
+coalesce(a.fecha_inicio_reprogramado,a.fecha_inicio_previsto,
+p.fecha_inicio_real) as inicio_previsto,
+coalesce(a.fecha_fin_reprogramada,a.fecha_fin_prevista,
+p.fecha_fin_reprogramada,p.fecha_fin_prevista) as fin_previsto,now()
+from cliente c, cronograma cr, usuario up, proceso p
+left join actividad a on a.proceso = p.id
+left join usuario ua on a.responsable = ua.id
+where p.cliente = c.id
+and p.cronograma = cr.id
+and p.responsable = up.id
+and p.estado in ('NUE','PRO')
+and (a.estado in ('NUE','PRO') or a.estado is null)
+order by responsable, tipo, cliente, inicio_previsto]]>
+		</queryString>
+		<field name="cliente" class="java.lang.String"/>
+		<field name="nro_proceso" class="java.lang.String"/>
+		<field name="proceso" class="java.lang.String"/>
+		<field name="nro_actividad" class="java.lang.String"/>
+		<field name="actividad" class="java.lang.String"/>
+		<field name="estado" class="java.lang.String"/>
+		<field name="tipo" class="java.lang.String"/>
+		<field name="inicio_previsto" class="java.sql.Timestamp"/>
+		<field name="fin_previsto" class="java.sql.Timestamp"/>
+		<field name="tipo_proceso" class="java.lang.String"/>
+		<field name="responsable" class="java.lang.String"/>
+		<group name="responsable">
+			<groupExpression><![CDATA[$F{responsable}]]></groupExpression>
+		</group>
+		<group name="tipo_proceso">
+			<groupExpression><![CDATA[$F{tipo_proceso}]]></groupExpression>
+		</group>
+	</subDataset>
 	<queryString>
 		<![CDATA[select coalesce(ua.usuario, up.usuario) as responsable,
 cr.nombre as tipo_proceso, c.nombre as cliente, p.nro_proceso,
@@ -45,13 +106,19 @@ order by responsable, tipo, cliente, inicio_previsto]]>
 		<groupHeader>
 			<band height="26">
 				<textField>
-					<reportElement x="115" y="0" width="100" height="20"/>
-					<textElement/>
+					<reportElement x="114" y="0" width="687" height="20"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{responsable}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="15" y="0" width="100" height="20"/>
-					<textElement>
+					<reportElement x="0" y="0" width="114" height="20"/>
+					<box>
+						<topPen lineWidth="0.5" lineStyle="Dashed"/>
+					</box>
+					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[RESPONSABLE: ]]></text>
@@ -61,30 +128,26 @@ order by responsable, tipo, cliente, inicio_previsto]]>
 		<groupFooter>
 			<band height="37">
 				<textField>
-					<reportElement x="216" y="9" width="100" height="20"/>
-					<textElement/>
+					<reportElement x="43" y="9" width="54" height="20" backcolor="#EF2D2D"/>
+					<box>
+						<topPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{cliente_1}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="64" y="9" width="42" height="20"/>
-					<textElement>
+					<reportElement x="0" y="9" width="43" height="20" backcolor="#B6B3B3"/>
+					<box>
+						<topPen lineWidth="0.75" lineStyle="Solid"/>
+						<leftPen lineWidth="0.75" lineStyle="Solid"/>
+						<bottomPen lineWidth="0.75" lineStyle="Solid"/>
+					</box>
+					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[TOTAL ]]></text>
-				</staticText>
-				<textField>
-					<reportElement x="106" y="9" width="100" height="20"/>
-					<textElement>
-						<font isBold="true"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{responsable}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="206" y="9" width="10" height="20"/>
-					<textElement>
-						<font isBold="true"/>
-					</textElement>
-					<text><![CDATA[: ]]></text>
+					<text><![CDATA[TOTAL:]]></text>
 				</staticText>
 			</band>
 		</groupFooter>
@@ -92,15 +155,25 @@ order by responsable, tipo, cliente, inicio_previsto]]>
 	<group name="tipo_proceso">
 		<groupExpression><![CDATA[$F{tipo_proceso}]]></groupExpression>
 		<groupHeader>
-			<band height="25">
+			<band height="20">
 				<textField>
-					<reportElement x="149" y="0" width="100" height="20"/>
-					<textElement/>
+					<reportElement x="114" y="0" width="688" height="20"/>
+					<box>
+						<topPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_proceso}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="35" y="0" width="114" height="20"/>
-					<textElement>
+					<reportElement x="0" y="0" width="114" height="20"/>
+					<box>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+					</box>
+					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[TIPO DE PROCESO: ]]></text>
@@ -149,66 +222,102 @@ order by responsable, tipo, cliente, inicio_previsto]]>
 		</band>
 	</title>
 	<columnHeader>
-		<band height="28" splitType="Stretch">
+		<band height="26" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="76" height="20"/>
-				<textElement>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="76" y="0" width="63" height="20"/>
-				<textElement textAlignment="Center">
+				<reportElement x="76" y="0" width="89" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[NRO PROC]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="149" y="0" width="160" height="20"/>
-				<textElement>
+				<reportElement x="165" y="0" width="129" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[PROCESO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="309" y="0" width="54" height="20"/>
-				<textElement textAlignment="Center">
+				<reportElement x="294" y="0" width="54" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[NRO ACT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="363" y="0" width="124" height="20"/>
-				<textElement>
+				<reportElement x="348" y="0" width="124" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[ACTIVIDAD]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="487" y="0" width="47" height="20"/>
-				<textElement textAlignment="Center">
+				<reportElement x="472" y="0" width="60" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[ESTADO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="534" y="0" width="52" height="20"/>
-				<textElement textAlignment="Center">
+				<reportElement x="532" y="0" width="59" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[TIPO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="586" y="0" width="101" height="20"/>
-				<textElement>
+				<reportElement x="591" y="0" width="112" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[INICIO PREV]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="687" y="0" width="114" height="20"/>
-				<textElement>
+				<reportElement x="703" y="0" width="99" height="20"/>
+				<box>
+					<leftPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[FIN PREV]]></text>
@@ -216,50 +325,104 @@ order by responsable, tipo, cliente, inicio_previsto]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="24" splitType="Stretch">
-			<textField isBlankWhenNull="true">
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="76" height="20"/>
-				<textElement/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cliente}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="76" y="0" width="63" height="20"/>
-				<textElement textAlignment="Center"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="76" y="0" width="89" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nro_proceso}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="149" y="0" width="160" height="20"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="165" y="0" width="129" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{proceso}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="309" y="0" width="54" height="20"/>
-				<textElement textAlignment="Center"/>
+				<reportElement x="294" y="0" width="54" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nro_actividad}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="363" y="0" width="124" height="20"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="348" y="0" width="124" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{actividad}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="487" y="0" width="47" height="20"/>
-				<textElement textAlignment="Center"/>
+				<reportElement x="472" y="0" width="60" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{estado}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="534" y="0" width="52" height="20"/>
-				<textElement textAlignment="Center"/>
+				<reportElement x="532" y="0" width="59" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
-				<reportElement x="586" y="0" width="101" height="20"/>
-				<textElement/>
+				<reportElement x="591" y="0" width="112" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{inicio_previsto}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
-				<reportElement x="687" y="0" width="114" height="20"/>
-				<textElement/>
+				<reportElement x="703" y="0" width="99" height="20"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{fin_previsto}]]></textFieldExpression>
 			</textField>
 		</band>
