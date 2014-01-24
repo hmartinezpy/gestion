@@ -70,4 +70,24 @@ public class Checklist extends Base implements Serializable  {
 		this.checklistDetalles = checklistDetalles;
 	}
 	
+	@Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (this.checklistId != null ? this.checklistId.hashCode() : 0);
+        return hash;
+    }
+	
+	@Override
+	public boolean equals(Object other) {
+
+		boolean comparacion = false;
+		if (other != null && other instanceof Checklist) {
+
+			if (this.checklistId == ((Checklist) other).getChecklistId()) {
+				comparacion = true;
+			}
+		}
+		return comparacion;
+	}
+	
 }

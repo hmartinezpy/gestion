@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Reporte de facturas ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center">Reporte
+			de facturas</h1>
+		<div class="entry" style="line-height: 200%; margin-left: 150px">
+			<h:form id="form">
+				<p:growl id="messages" />
+				<p:panel header="Reporte" id="panel" style="width:800px;">
+					<h:panelGrid columns="2" cellpadding="3" width="250" id="panelgrid">
+
+						<h:outputText value="Estado:" />
+						<h:selectOneMenu value="#{reporteFacturasMB.estado}">
+							<f:selectItem itemLabel="Todas" itemValue="Todas" />
+							<f:selectItem itemLabel="Pendientes" itemValue="Pendientes" />
+							<f:selectItem itemLabel="Cobradas" itemValue="Cobradas" />
+						</h:selectOneMenu>
+						<h:outputText value="Desde: " />
+						<p:calendar value="#{reporteFacturasMB.desde}" id="desde"
+							pattern="dd/MM/yyyy" />
+						<h:outputText value="Hasta: " />
+						<p:calendar value="#{reporteFacturasMB.hasta}" id="hasta"
+							pattern="dd/MM/yyyy" />
+					</h:panelGrid>
+				</p:panel>
+				<br></br>
+				<p:commandButton value="Crear Reporte" image="ui-icon-document"
+					update="messages" action="#{reporteFacturasMB.printPdfFacturas}"
+					ajax="false" />
+			</h:form>
+
+		</div>
+	</ui:define>
+</ui:composition>

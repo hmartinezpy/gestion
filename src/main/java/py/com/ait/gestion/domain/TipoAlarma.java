@@ -137,4 +137,24 @@ public class TipoAlarma  extends Base implements Serializable {
 	public void setCronogramaDetallesAlarma(List<CronogramaDetalle> cronogramaDetalles) {	
 		this.cronogramaDetallesAlarma = cronogramaDetalles;
 	}*/
+	
+	@Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (this.tipoAlarmaId != null ? this.tipoAlarmaId.hashCode() : 0);
+        return hash;
+    }
+	
+	@Override
+	public boolean equals(Object other) {
+
+		boolean comparacion = false;
+		if (other != null && other instanceof TipoAlarma) {
+
+			if (this.tipoAlarmaId == ((TipoAlarma) other).getTipoAlarmaId()) {
+				comparacion = true;
+			}
+		}
+		return comparacion;
+	}
 }

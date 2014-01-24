@@ -2,6 +2,7 @@ package py.com.ait.gestion.domain;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class ReportePendienteBean implements Serializable {
 
@@ -14,11 +15,13 @@ public class ReportePendienteBean implements Serializable {
 	private String proceso;
 	private String nro_actividad;
 	private String actividad;
+	private String responsable_proceso;
 	private String estado;
 	private String tipo;
-	private Timestamp inicio_previsto;
-	private Timestamp fin_previsto;
+	private Date inicio_previsto;
+	private Date fin_previsto;
 	private Timestamp now;
+	
 	public String getResponsable() {
 		return responsable;
 	}
@@ -73,16 +76,32 @@ public class ReportePendienteBean implements Serializable {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	public Timestamp getInicio_previsto() {
+	
+	public String getResponsable_proceso() {
+	
+		return responsable_proceso;
+	}
+	
+	public void setResponsable_proceso(String responsable_proceso) {
+	
+		this.responsable_proceso = responsable_proceso;
+	}
+	public Date getInicio_previsto() {
+	
 		return inicio_previsto;
 	}
-	public void setInicio_previsto(Timestamp inicio_previsto) {
+	
+	public void setInicio_previsto(Date inicio_previsto) {
+	
 		this.inicio_previsto = inicio_previsto;
 	}
-	public Timestamp getFin_previsto() {
+	
+	public Date getFin_previsto() {
+	
 		return fin_previsto;
 	}
-	public void setFin_previsto(Timestamp fin_previsto) {
+	public void setFin_previsto(Date fin_previsto) {
+	
 		this.fin_previsto = fin_previsto;
 	}
 	public Timestamp getNow() {

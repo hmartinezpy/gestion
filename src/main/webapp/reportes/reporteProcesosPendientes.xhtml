@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Reporte de procesos pendientes ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center">Reporte de procesos pendientes</h1>
+		<div class="entry" style="line-height: 200%; margin-left: 150px">
+			<h:form>
+				<p:growl id="messages" />
+				
+				<br></br>
+				<p:commandButton value="Generar reporte de Pendientes" image="ui-icon-disk"
+					update="messages" action="#{procesoListMB.printPdfPendientes}"
+					ajax="false" />
+			</h:form>
+		
+		</div>
+	</ui:define>
+</ui:composition>

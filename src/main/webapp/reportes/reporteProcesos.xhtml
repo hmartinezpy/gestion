@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Reporte estadístico de procesos ::</ui:define>
+	<ui:define name="content">
+		<h1 class="title ui-widget-header ui-corner-all" align="center">Reporte estadístico de procesos</h1>
+		<div class="entry" style="line-height: 200%; margin-left: 150px">
+			<h:form>
+				<p:growl id="messages" />
+				<p:panel header="Reporte" id="panel" style="width:800px;">
+					<h:panelGrid columns="2" cellpadding="3" >
+						<h:outputText value="Tipo de Proceso:" style="width:250px;" />
+						<h:selectOneMenu value="#{reporteProcesosMB.cronogramaId}">
+							<f:selectItem itemLabel="Todos" itemValue="0" />
+							<f:selectItems value="#{reporteProcesosMB.cronogramas}"
+								var="cronograma" itemLabel="#{cronograma.nombre}"
+								itemValue="#{cronograma.cronogramaId}" />
+						</h:selectOneMenu>
+						<h:outputText value="Estado:" />
+						<h:selectOneMenu value="#{reporteProcesosMB.estado}">
+							<f:selectItem itemLabel="Todos" itemValue="Todos" />
+							<f:selectItem itemLabel="Abierto" itemValue="Abierto" />
+							<f:selectItem itemLabel="Cerrado" itemValue="Cerrado" />
+						</h:selectOneMenu>
+						<h:outputText value="Desde: " />
+						<p:calendar value="#{reporteProcesosMB.desde}" 
+							pattern="dd/MM/yyyy" />
+						<h:outputText value="Hasta: " />
+						<p:calendar value="#{reporteProcesosMB.hasta}"
+							pattern="dd/MM/yyyy"/>
+					</h:panelGrid>
+				</p:panel>
+				<br></br>
+				<p:commandButton value="Crear Reporte" image="ui-icon-document" 
+					update="messages" action="#{reporteProcesosMB.printPdfProcesos}"
+					ajax="false" />
+			</h:form>
+		
+		</div>
+	</ui:define>
+</ui:composition>

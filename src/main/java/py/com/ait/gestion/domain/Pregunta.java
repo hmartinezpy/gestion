@@ -64,4 +64,23 @@ public class Pregunta  extends Base implements Serializable {
 		this.cronogramaDetalles = cronogramaDetalles;
 	}
 	*/
+	@Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (this.preguntaId != null ? this.preguntaId.hashCode() : 0);
+        return hash;
+    }
+	
+	@Override
+	public boolean equals(Object other) {
+
+		boolean comparacion = false;
+		if (other != null && other instanceof Pregunta) {
+
+			if (this.preguntaId == ((Pregunta) other).getPreguntaId()) {
+				comparacion = true;
+			}
+		}
+		return comparacion;
+	}
 }

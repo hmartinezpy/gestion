@@ -33,7 +33,7 @@
 				<div id="j_idt8:j_idt9">
 					<ul id="j_idt8:j_idt9_menu">
 						<p style="text-align:center;font-weight:400;">
-							<span class="wijmo-wijmenu-text"><font color="#555555">ACCESS ERROR</font></span>
+							<span class="wijmo-wijmenu-text"><font color="#555555">ACCESO NO AUTORIZADO</font></span>
 						</p>
 					</ul>
 				</div><script type="text/javascript">widget_j_idt8_j_idt9 = new PrimeFaces.widget.Menubar('j_idt8:j_idt9',{autoSubmenuDisplay:false,animated:'fade'});</script>
@@ -48,12 +48,12 @@
 				<table id="error" align="center">
 					<tbody>
 						<tr>
-							<td>Permission denied accessing the page.</td>
+							<td>Permiso denegado al acceder a la p&aacute;gina.</td>
 						</tr>
 						<tr>
 							<td>
 								<div class="ui-toolbar-group-right">
-									<button id="j_idt21" name="j_idt21" onclick=" location.href='/perfil/index.jsf' ">Back</button>									
+									<button id="j_idt21" name="j_idt21" onclick=" location.href='/gestion/home.jsp' ">Volver</button>									
 									<script type="text/javascript">widget_j_idt21 = new PrimeFaces.widget.CommandButton('j_idt21', {});</script>
 								</div>
 							</td>

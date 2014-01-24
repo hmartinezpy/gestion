@@ -73,4 +73,24 @@ public class Rol extends Base implements Serializable  {
 	public void setCronogramaDetalles(List<CronogramaDetalle> cronogramaDetalles) {	
 		this.cronogramaDetalles = cronogramaDetalles;
 	}
+	
+	@Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (this.rolId != null ? this.rolId.hashCode() : 0);
+        return hash;
+    }
+	
+	@Override
+	public boolean equals(Object other) {
+
+		boolean comparacion = false;
+		if (other != null && other instanceof Rol) {
+
+			if (this.rolId == ((Rol) other).getRolId()) {
+				comparacion = true;
+			}
+		}
+		return comparacion;
+	}
 }

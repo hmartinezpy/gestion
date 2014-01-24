@@ -37,7 +37,7 @@ public class CronogramaDetalle  extends Base  implements Serializable {
 	
 	
 	@Column(name="alerta_inicio")
-	private String alertaInicio;
+	private String alertaInicio = "No";
 	
 	@Column(name="duracion")
 	private Long duracionTarea;
@@ -231,4 +231,23 @@ public class CronogramaDetalle  extends Base  implements Serializable {
 		this.cronogramaDetallesRN = cronogramaDetalles;
 	}
 
+	@Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (this.cronogramaDetalleId != null ? this.cronogramaDetalleId.hashCode() : 0);
+        return hash;
+    }
+	
+	@Override
+	public boolean equals(Object other) {
+
+		boolean comparacion = false;
+		if (other != null && other instanceof CronogramaDetalle) {
+
+			if (this.cronogramaDetalleId == ((CronogramaDetalle) other).getCronogramaDetalleId()) {
+				comparacion = true;
+			}
+		}
+		return comparacion;
+	}
 }

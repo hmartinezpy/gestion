@@ -14,14 +14,13 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
-
+import javax.validation.constraints.NotNull;
 import net.sf.jasperreports.engine.JRException;
-
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.DateSelectEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -35,7 +34,6 @@ import org.ticpy.tekoporu.report.annotation.Path;
 import org.ticpy.tekoporu.stereotype.ViewController;
 import org.ticpy.tekoporu.template.AbstractListPageBean;
 import org.ticpy.tekoporu.util.FileRenderer;
-
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
@@ -90,11 +88,11 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 	@Inject
 	@Path("reports/reportProc.jasper")
 	private Report reporte;
-	
+
 	@Inject
 	@Path("reports/repPendientes.jasper")
 	private Report reportePendientes;
-	
+
 	@Inject
 	private ReporteDAO reporteDAO;
 
@@ -313,6 +311,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 	private List<Usuario> usuariosPorRol;
 	private List<Usuario> sigteUsuariosPorRol;
+	@NotNull(message="Debe seleccionar un responsable")
 	private Usuario sigteUsuario;
 	private List<Usuario> allUsuarios;
 	private List<CronogramaDetalle> cronogramaDetallesporCronograma;
@@ -609,6 +608,7 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		this.sigteUsuariosPorRol = sigteUsuariosPorRol;
 	}
 
+	
 	public Usuario getSigteUsuario() {
 
 		return this.sigteUsuario;
@@ -861,34 +861,38 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 
 		this.subActividad = subActividad;
 	}
-
+	
 	public void resolverActividad() {
 
 		if (this.actividadSeleccionada == null) {
 			this.agregarMensaje("Actividad no seleccionada");
 		} else {
 			Actividad actividad = this.actividadSeleccionada;
-			if (!this.validarSiPuedeResolverActividad()) {
-				this.elegirProceso();
-				return;
-			}
-
-			try {
-				this.actividadBC.resolveActividad(actividad,
-						this.getSigteUsuario());
-				if (actividad.getChecklistDetalle() != null) {
-					actividad.setTieneChecklist(true);
+			if (actividad.getResponsable() == null) {
+				this.agregarMensaje("Debe seleccionar un responsable");
+			}else{
+				if (!this.validarSiPuedeResolverActividad()) {
+					this.elegirProceso();
+					return;
 				}
-				this.elegirProceso();
-				this.registrarObsP();
-				this.agregarMensaje("Ha pasado a la siguiente Actividad");
-			} catch (RuntimeException ex) {
-				ex.printStackTrace();
-				this.agregarMensajeError(ex.getMessage());
-			}
-			if (actividad.getResponsable() != null) {
-				actividad.setResponsable(this.usuarioBC.load(actividad
-						.getResponsable().getUsuarioId()));
+
+				if(this.getSigteUsuario()!=null){
+					this.actividadBC.resolveActividad(actividad,
+							this.getSigteUsuario());
+					if (actividad.getChecklistDetalle() != null) {
+						actividad.setTieneChecklist(true);
+					}
+					this.elegirProceso();
+					this.registrarObsP();
+					this.agregarMensaje("Ha pasado a la siguiente Actividad");
+					if (actividad.getResponsable() != null) {
+						actividad.setResponsable(this.usuarioBC.load(actividad
+								.getResponsable().getUsuarioId()));
+					}
+				} else {
+					this.agregarMensajeError("Debe asignar un responsable");
+				}
+				
 			}
 		}
 	}
@@ -1118,30 +1122,32 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 			this.agregarMensaje("ERROR: Proceso NO seleccionado");
 			this.setDescripcionObsP("");
 		} else {
-			Proceso procesoSelec = this.procesoSeleccionado;
+			if (this.descripcionObsP != null
+					&& this.descripcionObsP.trim().length() != 0) {
+				Proceso procesoSelec = this.procesoSeleccionado;
 
-			Observacion obs = new Observacion();
+				Observacion obs = new Observacion();
 
-			obs.setDescripcion(this.getDescripcionObsP());
+				obs.setDescripcion(this.getDescripcionObsP());
 
-			String nombreUsu = this.usuarioBC.getUsuarioActual();
-			Usuario actual = this.usuarioBC.findSpecificUser(nombreUsu);
+				String nombreUsu = this.usuarioBC.getUsuarioActual();
+				Usuario actual = this.usuarioBC.findSpecificUser(nombreUsu);
 
-			obs.setUsuario(actual);
-			obs.setFechaHora(new Date());
-			obs.setEntidad("Proceso");
-			obs.setIdEntidad(procesoSelec.getProcesoId());
+				obs.setUsuario(actual);
+				obs.setFechaHora(new Date());
+				obs.setEntidad("Proceso");
+				obs.setIdEntidad(procesoSelec.getProcesoId());
 
-			this.observacionBC.registrar(obs);
-			if (this.observaciones != null) {
-				List<Observacion> nuevasObservaciones = new ArrayList<Observacion>();
-				nuevasObservaciones.add(obs);
-				nuevasObservaciones.addAll(this.observaciones);
-				this.observaciones = nuevasObservaciones;
+				this.observacionBC.registrar(obs);
+				if (this.observaciones != null) {
+					List<Observacion> nuevasObservaciones = new ArrayList<Observacion>();
+					nuevasObservaciones.add(obs);
+					nuevasObservaciones.addAll(this.observaciones);
+					this.observaciones = nuevasObservaciones;
+				}
+				this.agregarMensaje("Observacion creada");
+				this.setDescripcionObsP("");
 			}
-			this.agregarMensaje("Observacion creada");
-			this.setDescripcionObsP("");
-
 		}
 	}
 
@@ -1764,15 +1770,15 @@ public class ProcesoListMB extends AbstractListPageBean<Proceso, Long> {
 		return this.getNextView();
 
 	}
-	
-	public String printPdfPendientes() throws JRException {
-		
+
+	public void printPdfPendientes() throws JRException {
+
 		Map<String, Object> param = new HashMap<String, Object>();
-		List<ReportePendienteBean> list = reporteDAO.getDatosReportePendientes();
-		byte[] buffer = this.reportePendientes
-				.export(list, param, Type.PDF);
+		List<ReportePendienteBean> list = reporteDAO
+				.getDatosReportePendientes();
+		byte[] buffer = this.reportePendientes.export(list, param, Type.PDF);
 		this.renderer.render(buffer, FileRenderer.ContentType.PDF,
 				"reportePendientes.pdf");
-		return this.getNextView();
+		//return this.getNextView();
 	}
 }
