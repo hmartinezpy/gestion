@@ -92,10 +92,10 @@
 					<p:panel style="width:400px"  >
 						<h:panelGrid columns="2" id="panelSubActividad" cellpadding="5" >
 							<h:outputText value="Responsable " />
-							<p:selectOneMenu id="selectSigteActividadResponsable" value="#{procesoEditMB.sigteUsuario}" converter="usuarioConverter"  >
+							<h:selectOneMenu id="selectSigteActividadResponsable" value="#{procesoEditMB.sigteUsuario}" converter="usuarioConverter"  >
 								<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 								<f:selectItems value="#{procesoEditMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<p:commandButton onclick="dlgSigteActividad.hide(), dlg2.hide()" value="Confirmar" ajax="false"
 								icon="ui-icon-circle-check" action="#{procesoEditMB.empezarActividades()}">

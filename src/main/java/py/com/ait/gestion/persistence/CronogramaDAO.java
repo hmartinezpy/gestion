@@ -1,4 +1,5 @@
 package py.com.ait.gestion.persistence;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,10 +29,21 @@ public class CronogramaDAO extends JPACrud<Cronograma, Long> {
 	public List<CronogramaDetalle> getCronogramaDetallesByCronograma(
 			Cronograma cronogramaSeleccionado) {
 
-		Query q = em.createQuery("select cd from CronogramaDetalle cd where cd.master.cronogramaId = :cronograma order by cd.nroOrden");
+		Query q = em
+				.createQuery("select cd from CronogramaDetalle cd where cd.master.cronogramaId = :cronograma order by cd.nroOrden");
 		q.setParameter("cronograma", cronogramaSeleccionado.getCronogramaId());
-		
+
 		return ((List<CronogramaDetalle>) q.getResultList());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Cronograma> getCronogramaByProcesos(List<Long> procesosId) {
+		Query q = em
+				.createQuery("select distinct c from Cronograma c, Proceso p "
+						+ "where c.cronogramaId = p.cronograma and p.procesoId IN (:procesosId) order by c.nombre");
+		q.setParameter("procesosId", procesosId);
+
+		return ((List<Cronograma>) q.getResultList());
 	}
 
 }

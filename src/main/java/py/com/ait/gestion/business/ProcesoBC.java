@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.ticpy.tekoporu.stereotype.BusinessController;
 import org.ticpy.tekoporu.template.DelegateCrud;
 import org.ticpy.tekoporu.transaction.Transactional;
+
 import py.com.ait.gestion.constant.AppProperties;
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
@@ -403,11 +406,33 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return false;
 	}
 
-	public List<Proceso> getProcesosByCronograma(Long cronogramaId, String currentUser) {
+	public List<Proceso> getProcesosByCronogramaForUser(Long cronogramaId, String currentUser) {
 
-		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
-		
-		return this.procesoDAO.getProcesosByCronograma(cronogramaId, usuario.getUsuarioId());
+		List<Long> procesosId = getProcesosIdForUser(currentUser);
+
+		List<Proceso> result = this.procesoDAO.getProcesosByCronogramaAndProcesosId(cronogramaId, procesosId);
+
+		for (Proceso proc : result) {
+			proc.setLastActividad(this.actividadBC.getLastActividad(proc));
+		}
+
+		return result;
+
 	}
 
+	public List<Long> getProcesosIdForUser(String currentUser) {
+
+		boolean isAdminUser = this.usuarioBC.isAdminUser(currentUser);
+		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
+
+		List<Long> result = this.procesoDAO.getProcesoIdsForUser(isAdminUser, usuario.getUsuarioId());
+
+		return result;
+
+	}
+	public String getCountProcesosByCronogramaAndProcesosId(
+			Long cronogramaId, List<Long> procesosId) {
+
+		return procesoDAO.getCountProcesosByCronogramaAndProcesosId(cronogramaId, procesosId);
+	}
 }

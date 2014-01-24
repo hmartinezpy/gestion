@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 
@@ -34,6 +35,8 @@ public class Cronograma extends Base implements Serializable  {
 	@Column(name="sigla")
 	private String sigla;
 
+	@Transient
+	private String cantProcesos;
 
 	@OneToMany(mappedBy="master",cascade=CascadeType.ALL)
 	private List<CronogramaDetalle> cronogramaDetalles;
@@ -72,6 +75,14 @@ public class Cronograma extends Base implements Serializable  {
 		this.sigla = sigla;
 	}
 	
+	public String getCantProcesos() {
+		return cantProcesos;
+	}
+
+	public void setCantProcesos(String cantProcesos) {
+		this.cantProcesos = cantProcesos;
+	}
+
 	public List<CronogramaDetalle> getCronogramaDetalles(){
 		return this.cronogramaDetalles;
 	}
@@ -94,6 +105,10 @@ public class Cronograma extends Base implements Serializable  {
 	
 	@Override
 	public String toString(){
-		return getNombre();
+		String toRet = getNombre();
+		if (cantProcesos != null)
+			toRet += " ("+cantProcesos+")";
+
+		return toRet;
 	}
 }

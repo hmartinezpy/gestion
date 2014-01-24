@@ -148,4 +148,50 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		return (q.getResultList());
 
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<Long> getProcesoIdsForUser(boolean isAdminUser, Long usuarioId) {
+		String filtro = "where p.procesoId = a.master.procesoId";
+		// si no soy admin agregar filtros por usuario actual
+		if (!isAdminUser) {
+
+			filtro += " and (p.responsable.usuarioId = " + usuarioId
+					+ " or a.responsable.usuarioId = " + usuarioId + ")";
+		}
+
+		Query q = this.em
+				.createQuery("select distinct p.procesoId from Proceso p, Actividad a "
+						+ filtro + " order by p.procesoId");
+		return (q.getResultList());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Proceso> getProcesosByCronogramaAndProcesosId(
+			Long cronogramaId, List<Long> procesosId) {
+
+		String filtro = "where p.cronograma.cronogramaId = :cronogramaId and p.procesoId IN (:procesosId)";
+
+		Query q = this.em
+				.createQuery("select p from Proceso p "
+						+ filtro + " order by p.procesoId");
+		q.setParameter("cronogramaId", cronogramaId);
+		q.setParameter("procesosId", procesosId);
+
+		return (q.getResultList());
+	}
+
+	public String getCountProcesosByCronogramaAndProcesosId(
+			Long cronogramaId, List<Long> procesosId) {
+
+		String filtro = "where p.cronograma.cronogramaId = :cronogramaId and p.procesoId IN (:procesosId)";
+
+		Query q = em.createQuery("select count(p.id) from Proceso p " + filtro);
+
+		q.setParameter("cronogramaId", cronogramaId);
+		q.setParameter("procesosId", procesosId);
+		Long cantProcesos = (Long) q.getSingleResult(); 
+
+		return cantProcesos.toString();
+	}
+
 }

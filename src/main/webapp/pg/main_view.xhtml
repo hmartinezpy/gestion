@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
@@ -8,7 +8,7 @@
     <f:view contentType="text/html">
 <h:head>
 	<title>
-		<ui:insert name="title">PrimeFaces ShowCase</ui:insert>
+		<ui:insert name="title">:: Gestión de documentos ::</ui:insert>
 	</title>
 	<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
 	<style type="text/css">
@@ -44,73 +44,658 @@
 
 		<p:growl id="messages" showDetail="true" />
 
-        <p:layoutUnit position="west" size="200" resizable="true" collapsible="true" header="Cronogramas" id="leftPane">
-            <h:form>
-                <p:tree value="#{mainViewMB.items}" var="box" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
-                	<p:ajax event="select" update=":dataForm:procesosList :messages" listener="#{mainViewMB.onNodeSelect}" />
-                    <p:treeNode icon="ui-icon ui-icon-note">
-                        <h:outputText value="#{box}"/>
-                    </p:treeNode>
-                </p:tree>
-            </h:form>
-        </p:layoutUnit>
-        
+		<p:layoutUnit position="west" size="200" resizable="true" collapsible="true" header="Cronogramas" id="leftPane">
+			<h:form>
+				<p:tree value="#{mainViewMB.items}" var="box" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
+					<p:ajax event="select" update=":procesosForm:procesosList :messages" listener="#{mainViewMB.onNodeSelect}" />
+
+					<p:treeNode icon="ui-icon ui-icon-note">
+						<h:outputText value="#{box}"/>
+					</p:treeNode>
+				</p:tree>
+			</h:form>
+		</p:layoutUnit>
+
 		<p:layoutUnit position="center" id="centerMainPane">
 
 			<p:layout id="rightLayout">
 
-				<p:layoutUnit position="north" size="50%" resizable="true" styleClass="nestedUnit" id="centerNorthPane">
-					<h:form id="dataForm">
+				<p:layoutUnit position="north" size="40%" resizable="true" styleClass="nestedUnit" id="centerNorthPane">
+					<h:form id="procesosForm">
+
+						<p:toolbar>
+							<p:toolbarGroup align="right">
+								<p:menuButton value="Opciones">
+									<p:menuitem value="Inicio"  url="/pg/home.jsf" />
+									<p:menuitem value="Cerrar Sesión"  url="/index.jsp" />
+								</p:menuButton>
+							</p:toolbarGroup>
+						</p:toolbar>
 
 						<p:dataTable id="procesosList" var="proceso" value="#{mainViewMB.procesos}"
-						             selection="#{mainViewMB.proceso}" selectionMode="single"
-						             onRowSelectUpdate=":procesoViewer" rowKey="#{proceso.procesoId}">
-						             
-							<p:ajax event="rowSelect" listener="#{mainViewMB.onRowSelect}"   
-								update=":procesoViewer :messages" />
+									selection="#{mainViewMB.procesoSeleccionado}" selectionMode="single"
+									onRowSelectUpdate=":actividadesForm:actividadesList" rowKey="#{proceso.procesoId}"
+									emptyMessage="No se encontraron registros">
 
-							<p:column headerText="Nro Proceso" sortBy="#{proceso.nroProceso}">
-							    #{proceso.nroProceso}
+							<p:ajax event="rowSelect" listener="#{mainViewMB.onProcesoRowSelect}"
+								update=":actividadesForm:actividadesList :messages" />
+
+							<p:column headerText="#Proceso" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.nroProceso}" />
 							</p:column>
-							
-							<p:column headerText="Descripcion" sortBy="#{proceso.descripcion}">
-							    #{proceso.descripcion}
+
+							<p:column headerText="Responsable"  style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.responsable.usuario}" />
 							</p:column>
-							
-							<p:column headerText="Fecha Fin" sortBy="#{proceso.fechaFinFormateada}">
-							    #{proceso.fechaFinFormateada}
+
+							<p:column headerText="Cliente" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.cliente.nombre}" />
 							</p:column>
-							
+
+							<p:column headerText="Estado"  style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.estado}" />
+							</p:column>
+
+							<p:column headerText="Descripcion" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.descripcion}" />
+							</p:column>
+
+							<p:column headerText="FechIniReal"  style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.fechaInicioReal}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm"/>
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="FechFinPrev"  style="font-weight:bold;">
+								<h:outputText style="font-weight:normal;" value="#{proceso.fechaFinPrevista}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm"/>
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Actividad Actual" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{proceso.lastActividad}" />
+							</p:column>
+
+							<p:column style="width:50px;" headerText="" >
+								<p:commandLink update=":messages,:documentosForm:documentosList,:documentosForm:selectCarpeta" onclick="documentosDialog.show()" action="#{mainViewMB.mostrarFileProceso}" >
+									<span class="ui-icon ui-icon-folder-open" title="Documentos" />
+									<f:setPropertyActionListener value="#{proceso}" target="#{mainViewMB.procesoSeleccionado}" />
+								</p:commandLink>
+							</p:column> 
+
+							<p:column style="width:50px;" headerText="" >
+								<p:commandLink update=":messages,:observacionesForm:observacionesList,:actividadesForm:actividadesList" onclick="observacionesDialog.show()" action="#{mainViewMB.mostrarObsProceso}" >
+									<span class="ui-icon ui-icon-comment" title="Observaciones" />
+									<f:setPropertyActionListener value="#{proceso}" target="#{mainViewMB.procesoSeleccionado}" />
+								</p:commandLink>
+							</p:column> 
+
 						</p:dataTable>
-					
+
 					</h:form>
 
-                </p:layoutUnit>
+				</p:layoutUnit>
 
-                <p:layoutUnit position="center" styleClass="nestedUnit" id="centerSouthPane">
+				<p:layoutUnit position="center" styleClass="nestedUnit" id="centerMiddlePane">
 
-                    <p:outputPanel id="procesoViewer">
-                        <h:outputText value="#{mainViewMB.proceso.descripcion}" rendered="#{not empty mainViewMB.proceso}" />
-                    </p:outputPanel>
+					<h:form id="actividadesForm" >
 
-                </p:layoutUnit>
-                
-            </p:layout>
+						<p:dataTable id="actividadesList" var="actividad" value="#{mainViewMB.actividades}"
+									selection="#{mainViewMB.actividadSeleccionada}" selectionMode="single"
+									onRowSelectUpdate=":actividadesForm:actividadesList" rowKey="#{actividad.actividadId}"
+									emptyMessage="No se encontraron registros">
 
-        </p:layoutUnit>
+							<p:ajax event="rowSelect" listener="#{mainViewMB.onActividadRowSelect}"
+								update=":actividadesForm:actividadesList :messages" />
 
-    </p:layout>
+							<f:facet name="header">
+								Actividades - #{mainViewMB.procesoSeleccionado.descripcion} - #{mainViewMB.procesoSeleccionado.cliente.nombre} - #{mainViewMB.procesoSeleccionado.fechaFinFormateada}
+							</f:facet>
 
-    <p:ajaxStatus style="width:32px;height:32px;display:block;position:fixed;right:0;top:0;z-index:100">
-        <f:facet name="start">
-            <p:graphicImage value="/images/loading.gif" />
-        </f:facet>
+							<p:column headerText="#Actividad" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{actividad.nroActividad}" />
+							</p:column>
 
-        <f:facet name="complete">
-            <h:outputText value="" />
-        </f:facet>
-    </p:ajaxStatus>
-	
+							<p:column headerText="Descripción"  style="font-weight:bold;" width="150" >
+								<h:outputText style="font-weight:normal;" value="#{actividad.descripcion}" />
+							</p:column>
+
+							<p:column headerText="Responsable"  style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{actividad.responsable.usuario}" />
+							</p:column>
+
+							<p:column headerText="Estado"  style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{actividad.estado}" />
+							</p:column>
+
+							<p:column headerText="Fecha Creación"  style="font-weight:bold;">
+								<h:outputText  style="font-weight:normal;" value="#{actividad.fechaCreacion}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm"/>
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Fecha Ini. Prevista"  style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{actividad.fechaInicioPrevisto}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm"/>
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Fech Fin Prevista"  style="font-weight:bold;">
+								<h:outputText style="font-weight:normal;" value="#{actividad.fechaFinPrevista}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm"/>
+								</h:outputText>
+							</p:column>
+
+							<p:column style="width:50px;" headerText="" >
+								<p:commandLink update=":messages,:editarActividadForm:editarActividadPanel" onclick="editarActividadDialog.show()" action="#{mainViewMB.elegirActividad}"
+											rendered="#{actividad.estado != 'RES' and actividad.estado != 'DEV' and actividad.estado != 'CAN'
+														and (actividad.responsable.usuarioId eq mainViewMB.usuarioId or mainViewMB.isAdminUser)
+														}">
+									<span class="ui-icon ui-icon-pencil" title="Editar" />
+									<f:setPropertyActionListener value="#{actividad}" target="#{mainViewMB.actividadSeleccionada}" />
+								</p:commandLink>
+							</p:column>
+
+							<p:column style="width:50px;" headerText="" >
+								<p:commandLink update=":messages,:checklistForm:checklistList," onclick="checklistDialog.show()" 
+											action="#{mainViewMB.mostrarChecklist}" rendered="#{actividad.tieneChecklist}">
+									<span class="ui-icon ui-icon-check" title="Checklist" />
+									<f:setPropertyActionListener value="#{actividad}" target="#{mainViewMB.actividadSeleccionada}" />
+								</p:commandLink>
+							</p:column>
+
+						</p:dataTable>
+					</h:form>
+
+				</p:layoutUnit>
+
+				<p:layoutUnit position="south" size="20%" resizable="true" styleClass="nestedUnit" id="centerSouthPane">
+
+					<h:form id="notificacionesForm" >
+						<p:growl id="messagesNotif" sticky="true" escape="false" />
+
+						<p:poll interval="5" listener="#{notificacionMB.updateNotificaciones()}" id="formPoll"
+							update=":notificacionesForm:messagesNotif,:notificacionesForm:notificacionesList,:notificacionesForm:formPoll" widgetVar="poll" autoStart="true"
+							oncomplete="poll.stop();poll.cfg.frequency = 60;poll.start();" />
+
+						<p:dataTable id="notificacionesList" var="notificacion" value="#{mainViewMB.notificaciones}"
+									emptyMessage="No se encontraron registros">
+
+							<f:facet name="header">
+								NOTIFICACIONES
+							</f:facet>
+
+							<p:column headerText="ID" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{notificacion.notificacionId}" />
+							</p:column>
+
+							<p:column headerText="Titulo" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{notificacion.titulo}" />
+							</p:column>
+
+							<p:column headerText="Descripcion" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{notificacion.descripcion}" />
+							</p:column>
+
+							<p:column headerText="Fecha" style="font-weight:bold;" >
+								<h:outputText style="font-weight:normal;" value="#{notificacion.fechaCreacion}">
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm"/>
+								</h:outputText>
+							</p:column>
+
+						</p:dataTable>
+
+					</h:form>
+
+				</p:layoutUnit>
+
+			</p:layout>
+
+		</p:layoutUnit>
+
+	</p:layout>
+
+	<p:ajaxStatus style="width:32px;height:32px;display:block;position:fixed;right:0;top:0;z-index:100">
+		<f:facet name="start">
+			<p:graphicImage value="/images/loading.gif" />
+		</f:facet>
+
+		<f:facet name="complete">
+			<h:outputText value="" />
+		</f:facet>
+	</p:ajaxStatus>
+
+	<!-- Dialogos de actividades -->
+	<p:dialog header="Editar Actividad" widgetVar="editarActividadDialog" resizable="false">
+		<h:form id="editarActividadForm">
+			<p:panel style="width:900px" id="editarActividadPanel" >
+				<h:panelGrid columns="4" cellpadding="7" >
+					<h:outputText value="Nroactividad " />
+
+					<p:inputText required="true" value="#{mainViewMB.actividadSeleccionada.nroActividad}" readonly="true"/>
+
+					<h:outputText value="CronogramaDetalle " />
+					<p:inputText value="#{mainViewMB.actividadSeleccionada.cronogramaDetalle.tarea}" readonly="true" />
+
+					<h:outputText value="Estado " />
+					<p:selectOneMenu id="selectEstado" value="#{mainViewMB.actividadSeleccionada.estado}"  rendered="#{!mainViewMB.subActividad}">
+						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.estadosActividad}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
+					</p:selectOneMenu>
+
+					<p:selectOneMenu id="selectEstadoSubActividad" value="#{mainViewMB.actividadSeleccionada.estado}"  rendered="#{mainViewMB.subActividad}">
+						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.estadosSubActividad}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Descripcion " />
+					<p:inputTextarea rows="2" cols="50" value="#{mainViewMB.actividadSeleccionada.descripcion}" maxlength="50"/>
+
+					<h:outputText value="Responsable " />
+					<p:selectOneMenu id="selectResponsable" value="#{mainViewMB.actividadSeleccionada.responsable}" converter="usuarioConverter"  >
+						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.usuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="fechaCreacion " />
+					<p:calendar value="#{mainViewMB.actividadSeleccionada.fechaCreacion}" pattern="dd/MM/yyyy HH:mm" disabled="true"/>
+
+					<h:outputText value="fechaInicioPrevisto " />
+					<p:calendar  value="#{mainViewMB.actividadSeleccionada.fechaInicioPrevisto}" pattern="dd/MM/yyyy HH:mm">
+					<p:ajax event="dateSelect" listener="#{mainViewMB.calculoFechaFin}" update="cal_fechaFinPrevista" />
+					</p:calendar>
+
+					<h:outputText value="fechaFinPrevista " />
+					<p:calendar id="cal_fechaFinPrevista" value="#{mainViewMB.actividadSeleccionada.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm" />
+
+					<h:outputText value="Pregunta " rendered="#{mainViewMB.mostrarCampoRespuesta}"/>
+					<p:inputTextarea rows="2" cols="50" value="#{mainViewMB.actividadSeleccionada.pregunta}" readonly="true" rendered="#{mainViewMB.mostrarCampoRespuesta}" />
+
+					<h:outputText value="Respuesta " rendered="#{mainViewMB.mostrarCampoRespuesta}"/>
+					<p:selectOneMenu id="SelectRespuesta" value="#{mainViewMB.actividadSeleccionada.respuesta}" rendered="#{mainViewMB.mostrarCampoRespuesta}"  >
+						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.siNoList}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="fechaCobro " rendered="#{mainViewMB.canControlFactura}"/>
+					<p:calendar id="cal_fechaCobro" value="#{mainViewMB.actividadSeleccionada.fechaCobro}" pattern="dd/MM/yyyy HH:mm"  rendered="#{mainViewMB.canControlFactura}"/>
+
+					<h:outputText value="Nro. Factura " rendered="#{mainViewMB.canControlFactura}"/>
+					<p:inputText maxlength="20" value="#{mainViewMB.actividadSeleccionada.nroFactura}" rendered="#{mainViewMB.canControlFactura}" />
+
+					<h:outputText value="Nro. Cheque " rendered="#{mainViewMB.canControlFactura}"/>
+					<p:inputText maxlength="20" value="#{mainViewMB.actividadSeleccionada.chequeNro}" rendered="#{mainViewMB.canControlFactura}" />
+
+					<h:outputText value="Bco. Cheque " rendered="#{mainViewMB.canControlFactura}"/>
+					<p:inputText maxlength="20" value="#{mainViewMB.actividadSeleccionada.chequeBanco}" rendered="#{mainViewMB.canControlFactura}" />
+
+					<p:commandButton value="Guardar" id="editar" actionListener="#{mainViewMB.editarActividad}"
+								oncomplete="editarActividadDialog.hide()"  icon="ui-icon-disk" update=":messages,:actividadesForm:actividadesList"/>
+
+					<p:commandButton value="Siguiente Actividad" id="resolver" onclick="sigteActividadDialog.show()"
+								icon="ui-icon-play" update=":messages,:sigteActividadForm:selectSigteActividadResponsable" 
+								action="#{mainViewMB.nextActividadUsuariosPorRol}" 
+								rendered="#{mainViewMB.sigteCronogramaDetalle != null and !mainViewMB.subActividad}"/>
+
+					<p:commandButton value="Finalizar Proceso" id="finalizar" onclick="finalizarActividadDialog.show()"
+								icon="ui-icon-stop" update=":messages,:actividadesForm:actividadesList" 
+								rendered="#{mainViewMB.sigteCronogramaDetalle == null and !mainViewMB.subActividad}"/>
+
+					<p:commandButton value="Crear Sub Actividad" id="subActividad" oncomplete="subActividadDialog.show()"
+								icon="ui-icon-newwin" update=":messages,:subActividadForm:subActividadPanel"
+								rendered="#{!mainViewMB.subActividad}"/>
+
+					<p:commandButton value="Devolver Actividad" id="devolverActividad" onclick="devolverActividadDialog.show()"
+								icon="ui-icon-seek-prev" update=":messages,:devolverActividadForm:devolverActividadPanel"
+								rendered="#{!mainViewMB.subActividad}"/>
+
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Siguiente Actividad" widgetVar="sigteActividadDialog"  resizable="false" modal="true">
+		<h:form id="sigteActividadForm">
+			<p:panel style="width:600px"  >
+				<h:panelGrid columns="2" id="sigteActividadPanel" cellpadding="5" >
+					<h:outputText value="Responsable " />
+					<p:selectOneMenu id="selectSigteActividadResponsable" value="#{mainViewMB.sigteUsuario}" converter="usuarioConverter"  >
+						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
+					</p:selectOneMenu>
+					<h:outputText value="Comentario " />
+					<p:inputTextarea rows="3" cols="50" maxlength="250" value="#{mainViewMB.descripcionObservacion}" />
+
+					<p:commandButton onclick="sigteActividadDialog.hide(), editarActividadDialog.hide()" value="Confirmar" ajax="false"
+						icon="ui-icon-circle-check" actionListener="#{mainViewMB.resolverActividad}"
+						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList">
+						<f:setPropertyActionListener value="#{responsable}" target="#{mainViewMB.actividadSeleccionada.responsable}" />
+					</p:commandButton>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Finalizar Proceso" widgetVar="finalizarActividadDialog"  resizable="false" modal="true">
+		<h:form id="finalizarActividadForm">
+			<p:panel style="width:600px"  >
+				<h:panelGrid columns="2" id="finalizarActividadPanel" cellpadding="5" >
+					<p:commandButton onclick="finalizarActividadDialog.hide(), editarActividadDialog.hide()" value="Confirmar" ajax="false"
+						icon="ui-icon-circle-check" actionListener="#{mainViewMB.finalizarProceso}"
+						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList">
+					</p:commandButton>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Crear SubActividad" widgetVar="subActividadDialog"  resizable="false" modal="true">
+		<h:form id="subActividadForm">
+			<p:panel style="width:600px">
+				<h:panelGrid columns="2" id="subActividadPanel" cellpadding="5" >
+					<h:outputText value="Descripcion " />
+					<p:inputTextarea rows="1" cols="50" maxlength="50" value="#{mainViewMB.actividadSeleccionada.descripcion}" id="descripcionSubActividad"/>
+
+					<h:outputText value="Responsable " />
+					<p:selectOneMenu id="selectResponsable" value="#{mainViewMB.actividadSeleccionada.responsable}" converter="usuarioConverter"  >
+						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.allUsuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
+					</p:selectOneMenu>
+
+					<p:commandButton onclick="subActividadDialog.hide(), editarActividadDialog.hide()" value="Confirmar" ajax="false"
+						icon="ui-icon-circle-check" actionListener="#{mainViewMB.crearSubActividad}"
+						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList" >
+						<f:setPropertyActionListener value="#{responsable}" target="#{mainViewMB.actividadSeleccionada.responsable}" />
+						<f:setPropertyActionListener value="#{descripcion}" target="#{mainViewMB.actividadSeleccionada.descripcion}" />
+					</p:commandButton>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Devolver Actividad" widgetVar="devolverActividadDialog"  resizable="false" modal="true">
+		<h:form id="devolverActividadForm">
+			<p:panel style="width:600px"  >
+				<h:panelGrid columns="2" id="devolverActividadPanel" cellpadding="5" >
+					<p:commandButton onclick="devolverActividadDialog.hide(), editarActividadDialog.hide()" value="Confirmar" ajax="false"
+						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList"
+						icon="ui-icon-circle-check" actionListener="#{mainViewMB.devolverActividad}">
+					</p:commandButton>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Checklist" widgetVar="checklistDialog"  resizable="false">
+
+		<h:form id="checklistForm">
+			<p:dataTable var="checklist" value="#{mainViewMB.checklist}"  id="checklistList" editable="true" paginator="true" paginatorPosition="bottom" rows="5">
+
+				<p:column headerText="Descripcion" style="font-weight:bold" >
+					<h:outputText style="font-weight:normal;" value="#{checklist.descripcion}" />
+				</p:column>
+
+				<p:column headerText="Respuesta" style="font-weight:bold" >
+					<h:outputText style="font-weight:normal;" value="#{checklist.respuesta}" />
+				</p:column>
+
+				<p:column style="width:50px;" headerText="" >
+					<p:commandLink update=":messages,:editChecklistForm:editChecklistPanel" onclick="editarChecklistDialog.show()" action="#{mainViewMB.elegirChecklistDetalle}" 
+					rendered="#{mainViewMB.actividadSeleccionada.estado != 'RES' 
+							and mainViewMB.actividadSeleccionada.estado != 'DEV' 
+							and mainViewMB.actividadSeleccionada.estado != 'CAN' 
+							and (mainViewMB.actividadSeleccionada.responsable.usuarioId eq mainViewMB.usuarioId
+								or mainViewMB.isAdminUser)}">
+						<span class="ui-icon ui-icon-pencil" title="Editar">  </span>
+						<f:setPropertyActionListener value="#{checklist}" target="#{mainViewMB.checklistDetalle}" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Editar Checklist" widgetVar="editarChecklistDialog"  resizable="false">
+
+		<h:form id="editChecklistForm">
+			<p:panel style="width:400px" id="editChecklistPanel" >
+				<h:panelGrid columns="2" cellpadding="5" >
+
+					<h:outputText value="Descripcion " />
+					<p:inputTextarea rows="3" cols="40" value="#{mainViewMB.checklistDetalle.descripcion}" readonly="true"/>
+
+
+					<h:outputText value="Respuesta " />
+					<p:selectOneMenu id="SelectRespuesta" value="#{mainViewMB.checklistDetalle.respuesta}">
+						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
+						<f:selectItems value="#{mainViewMB.siNoList}" var="respuestaChecklist" itemLabel="#{respuestaChecklist.descripcion}" itemValue="#{respuestaChecklist.codigo}" />
+					</p:selectOneMenu>
+
+					<p:commandButton value="Guardar" actionListener="#{mainViewMB.editarChecklistDetalle()}"
+                                           oncomplete="editarChecklistDialog.hide()" icon="ui-icon-disk" update=":messages,:checklistForm:checklistList"/>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+
+	<!-- Dialogos de documentos -->
+	<p:dialog header="Documentos" widgetVar="documentosDialog"  resizable="false">
+
+		<h:form id="documentosForm">
+			<p:dataTable  var="documento" value="#{mainViewMB.documentos}"  id="documentosList" editable="true"
+						paginator="true" paginatorPosition="bottom" rows="4" emptyMessage="No se encontraron registros">
+
+				<p:column headerText="Nombre" style="font-weight:bold" >
+					<h:outputText style="font-weight:normal;" value="#{documento.filename}" />
+				</p:column>
+
+				<p:column headerText="Extensión" style="font-weight:bold" >
+					<h:outputText style="font-weight:normal;" value="#{documento.fileExtension}" />
+				</p:column>
+
+				<p:column headerText="Ubicación" style="font-weight:bold; width:200px" >
+					<h:outputText style="font-weight:normal;" value="#{documento.filepath}" />
+				</p:column>
+
+				<p:column headerText="Bloqueado" style="font-weight:bold" >
+					<h:outputText style="font-weight:normal;" value="#{documento.bloqueado}" />
+				</p:column>
+
+				<p:column headerText="Fecha&#10;Bloqueo" escape="false" style="font-weight:bold;white-space:pre-line;" >
+					<h:outputText style="font-weight:normal;" value="#{documento.fechaBloqueo}" />
+				</p:column>
+
+				<p:column headerText="Usuario&#10;Bloqueo" escape="false" style="font-weight:bold;white-space:pre-line;" >
+					<h:outputText style="font-weight:normal;" value="#{documento.usuarioBloqueo.usuario}" />
+				</p:column>
+
+				<p:column headerText="Fecha&#10;Desbloqueo" escape="false" style="font-weight:bold;white-space:pre-line;" >
+					<h:outputText style="font-weight:normal;" value="#{documento.fechaDesbloqueo}" />
+				</p:column>
+
+				<p:column headerText="Usuario&#10;Desbloqueo" escape="false" style="font-weight:bold;white-space:pre-line;" >
+					<h:outputText style="font-weight:normal;" value="#{documento.usuarioDesbloqueo.usuario}" />
+				</p:column>
+
+				<p:column headerText="Creador" style="font-weight:bold;" >
+					<h:outputText style="font-weight:normal;" value="#{documento.usuarioCreacion.usuario}" />
+				</p:column>
+
+				<p:column headerText="Modificado"  style="font-weight:bold;" >
+					<h:outputText style="font-weight:normal;" value="#{documento.fechaUltimoUpdate}" />
+				</p:column>
+				
+				<p:column style="width:50px;" headerText="" >
+					<p:commandLink id="showDialogButtonFP" onclick="confirmationFP.show()" 
+									rendered="#{mainViewMB.usuarioId eq documento.usuarioCreacion.usuarioId or mainView.isAdminUser}" >
+						<span class="ui-icon ui-icon-trash" title="Eliminar" />
+						<f:setPropertyActionListener value="#{documento}" target="#{mainViewMB.documentoSeleccionado}" />
+					</p:commandLink>
+				</p:column>
+
+				<p:column style="width:50px;" headerText="" >
+					<p:commandLink update=":messages,:formDocumentoRoles:panelDocumentoRoles" onclick="dlgDocumentoRoles.show()"
+									>
+						<span class="ui-icon ui-icon-key" title="Asociar roles permitidos" />
+						<f:setPropertyActionListener value="#{documento}" target="#{mainViewMB.documentoSeleccionado}" />
+					</p:commandLink>
+				</p:column>
+
+				<p:column style="width:50px;" headerText="" >
+					<p:commandLink update=":messages,:documentosForm:documentosList" onclick="documentosDialog.hide()" action="#{mainViewMB.bloquearDocumento}"
+									rendered="#{documento.bloqueado eq 'No'}">
+						<span class="ui-icon ui-icon-locked" title="Bloquear" />
+						<f:setPropertyActionListener value="#{documento}" target="#{mainViewMB.documentoSeleccionado}" />
+					</p:commandLink>
+
+					<p:commandLink update=":messages,:documentosForm:documentosList" onclick="documentosDialog.hide()" action="#{mainViewMB.desbloquearDocumento}" 
+									rendered="#{documento.bloqueado eq 'Si'
+												and (documento.usuarioBloqueo.usuarioId eq mainViewMB.usuarioId or mainViewMB.isAdminUser)}">
+						<span class="ui-icon ui-icon-unlocked" title="Desbloquear" />
+						<f:setPropertyActionListener value="#{documento}" target="#{mainViewMB.documentoSeleccionado}" />
+					</p:commandLink>
+				</p:column>
+
+				<p:column style="width:50px;" headerText="" >
+					<p:commandLink update=":messages,:formDownload:panelDownload" onclick="downloadDialog.show()" action="#{mainViewMB.elegirDocumento}" >
+						<span class="ui-icon ui-icon-circle-arrow-s" title="Descargar" />
+						<f:setPropertyActionListener value="#{documento}" target="#{mainViewMB.documentoSeleccionado}" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+
+			<br></br>
+
+			<p:toolbarGroup>
+
+				<p:fileUpload update=":messages,:documentosForm:documentosList,:documentosForm:selectCarpeta" mode="advanced" dragDropSupport="false"  fileLimit="1" fileUploadListener="#{mainViewMB.handleFileUpload}"
+							label="Seleccionar" cancelLabel="Cancelar" uploadLabel="Confirmar" widgetVar="fileupload_wgt"
+							invalidSizeMessage="Archivo de tamaño invalido" />
+			</p:toolbarGroup>
+
+			<div style="margin-top:10px;">
+				<h:outputText value="Carpeta: " style="vertical-align:top;" />
+
+				<p:selectOneMenu value="#{mainViewMB.carpetaFileUpload}" effect="fold" editable="true" id="selectCarpeta" >
+					<f:selectItem itemLabel="---Sin carpeta---" itemValue="" />
+					<f:selectItems value="#{mainViewMB.carpetas}" />
+					<f:ajax event="valueChange" />
+				</p:selectOneMenu>
+			</div>
+
+		</h:form>
+	</p:dialog>
+
+	<p:confirmDialog id="confirmDialogFP" message="¿Desea eliminar el Archivo"
+					header="Eliminar?" severity="alert" widgetVar="confirmationFP">
+		<p:commandButton id="confirmFP" value="Si" oncomplete="confirmationFP.hide()"
+					actionListener="#{mainViewMB.eliminarDocumento}" update=":messages,:documentosForm:documentosList" />
+		<p:commandButton id="declineFP" value="No" onclick="confirmationFP.hide()" type="button" />
+	</p:confirmDialog>
+
+	<p:dialog header="Documento Roles" widgetVar="dlgDocumentoRoles"  resizable="false">
+		<h:form id="formDocumentoRoles">
+			<p:panel style="width:600px">
+				<h:panelGrid columns="2" id="panelDocumentoRoles" cellpadding="5" > 
+
+				<h:outputText style="font-weight:normal;" value="#{mainViewMB.documentoSeleccionado.filename}" />
+
+				<!-- PickList de roles -->
+				<p:fieldset legend="#{messages['rol.label']}" toggleable="true" toggleSpeed="500" rendered="true" >
+					<h:panelGrid id="roles" columns="3">
+						<p:pickList id="rolesAsociados" value="#{mainViewMB.listaDual}" iconOnly="true" var="rol" itemValue="#{rol}" itemLabel="#{rol}" effect="bounce"  disabled="false"/>
+					</h:panelGrid>
+				</p:fieldset>
+				<p:commandButton value="Guardar" oncomplete="dlgDocumentoRoles.hide()" 
+				actionListener="#{mainViewMB.guardarRoles}" update=":messages" 
+				icon="ui-icon-disk"/>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog> 
+
+	<p:dialog header="Descargar Archivo" widgetVar="downloadDialog"  resizable="false">
+		<h:form id="formDownload">
+			<p:panel style="width:200px">
+				<h:panelGrid columns="2" id="panelDownload" cellpadding="5" > 
+
+					<h:outputText style="font-weight:normal;" value="#{mainViewMB.documentoSeleccionado.filename}" />
+					<br></br>
+					<p:commandButton onclick="downloadDialog.hide(), documentosDialog.hide()" value="Download" ajax="false"
+					icon="ui-icon-arrowthick-1-s">
+					<p:fileDownload value="#{mainViewMB.file}" />
+					</p:commandButton>
+				
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+	</p:dialog> 
+
+	<!-- Dialogos de observaciones -->
+	<p:dialog header="Observaciones" widgetVar="observacionesDialog"  resizable="false">
+
+		<h:form id="observacionesForm">
+
+			<p:dataTable var="observacion" value="#{mainViewMB.observaciones}"  id="observacionesList" editable="true" paginator="true" paginatorPosition="bottom" rows="10">
+
+				<p:column headerText="Descripcion" style="font-weight:bold;width:300px" >
+					<h:outputText style="font-weight:normal;" value="#{observacion.descripcion}" />
+				</p:column>
+
+				<p:column headerText="Fecha Creacion &#10;Modificación" escape="false" style="font-weight:bold;white-space:pre-line;" >
+					<h:outputText style="font-weight:normal;" value="#{observacion.fechaHora}" >
+						<f:convertDateTime type="date" pattern="dd/MM/yyyy HH:mm" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Usuario" style="font-weight:bold;" >
+					<h:outputText style="font-weight:normal;" value="#{observacion.usuario.usuario}" />
+				</p:column>
+
+				<p:column style="width:50px;" headerText="" rendered="#{mainViewMB.isAdminUser}" >
+					<p:commandLink id="showDialogButtonOP" onclick="confirmationOP.show()" >
+						<span class="ui-icon ui-icon-trash" title="Eliminar" />
+						<f:setPropertyActionListener value="#{observacion}" target="#{mainViewMB.observacionSeleccionada}" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+
+			<br></br>
+
+			<p:toolbarGroup>
+				<p:commandButton value ="Nuevo " onclick="nuevaObservacionDialog.show()" image="ui-icon-document" />
+			</p:toolbarGroup>
+
+		</h:form>
+
+	</p:dialog>
+
+	<p:confirmDialog id="confirmDialogOP" message="¿Desea eliminar la Observacion"
+					header="Eliminar?" severity="alert" widgetVar="confirmationOP">
+		<p:commandButton id="confirmOP" value="Si" oncomplete="confirmationOP.hide()"
+						actionListener="#{mainViewMB.eliminarObservacion}" update=":messages,:observacionesForm:observacionesList" />
+		<p:commandButton id="declineOP" value="No" onclick="confirmationOP.hide()" type="button" />
+	</p:confirmDialog>
+
+	<p:dialog header="Nueva Observacion" widgetVar="nuevaObservacionDialog" resizable="false">
+
+		<h:form id="nuevaObservacionForm">
+			<p:panel style="width:400px" id="nuevaObservacionPanel" >
+				<h:panelGrid columns="2" cellpadding="5" >
+					<h:outputText value="Descripcion " />
+					<p:inputTextarea rows="3" cols="40" maxlength="250" value="#{mainViewMB.descripcionObservacion}" required="true" />
+					<p:commandButton value="Agregar"  actionListener="#{mainViewMB.registrarObservacion}"
+									oncomplete="nuevaObservacionDialog.hide()" icon="ui-icon-disk" 
+									update=":messages,:observacionesForm:observacionesList,nuevaObservacionPanel"/>
+				</h:panelGrid>
+			</p:panel>
+		</h:form>
+
+	</p:dialog>
+
 </h:body>
 
 </f:view>

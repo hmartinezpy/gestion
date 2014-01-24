@@ -32,6 +32,9 @@ public class CronogramaBC extends DelegateCrud<Cronograma, Long, CronogramaDAO>{
 	@Inject 
 	SesionLogDAO sesionLogDAO;
 
+	@Inject
+	private ProcesoBC procesoBC;
+
 
 	public List<Cronograma> listar() {
 		return cronogramaDAO.findAll();	
@@ -98,6 +101,18 @@ public class CronogramaBC extends DelegateCrud<Cronograma, Long, CronogramaDAO>{
 	public List<CronogramaDetalle> getCronogramaDetallesByCronograma(
 			Cronograma cronogramaSeleccionado) {
 		return cronogramaDAO.getCronogramaDetallesByCronograma(cronogramaSeleccionado);
+	}
+
+	public List<Cronograma> getCronogramasForUser(String currentUser) {
+		List<Long> procesosId = procesoBC.getProcesosIdForUser(currentUser);
+		List<Cronograma> result = cronogramaDAO.getCronogramaByProcesos(procesosId);
+		for (Cronograma cronograma:result){
+			cronograma.setCantProcesos(
+					procesoBC.getCountProcesosByCronogramaAndProcesosId(
+							cronograma.getCronogramaId(), procesosId)
+					);
+		}
+		return result;
 	}
 
 }
