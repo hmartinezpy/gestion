@@ -44,10 +44,37 @@
 
 		<p:growl id="messages" showDetail="true" />
 
-		<p:layoutUnit position="west" size="200" resizable="true" collapsible="true" header="Cronogramas" id="leftPane">
-			<h:form>
-				<p:tree value="#{mainViewMB.items}" var="box" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
-					<p:ajax event="select" update=":procesosForm:procesosList :messages" listener="#{mainViewMB.onNodeSelect}" />
+		<p:layoutUnit position="west" size="200" resizable="true" collapsible="true" header="Procesos por Cronogramas" id="leftPane">
+			<h:form id="treeForm">
+				<p:toolbar>
+					<p:toolbarGroup align="right">
+
+						<p:commandButton value="Abiertos"
+							update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
+							action="#{mainViewMB.updateFiltroEstadoProceso}">
+							<f:setPropertyActionListener value="A"
+								target="#{mainViewMB.filtroEstadoProceso}" />
+						</p:commandButton>
+
+						<p:commandButton value="Cerrados"
+							update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
+							action="#{mainViewMB.updateFiltroEstadoProceso}">
+							<f:setPropertyActionListener value="C"
+								target="#{mainViewMB.filtroEstadoProceso}" />
+						</p:commandButton>
+
+						<p:commandButton value="Todos"
+							update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
+							action="#{mainViewMB.updateFiltroEstadoProceso}">
+							<f:setPropertyActionListener value="T"
+								target="#{mainViewMB.filtroEstadoProceso}" />
+						</p:commandButton>
+
+					</p:toolbarGroup>
+				</p:toolbar>
+
+				<p:tree value="#{mainViewMB.items}" var="box" id="treeList" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
+					<p:ajax event="select" update=":procesosForm:procesosList,:messages,:procesosForm:centerToolbar" listener="#{mainViewMB.onNodeSelect}" />
 
 					<p:treeNode icon="ui-icon ui-icon-note">
 						<h:outputText value="#{box}"/>
@@ -63,10 +90,10 @@
 				<p:layoutUnit position="north" size="40%" resizable="true" styleClass="nestedUnit" id="centerNorthPane">
 					<h:form id="procesosForm">
 
-						<p:toolbar>
+						<p:toolbar id="centerToolbar">
 							<p:toolbarGroup align="left">
 								<p:commandButton value="Nuevo " rendered="mainViewMB.canCreateProcess" icon="ui-icon-document"
-												action="#{mainViewMB.getNextView}" ajax="false"/>
+												action="/pg/proceso_edit.xhtml" ajax="false"/>
 							</p:toolbarGroup>
 
 							<p:toolbarGroup align="right">
@@ -75,9 +102,7 @@
 									<f:selectItems value="#{mainViewMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente}" />
 								</p:selectOneMenu>
 								<p:commandButton id="filtroClientes" action="#{mainViewMB.filtrarProcesos}" value="Filtrar"
-												update=":procesosForm:procesosList,:actividadesForm:actividadesList"
-								>
-								</p:commandButton>
+												update=":procesosForm:procesosList,:actividadesForm:actividadesList" />
 
 								<p:menuButton value="Informes">
 									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf"  rendered="#{rolListMB.verMenuArchivos}"/>

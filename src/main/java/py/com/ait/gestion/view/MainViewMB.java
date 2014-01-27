@@ -65,6 +65,7 @@ public class MainViewMB {
 	private TreeNode items;
 	private TreeNode selectedItem;
 	private Cronograma cronogramaSeleccionado;
+	private String filtroEstadoProceso = "A";
 
 	/* Usuario actual de la aplicación*/
 	private String currentUser;
@@ -143,7 +144,7 @@ public class MainViewMB {
 	private void createTree() {
 		items = new DefaultTreeNode("root", null);
 
-		List<Cronograma> cronogramas = cronogramaBC.getCronogramasForUser(currentUser);
+		List<Cronograma> cronogramas = cronogramaBC.getCronogramasForUser(filtroEstadoProceso, currentUser);
 
 		@SuppressWarnings("unused")
 		TreeNode treeNode = null;
@@ -165,6 +166,14 @@ public class MainViewMB {
 
 	public void setSelectedItem(TreeNode selectedItem) {
 		this.selectedItem = selectedItem;
+	}
+
+	public String getFiltroEstadoProceso() {
+		return filtroEstadoProceso;
+	}
+
+	public void setFiltroEstadoProceso(String filtroEstadoProceso) {
+		this.filtroEstadoProceso = filtroEstadoProceso;
 	}
 
 	private void getCurrentUserData() {
@@ -210,7 +219,8 @@ public class MainViewMB {
 
 		Cronograma nodo = (Cronograma) event.getTreeNode().getData();
 		this.cronogramaSeleccionado = nodo;
-		procesos = procesoBC.getProcesosByCronogramaForUser(nodo.getCronogramaId(), currentUser);
+		this.clienteSeleccionado = null;
+		procesos = procesoBC.getProcesosByCronogramaForUser(filtroEstadoProceso, nodo.getCronogramaId(), currentUser);
 
 		agregarMensaje(nodo.getNombre());
 	}
@@ -242,13 +252,23 @@ public class MainViewMB {
 		agregarMensaje(titulo, mensaje);
 	}
 
+	public void updateFiltroEstadoProceso() {
+
+		createTree();
+		procesos = null;
+		actividades = null;
+	}
+
 	public void filtrarProcesos(){
 		Long cronogramaId = null;
 		if (cronogramaSeleccionado != null)
 			cronogramaId = cronogramaSeleccionado.getCronogramaId();
 
-		Long clienteId = clienteSeleccionado.getClienteId();
-		procesos = procesoBC.getProcesosFilteredForUser(cronogramaId, clienteId, currentUser);
+		Long clienteId = null;
+		if (clienteSeleccionado != null)
+			clienteId = clienteSeleccionado.getClienteId();
+
+		procesos = procesoBC.getProcesosFilteredForUser(filtroEstadoProceso, cronogramaId, clienteId, currentUser);
 		actividades = null;
 	}
 
@@ -563,6 +583,7 @@ public class MainViewMB {
 		} else {
 			Actividad actividad = this.actividadSeleccionada;
 			if (!this.validarSiPuedeResolverActividad()) {
+				elegirProceso(procesoSeleccionado);
 				return;
 			}
 

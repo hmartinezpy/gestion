@@ -103,8 +103,8 @@ public class CronogramaBC extends DelegateCrud<Cronograma, Long, CronogramaDAO>{
 		return cronogramaDAO.getCronogramaDetallesByCronograma(cronogramaSeleccionado);
 	}
 
-	public List<Cronograma> getCronogramasForUser(String currentUser) {
-		List<Long> procesosId = procesoBC.getProcesosIdForUser(currentUser);
+	public List<Cronograma> getCronogramasForUser(String filtroEstado, String currentUser) {
+		List<Long> procesosId = procesoBC.getProcesosIdForUser(filtroEstado, currentUser);
 		List<Cronograma> result = cronogramaDAO.getCronogramaByProcesos(procesosId);
 		for (Cronograma cronograma:result){
 			cronograma.setCantProcesos(

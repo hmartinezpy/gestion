@@ -130,31 +130,20 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Proceso> getProcesosByCronograma(Long cronogramaId,
-			Long usuarioId) {
-
+	public List<Long> getProcesoIdsForUser(String filtroEstado, boolean isAdminUser, Long usuarioId) {
 		String filtro = "where p.procesoId = a.master.procesoId";
+		if (filtroEstado.equals("C")) {
 
-		filtro += " and p.estado not in ("
-				+ Definiciones.EstadoProceso.getEstadosCerrados() + ")";
-		filtro += " and a.estado not in ("
-				+ Definiciones.EstadoActividad.getEstadosCerrados() + ")";
+			filtro += " and p.estado in ("
+					+ Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+		} else if (filtroEstado.equals("A")) {
 
-		filtro += " and p.cronograma.cronogramaId = :cronogramaId";
+			filtro += " and p.estado not in ("
+					+ Definiciones.EstadoProceso.getEstadosCerrados() + ")";
+			filtro += " and a.estado not in ("
+					+ Definiciones.EstadoActividad.getEstadosCerrados() + ")";
+		}
 
-		Query q = this.em
-				.createQuery("select distinct p from Proceso p, Actividad a "
-						+ filtro + " order by p.nroProceso");
-
-		q.setParameter("cronogramaId", cronogramaId);
-
-		return (q.getResultList());
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Long> getProcesoIdsForUser(boolean isAdminUser, Long usuarioId) {
-		String filtro = "where p.procesoId = a.master.procesoId";
 		// si no soy admin agregar filtros por usuario actual
 		if (!isAdminUser) {
 
@@ -178,6 +167,7 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 				.createQuery("select p from Proceso p "
 						+ filtro + " order by p.procesoId");
 		q.setParameter("cronogramaId", cronogramaId);
+
 		q.setParameter("procesosId", procesosId);
 
 		return (q.getResultList());
@@ -191,6 +181,7 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		Query q = em.createQuery("select count(p.id) from Proceso p " + filtro);
 
 		q.setParameter("cronogramaId", cronogramaId);
+
 		q.setParameter("procesosId", procesosId);
 		Long cantProcesos = (Long) q.getSingleResult(); 
 
@@ -202,7 +193,10 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 			Long cronogramaId, Long clienteId,
 			List<Long> procesosId) {
 
-		String filtro = "where p.cronograma.cronogramaId = :cronogramaId and p.procesoId IN (:procesosId)";
+		String filtro = "where p.procesoId IN (:procesosId)";
+
+		if (cronogramaId!=null)
+			filtro += " and p.cronograma.cronogramaId = :cronogramaId";
 
 		if (clienteId!=null)
 			filtro += " and p.cliente.clienteId = :clienteId";
@@ -210,8 +204,12 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		Query q = this.em
 				.createQuery("select p from Proceso p "
 						+ filtro + " order by p.procesoId");
-		q.setParameter("cronogramaId", cronogramaId);
+
 		q.setParameter("procesosId", procesosId);
+
+		if (cronogramaId != null)
+			q.setParameter("cronogramaId", cronogramaId);
+
 		if (clienteId != null)
 			q.setParameter("clienteId", clienteId);
 

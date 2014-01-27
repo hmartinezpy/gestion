@@ -41,6 +41,7 @@ public class CronogramaDAO extends JPACrud<Cronograma, Long> {
 		Query q = em
 				.createQuery("select distinct c from Cronograma c, Proceso p "
 						+ "where c.cronogramaId = p.cronograma and p.procesoId IN (:procesosId) order by c.nombre");
+
 		q.setParameter("procesosId", procesosId);
 
 		return ((List<Cronograma>) q.getResultList());

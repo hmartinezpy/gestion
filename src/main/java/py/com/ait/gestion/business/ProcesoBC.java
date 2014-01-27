@@ -406,9 +406,9 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return false;
 	}
 
-	public List<Proceso> getProcesosByCronogramaForUser(Long cronogramaId, String currentUser) {
+	public List<Proceso> getProcesosByCronogramaForUser(String filtroEstado, Long cronogramaId, String currentUser) {
 
-		List<Long> procesosId = getProcesosIdForUser(currentUser);
+		List<Long> procesosId = getProcesosIdForUser(filtroEstado, currentUser);
 
 		List<Proceso> result = this.procesoDAO.getProcesosByCronogramaAndProcesosId(cronogramaId, procesosId);
 
@@ -420,12 +420,19 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 	}
 
-	public List<Long> getProcesosIdForUser(String currentUser) {
+	public List<Long> getProcesosIdForUser(String filtroEstado, String currentUser) {
 
 		boolean isAdminUser = this.usuarioBC.isAdminUser(currentUser);
 		Usuario usuario = this.usuarioBC.findSpecificUser(currentUser);
 
-		List<Long> result = this.procesoDAO.getProcesoIdsForUser(isAdminUser, usuario.getUsuarioId());
+		List<Long> result = this.procesoDAO.getProcesoIdsForUser(filtroEstado, isAdminUser, usuario.getUsuarioId());
+
+		// Si no existe ningún proceso para estos filtros, retornar al 
+		// menos un identificador de proceso inexistente.
+		if (result == null || result.size() == 0){
+			result = new ArrayList<Long>();
+			result.add(-1L);
+		}
 
 		return result;
 
@@ -436,10 +443,10 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 		return procesoDAO.getCountProcesosByCronogramaAndProcesosId(cronogramaId, procesosId);
 	}
 
-	public List<Proceso> getProcesosFilteredForUser(Long cronogramaId,
+	public List<Proceso> getProcesosFilteredForUser(String filtroEstado, Long cronogramaId,
 			Long clienteId, String currentUser) {
 
-		List<Long> procesosId = getProcesosIdForUser(currentUser);
+		List<Long> procesosId = getProcesosIdForUser(filtroEstado, currentUser);
 
 		List<Proceso> result = this.procesoDAO.getProcesosByCronogramaClienteAndProcesosId(cronogramaId, clienteId, procesosId);
 
