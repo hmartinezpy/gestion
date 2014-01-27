@@ -435,4 +435,18 @@ public class ProcesoBC extends DelegateCrud<Proceso, Long, ProcesoDAO> {
 
 		return procesoDAO.getCountProcesosByCronogramaAndProcesosId(cronogramaId, procesosId);
 	}
+
+	public List<Proceso> getProcesosFilteredForUser(Long cronogramaId,
+			Long clienteId, String currentUser) {
+
+		List<Long> procesosId = getProcesosIdForUser(currentUser);
+
+		List<Proceso> result = this.procesoDAO.getProcesosByCronogramaClienteAndProcesosId(cronogramaId, clienteId, procesosId);
+
+		for (Proceso proc : result) {
+			proc.setLastActividad(this.actividadBC.getLastActividad(proc));
+		}
+
+		return result;
+	}
 }

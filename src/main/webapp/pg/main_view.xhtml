@@ -64,11 +64,33 @@
 					<h:form id="procesosForm">
 
 						<p:toolbar>
+							<p:toolbarGroup align="left">
+								<p:commandButton value="Nuevo " rendered="mainViewMB.canCreateProcess" icon="ui-icon-document"
+												action="#{mainViewMB.getNextView}" ajax="false"/>
+							</p:toolbarGroup>
+
 							<p:toolbarGroup align="right">
+								<p:selectOneMenu id="selectClienteFilter" value="#{mainViewMB.clienteSeleccionado}"  converter="clienteConverter" style="display: inline-block; vertical-align: top;">
+									<f:selectItem itemLabel="---Seleccione---" itemValue="" />
+									<f:selectItems value="#{mainViewMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente}" />
+								</p:selectOneMenu>
+								<p:commandButton id="filtroClientes" action="#{mainViewMB.filtrarProcesos}" value="Filtrar"
+												update=":procesosForm:procesosList,:actividadesForm:actividadesList"
+								>
+								</p:commandButton>
+
+								<p:menuButton value="Informes">
+									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf"  rendered="#{rolListMB.verMenuArchivos}"/>
+									<p:menuitem value="Reportes de procesos" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteProcesosPendientes.jsf"  rendered="true"/>
+									<p:menuitem value="Reportes de facturas" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteFacturas.jsf"  rendered="true"/>
+									<p:menuitem value="Estadística de procesos" icon="ui-icon-document" style="FONT-SIZE: 12px; width:150px;" url="/reportes/reporteProcesos.jsf"  rendered="true"/>
+								</p:menuButton>
+
 								<p:menuButton value="Opciones">
 									<p:menuitem value="Inicio"  url="/pg/home.jsf" />
 									<p:menuitem value="Cerrar Sesión"  url="/index.jsp" />
 								</p:menuButton>
+								<span align="right" style="padding-right: 10px;FONT-SIZE: 12px;font-family: Arial, Helvetica, sans-serif;">Usuario Actual: #{usuarioEditMB.usuarioActual}</span>
 							</p:toolbarGroup>
 						</p:toolbar>
 
@@ -666,7 +688,7 @@
 			<br></br>
 
 			<p:toolbarGroup>
-				<p:commandButton value ="Nuevo " onclick="nuevaObservacionDialog.show()" image="ui-icon-document" />
+				<p:commandButton value ="Nuevo " onclick="nuevaObservacionDialog.show()" icon="ui-icon-document" />
 			</p:toolbarGroup>
 
 		</h:form>

@@ -2,12 +2,15 @@ package py.com.ait.gestion.persistence;
 
 import java.util.Calendar;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import org.slf4j.Logger;
 import org.ticpy.tekoporu.stereotype.PersistenceController;
 import org.ticpy.tekoporu.template.JPACrud;
+
 import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.Proceso;
@@ -192,6 +195,27 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 		Long cantProcesos = (Long) q.getSingleResult(); 
 
 		return cantProcesos.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Proceso> getProcesosByCronogramaClienteAndProcesosId(
+			Long cronogramaId, Long clienteId,
+			List<Long> procesosId) {
+
+		String filtro = "where p.cronograma.cronogramaId = :cronogramaId and p.procesoId IN (:procesosId)";
+
+		if (clienteId!=null)
+			filtro += " and p.cliente.clienteId = :clienteId";
+
+		Query q = this.em
+				.createQuery("select p from Proceso p "
+						+ filtro + " order by p.procesoId");
+		q.setParameter("cronogramaId", cronogramaId);
+		q.setParameter("procesosId", procesosId);
+		if (clienteId != null)
+			q.setParameter("clienteId", clienteId);
+
+		return (q.getResultList());
 	}
 
 }

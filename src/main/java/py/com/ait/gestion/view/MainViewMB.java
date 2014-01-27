@@ -34,6 +34,7 @@ import org.ticpy.tekoporu.stereotype.ViewController;
 
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
+import py.com.ait.gestion.business.ClienteBC;
 import py.com.ait.gestion.business.CronogramaBC;
 import py.com.ait.gestion.business.CronogramaDetalleBC;
 import py.com.ait.gestion.business.DocumentoBC;
@@ -47,6 +48,7 @@ import py.com.ait.gestion.constant.Definiciones;
 import py.com.ait.gestion.constant.Definiciones.Estado;
 import py.com.ait.gestion.domain.Actividad;
 import py.com.ait.gestion.domain.ActividadChecklistDetalle;
+import py.com.ait.gestion.domain.Cliente;
 import py.com.ait.gestion.domain.Cronograma;
 import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Documento;
@@ -56,12 +58,13 @@ import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Usuario;
 
 @ViewController
-@NextView("/pg/main_view.xhtml")
+@NextView("/pg/proceso_edit.xhtml")
 @PreviousView("/pg/main_view.xhtml")
 public class MainViewMB {
 	/* Variables para el árbol de la izquierda */
 	private TreeNode items;
 	private TreeNode selectedItem;
+	private Cronograma cronogramaSeleccionado;
 
 	/* Usuario actual de la aplicación*/
 	private String currentUser;
@@ -88,9 +91,11 @@ public class MainViewMB {
 	private List<Usuario> sigteUsuariosPorRol;
 	private List<Usuario> allUsuarios;
 	private List<String> carpetas;
+	private List<Cliente> clientes;
 	
 	/* Objetos seleccionados en combos (selectOne) */
 	private Usuario sigteUsuario;
+	private Cliente clienteSeleccionado;
 
 	/* Variable utilizada para guardar la descripción de la observación */
 	private String descripcionObservacion;
@@ -125,10 +130,14 @@ public class MainViewMB {
 	@Inject
 	private ActividadChecklistDetalleBC actividadChecklistDetalleBC;
 
+	@Inject
+	private ClienteBC clienteBC;
+
 	@PostConstruct
 	public void init() {
 		getCurrentUserData();
 		createTree();
+		setClientes(clienteBC.listar());
 	}
 
 	private void createTree() {
@@ -200,7 +209,7 @@ public class MainViewMB {
 	public void onNodeSelect(NodeSelectEvent event) {
 
 		Cronograma nodo = (Cronograma) event.getTreeNode().getData();
-
+		this.cronogramaSeleccionado = nodo;
 		procesos = procesoBC.getProcesosByCronogramaForUser(nodo.getCronogramaId(), currentUser);
 
 		agregarMensaje(nodo.getNombre());
@@ -231,7 +240,17 @@ public class MainViewMB {
 		String mensaje = actividadSeleccionada.getDescripcion();
 
 		agregarMensaje(titulo, mensaje);
-    }
+	}
+
+	public void filtrarProcesos(){
+		Long cronogramaId = null;
+		if (cronogramaSeleccionado != null)
+			cronogramaId = cronogramaSeleccionado.getCronogramaId();
+
+		Long clienteId = clienteSeleccionado.getClienteId();
+		procesos = procesoBC.getProcesosFilteredForUser(cronogramaId, clienteId, currentUser);
+		actividades = null;
+	}
 
 	public void elegirProceso(Proceso proceso){
 		this.procesoSeleccionado = proceso;
@@ -311,6 +330,12 @@ public class MainViewMB {
 
 		return this.procesoBC.canControlFactura(currentUser);
 	}
+
+	public boolean getCanCreateProcess() {
+
+		return this.procesoBC.canCreateProcess(currentUser);
+	}
+
 
 	public Long getUsuarioId() {
 
@@ -410,12 +435,28 @@ public class MainViewMB {
 		this.carpetas = carpetas;
 	}
 
+	public List<Cliente> getClientes() {
+		return clientes;
+	}
+
+	public void setClientes(List<Cliente> clientes) {
+		this.clientes = clientes;
+	}
+
 	public Usuario getSigteUsuario() {
 		return sigteUsuario;
 	}
 
 	public void setSigteUsuario(Usuario sigteUsuario) {
 		this.sigteUsuario = sigteUsuario;
+	}
+
+	public Cliente getClienteSeleccionado() {
+		return clienteSeleccionado;
+	}
+
+	public void setClienteSeleccionado(Cliente clienteSeleccionado) {
+		this.clienteSeleccionado = clienteSeleccionado;
 	}
 
 	public Documento getDocumentoSeleccionado() {
