@@ -1,71 +1,95 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://java.sun.com/jsf/html"
-      	        xmlns:ui="http://java.sun.com/jsf/facelets"
-      	        template="../template/plantilla.xhtml">
-    <ui:define name="head">:: Gestión de Documentos ::</ui:define>
-    <ui:define name="content">
-		<h:form prependId="false">
-			<p:fieldset legend="#{messages['usuario.label']}" toggleable="true" toggleSpeed="500">
-				<h:panelGrid id="fields" rows="8" columns= "3">
-					
-					<h:outputLabel value="#{messages['usuario.label.id']}: " for="id" styleClass="text-input" />
-					<h:inputText id="id" value="#{usuarioEditMB.bean.usuarioId}" required="true" readonly="true"
-						title="#{messages['usuario.label.id']}" />
-					<p:message for="id" display="default" />
-					<h:outputLabel value="#{messages['usuario.label.username']}: " for="usuario" styleClass="text-input" />
-					<h:inputText id="usuario" value="#{usuarioEditMB.bean.usuario}" required="true" disabled="#{usuarioEditMB.updateMode}"
-						title="#{messages['usuario.label.username']}" />
-					<p:message for="usuario" display="default" />
-					
-					<h:outputLabel value="#{messages['usuario.label.nombre']}: " for="nombre" styleClass="text-input" />
-					<h:inputText id="nombre" value="#{usuarioEditMB.bean.nombre}" required="true"
-						title="#{messages['usuario.label.nombre']}" />
-					<p:message for="nombre" display="default"/>
-					
-					<h:outputLabel value="#{messages['usuario.label.apellido']}: " for="apellido" styleClass="text-input" />
-					<h:inputText id="apellido" value="#{usuarioEditMB.bean.apellido}"
-						title="#{messages['usuario.label.apellido']}" required="true"/>
-					<p:message for="apellido" display="default"/>
-					
-					<h:outputLabel value="#{messages['usuario.label.email']}: " for="email" styleClass="text-input" />
-					<h:inputText id="email" value="#{usuarioEditMB.bean.email}"
-						title="#{messages['usuario.label.email']}" />
-					<p:message for="email" />
-					
-					<h:outputLabel value="#{messages['usuario.label.estado']}: " for="estado" styleClass="text-input" />
-					<h:selectOneListbox id = "estado" size="1" style=" width : 184px;" value="#{usuarioEditMB.bean.estado}"  >						
-						  <f:selectItem  itemLabel="Activo" itemValue="A"/>
-						  <f:selectItem  itemLabel="Inactivo" itemValue="I"/>
-					</h:selectOneListbox>
-					<p:message for="estado"/>
-					
-					<h:outputLabel value="#{messages['usuario.label.password']}: " for="email" styleClass="text-input" />
-					 <p:password id="password" value="#{usuarioEditMB.password}" feedback="true" inline="true"/>  	
-					<p:message for="password" />
-				</h:panelGrid>
-			</p:fieldset>
-			<p:fieldset legend="#{messages['rol.label']}" toggleable="true" toggleSpeed="500" rendered="#{usuarioEditMB.updateMode}" >
-				<h:panelGrid id="roles" columns="3">
-					<p:pickList id="rolesAsociados" value="#{usuarioEditMB.listaDual}" iconOnly="true" var="rol" itemValue="#{rol}" itemLabel="#{rol}" effect="bounce"  disabled="#{!usuarioEditMB.modificarRoles}"/>     
-				</h:panelGrid>
-			</p:fieldset>
-			
-			<p:fieldset legend="#{messages['rolpermiso.permisoAsociado']}" toggleable="true" toggleSpeed="500" rendered="#{usuarioEditMB.updateMode}">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="../template/plantilla.xhtml">
+	<ui:define name="head">:: Gestión de Documentos ::</ui:define>
+	<ui:define name="content">
+		<div class="entry" style="line-height: 200%; margin-left: 140px;">
+			<h:form prependId="false">
+				<p:fieldset legend="#{messages['usuario.label']}" toggleable="true"
+					toggleSpeed="500">
+					<h:panelGrid id="fields" rows="8" columns="3">
+
+						<h:outputLabel value="#{messages['usuario.label.id']}: " for="id"
+							styleClass="text-input" />
+						<h:inputText id="id" value="#{usuarioEditMB.bean.usuarioId}"
+							required="true" readonly="true"
+							title="#{messages['usuario.label.id']}" />
+						<p:message for="id" display="default" />
+						<h:outputLabel value="#{messages['usuario.label.username']}: "
+							for="usuario" styleClass="text-input" />
+						<h:inputText id="usuario" value="#{usuarioEditMB.bean.usuario}"
+							required="true" disabled="#{usuarioEditMB.updateMode}"
+							title="#{messages['usuario.label.username']}" />
+						<p:message for="usuario" display="default" />
+
+						<h:outputLabel value="#{messages['usuario.label.nombre']}: "
+							for="nombre" styleClass="text-input" />
+						<h:inputText id="nombre" value="#{usuarioEditMB.bean.nombre}"
+							required="true" title="#{messages['usuario.label.nombre']}" />
+						<p:message for="nombre" display="default" />
+
+						<h:outputLabel value="#{messages['usuario.label.apellido']}: "
+							for="apellido" styleClass="text-input" />
+						<h:inputText id="apellido" value="#{usuarioEditMB.bean.apellido}"
+							title="#{messages['usuario.label.apellido']}" required="true" />
+						<p:message for="apellido" display="default" />
+
+						<h:outputLabel value="#{messages['usuario.label.email']}: "
+							for="email" styleClass="text-input" />
+						<h:inputText id="email" value="#{usuarioEditMB.bean.email}"
+							title="#{messages['usuario.label.email']}" />
+						<p:message for="email" />
+
+						<h:outputLabel value="#{messages['usuario.label.estado']}: "
+							for="estado" styleClass="text-input" />
+						<h:selectOneListbox id="estado" size="1" style=" width : 184px;"
+							value="#{usuarioEditMB.bean.estado}">
+							<f:selectItem itemLabel="Activo" itemValue="A" />
+							<f:selectItem itemLabel="Inactivo" itemValue="I" />
+						</h:selectOneListbox>
+						<p:message for="estado" />
+
+						<h:outputLabel value="#{messages['usuario.label.password']}: "
+							for="email" styleClass="text-input" />
+						<p:password id="password" value="#{usuarioEditMB.password}"
+							feedback="true" />
+						<p:message for="password" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset legend="#{messages['rol.label']}" toggleable="true"
+					toggleSpeed="500" rendered="#{usuarioEditMB.updateMode}">
+					<h:panelGrid id="roles" columns="3">
+						<p:pickList id="rolesAsociados" value="#{usuarioEditMB.listaDual}"
+							iconOnly="true" var="rol" itemValue="#{rol}" itemLabel="#{rol}"
+							effect="bounce" disabled="#{!usuarioEditMB.modificarRoles}" />
+					</h:panelGrid>
+				</p:fieldset>
+
+				<p:fieldset legend="#{messages['rolpermiso.permisoAsociado']}"
+					toggleable="true" toggleSpeed="500"
+					rendered="#{usuarioEditMB.updateMode}">
 					<h:panelGrid id="permisos" columns="3">
-				<p:pickList id="permisosAsociados" value="#{usuarioEditMB.listaDualPermiso}" iconOnly="true" var="permiso" itemValue="#{permiso}" itemLabel="#{permiso}" effect="bounce" disabled="#{!usuarioEditMB.modificarPermisos}" />     
-				</h:panelGrid>
-			</p:fieldset>
-			<p:toolbar>
-				<p:toolbarGroup align="left">
-					<p:commandButton value="#{messages['boton.guardar']}" image="ui-icon-disk" action="#{usuarioEditMB.insert}"
-						rendered="#{!usuarioEditMB.updateMode}" ajax="false" />
-					<p:commandButton value="#{messages['boton.guardar']}" image="ui-icon-disk" action="#{usuarioEditMB.update}"
-						rendered="#{usuarioEditMB.updateMode}" ajax="false" />
-				</p:toolbarGroup>
-			</p:toolbar>
-			<label><h3> No olvide guardar los Cambios </h3> </label>
-		</h:form>
+						<p:pickList id="permisosAsociados"
+							value="#{usuarioEditMB.listaDualPermiso}" iconOnly="true"
+							var="permiso" itemValue="#{permiso}" itemLabel="#{permiso}"
+							effect="bounce" disabled="#{!usuarioEditMB.modificarPermisos}" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:toolbar>
+					<p:toolbarGroup align="left">
+						<p:commandButton value="#{messages['boton.guardar']}"
+							image="ui-icon-disk" action="#{usuarioEditMB.insert}"
+							rendered="#{!usuarioEditMB.updateMode}" ajax="false" />
+						<p:commandButton value="#{messages['boton.guardar']}"
+							image="ui-icon-disk" action="#{usuarioEditMB.update}"
+							rendered="#{usuarioEditMB.updateMode}" ajax="false" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				<label><h3>No olvide guardar los Cambios</h3> </label>
+			</h:form>
+		</div>
 	</ui:define>
 </ui:composition>

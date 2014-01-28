@@ -136,7 +136,7 @@ public class ReporteDAO {
 				+ "a.nro_factura, a.cheque_nro, a.cheque_banco "
 				+ "from  actividad a "
 				+ "join proceso p on p.id = a.proceso "
-				+ "join cliente c on c.id = p.cliente where a.nro_factura!='' ";
+				+ "join cliente c on c.id = p.cliente where a.nro_factura!='' and a.nro_factura is not null ";
 		if (estado.toLowerCase().compareTo("pendientes") == 0) {
 			sqlQuery = sqlQuery + " and a.fecha_cobro is null ";
 		} else if (estado.toLowerCase().compareTo("cobradas") == 0) {

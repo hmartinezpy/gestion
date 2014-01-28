@@ -84,10 +84,16 @@ public class ChecklistListMB extends AbstractListPageBean<Checklist,Long> {
 	}
 	
 	public void eliminar(ActionEvent actionEvent) {
-		checklistBC.eliminar(checklistSeleccionado.getChecklistId());
-		checklistSeleccionado = new Checklist();
-        setChecklists(checklistBC.listar());
-        agregarMensaje("Checklist eliminado");
+		try {
+			checklistBC.eliminar(checklistSeleccionado.getChecklistId());
+			checklistSeleccionado = new Checklist();
+	        setChecklists(checklistBC.listar());
+	        agregarMensaje("Checklist eliminado");
+		} catch (Exception e) {
+			e.printStackTrace();
+			agregarMensajeError("No se puede eliminar el registro, el mismo está siendo utilizado por otros datos del sistema");
+		}
+		
     }
 	
 	public void elegirChecklist(){
@@ -96,6 +102,12 @@ public class ChecklistListMB extends AbstractListPageBean<Checklist,Long> {
 		detalleSeleccionado = new ChecklistDetalle();
 		agregarMensaje("Checklist seleccionado: " + nombreChecklist);
 		
+	}
+	
+	public void agregarMensajeError(String mensaje) {
+
+		this.facesContext.addMessage("error", new FacesMessage(
+				FacesMessage.SEVERITY_ERROR, mensaje, null));
 	}
 	
 	public void elegirDetalle(){

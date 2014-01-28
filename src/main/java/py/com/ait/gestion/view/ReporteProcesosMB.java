@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import net.sf.jasperreports.engine.JRException;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.slf4j.Logger;
@@ -39,8 +40,11 @@ public class ReporteProcesosMB {
 
 	@Inject
 	private FileRenderer renderer;
+	@NotNull
 	private Date hasta = new Date();
+	@NotNull
 	private Date desde = new Date();
+	
 	private long cronogramaId;
 	private String estado;
 

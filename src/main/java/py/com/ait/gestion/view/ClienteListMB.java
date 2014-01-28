@@ -55,10 +55,16 @@ public class ClienteListMB extends AbstractListPageBean<Cliente,Long> {
 	}
 	
 	public void eliminar(ActionEvent actionEvent) {
-		clienteBC.eliminar(clienteSeleccionado.getClienteId());
-		clienteSeleccionado = new Cliente();
-        setClientes(clienteBC.listar());
-        agregarMensaje("Cliente eliminado");
+		try {
+			clienteBC.eliminar(clienteSeleccionado.getClienteId());
+			clienteSeleccionado = new Cliente();
+	        setClientes(clienteBC.listar());
+	        agregarMensaje("Cliente eliminado");
+		} catch (Exception e) {
+			e.printStackTrace();
+			agregarMensajeError("No se puede eliminar el registro, el mismo está siendo utilizado por otros datos del sistema");
+		}
+		
     }
 	
 	@Override
@@ -69,6 +75,12 @@ public class ClienteListMB extends AbstractListPageBean<Cliente,Long> {
 	
 	public void agregarMensaje(String mensaje){
 	    	facesContext.addMessage("suceso", new FacesMessage(mensaje));
+	}
+	
+	public void agregarMensajeError(String mensaje) {
+
+		this.facesContext.addMessage("error", new FacesMessage(
+				FacesMessage.SEVERITY_ERROR, mensaje, null));
 	}
 
 }

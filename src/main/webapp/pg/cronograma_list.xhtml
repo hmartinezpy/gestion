@@ -6,13 +6,13 @@
 	template="../template/plantilla.xhtml">
 	<ui:define name="head">:: Gestión de documentos ::</ui:define>
 	<ui:define name="content">
-	<h:outputStylesheet library="css" name="styles.css"  /> 
 		<h1 class="title ui-widget-header ui-corner-all" align="center">Cronogramas</h1>
 		<div class="entry" style="line-height: 200%; margin-left: 100px">
 
-			<p:ajaxStatus style="width:16px;height:16px;">
+			<p:ajaxStatus
+				style="width:32px;height:32px;display:block;position:fixed;right:0;top:0;z-index:100">
 				<f:facet name="start">
-					<h:graphicImage value="../design/ajaxloading.gif" />
+					<p:graphicImage value="/images/loading.gif" />
 				</f:facet>
 
 				<f:facet name="complete">
@@ -20,7 +20,8 @@
 				</f:facet>
 			</p:ajaxStatus>
 
-<!-- Lista de cronogramas --> 
+
+			<!-- Lista de cronogramas -->
 			<h:form id="form">
 				<p:growl id="messages" />
 				<p:dataTable var="cronograma"
@@ -88,7 +89,7 @@
 
 			<br></br>
 			<h:form id="form2">
-<!-- Lista de detalles del cronograma --> 
+				<!-- Lista de detalles del cronograma -->
 				<p:dataTable id="detalles" var="detalle"
 					value="#{cronogramaListMB.detalles}" editable="true"
 					paginator="true" paginatorPosition="bottom" rows="10">
@@ -167,7 +168,7 @@
 					<p:commandButton id="confirm2" value="Si"
 						oncomplete="confirmation2.hide()"
 						actionListener="#{cronogramaListMB.eliminarDetalle}"
-						update=":form:messages,:form2:detalles" ajax="false"/>
+						update=":form:messages,:form2:detalles" ajax="false" />
 					<p:commandButton id="decline2" value="No"
 						onclick="confirmation2.hide()" type="button" />
 				</p:confirmDialog>
@@ -177,9 +178,9 @@
 
 			<br></br>
 			<p:commandButton id="showDialogButton3" type="button"
-				value="Nuevo Detalle" onclick="dlg.show()" update=":form3:panel3"/>
+				value="Nuevo Detalle" onclick="dlg.show()" update=":form3:panel3" />
 			<br></br>
-<!-- Formulario de detalle nuevo --> 
+			<!-- Formulario de detalle nuevo -->
 			<p:dialog header="Nuevo Detalle" widgetVar="dlg" resizable="false">
 
 				<h:form id="form3">
@@ -190,12 +191,15 @@
 							<p:inputText value="#{cronogramaListMB.detalleNuevo.nroOrden}" />
 
 							<h:outputText value="Descripcion" />
-							<p:inputText value="#{cronogramaListMB.detalleNuevo.tarea}" required="true"
-								maxlength="50" size="50" />
+							<p:inputText value="#{cronogramaListMB.detalleNuevo.tarea}" requiredMessage="Es necesaria una descripcion"
+								required="true" maxlength="50" size="50" >
+								<f:validateRequired></f:validateRequired>
+							</p:inputText>
 
 							<h:outputText value="RolResponsable: " />
-							<h:selectOneMenu id="newSelectRolResp" 
-								value="#{cronogramaListMB.detalleNuevo.rolResponsable}" converter="rolConverter">
+							<h:selectOneMenu id="newSelectRolResp"
+								value="#{cronogramaListMB.detalleNuevo.rolResponsable}"
+								converter="rolConverter">
 								<f:selectItem itemLabel="Seleccione Rol-Resp" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.roles}" var="rol"
 									itemLabel="#{rol.descripcion}" itemValue="#{rol}" />
@@ -209,28 +213,30 @@
 							</h:selectOneMenu>
 
 							<h:outputText value="Duracion(Días)" />
-							<p:inputText value="#{cronogramaListMB.detalleNuevo.duracionTarea}" />
+							<p:inputText
+								value="#{cronogramaListMB.detalleNuevo.duracionTarea}" />
 
 							<h:outputText value="Alarma: " />
-							<h:selectOneMenu id="newSelectAlarma" 
-								value="#{cronogramaListMB.detalleNuevo.alarma}" converter="tipoAlarmaConverter">
+							<h:selectOneMenu id="newSelectAlarma"
+								value="#{cronogramaListMB.detalleNuevo.alarma}"
+								converter="tipoAlarmaConverter">
 								<f:selectItem itemLabel="Seleccione Alarma" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.alarmas}" var="alarma"
-									itemLabel="#{alarma.descripcion}"
-									itemValue="#{alarma}" />
+									itemLabel="#{alarma.descripcion}" itemValue="#{alarma}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="Alerta: " />
-							<h:selectOneMenu id="newSelectAlerta" 
-								value="#{cronogramaListMB.detalleNuevo.alerta}" converter="tipoAlarmaConverter" >
+							<h:selectOneMenu id="newSelectAlerta"
+								value="#{cronogramaListMB.detalleNuevo.alerta}"
+								converter="tipoAlarmaConverter">
 								<f:selectItem itemLabel="Seleccione Alerta" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.alertas}" var="alerta"
-									itemLabel="#{alerta.descripcion}" 
-									itemValue="#{alerta}" />
+									itemLabel="#{alerta.descripcion}" itemValue="#{alerta}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="TareaSgte: " />
-							<h:selectOneMenu id="newSelectTareaSgte" converter="cronogramaDetalleConverter"
+							<h:selectOneMenu id="newSelectTareaSgte"
+								converter="cronogramaDetalleConverter"
 								disabled="#{cronogramaListMB.checkPregunta}"
 								value="#{cronogramaListMB.detalleNuevo.tareaSiguiente}">
 								<f:selectItem itemLabel="Seleccione TareaSgte" itemValue="" />
@@ -246,8 +252,9 @@
 							</p:selectBooleanCheckbox>
 
 							<h:outputText value="Pregunta: " />
-							<h:selectOneMenu id="newSelectPregunta" 
-								disabled="#{!cronogramaListMB.checkPregunta}" converter="preguntaConverter"
+							<h:selectOneMenu id="newSelectPregunta"
+								disabled="#{!cronogramaListMB.checkPregunta}"
+								converter="preguntaConverter"
 								value="#{cronogramaListMB.detalleNuevo.pregunta}">
 								<f:selectItem itemLabel="Seleccione Pregunta" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.preguntas}"
@@ -256,27 +263,30 @@
 							</h:selectOneMenu>
 
 							<h:outputText value="TareaSi: " />
-							<h:selectOneMenu id="newSelectTareaSi" converter="cronogramaDetalleConverter"
+							<h:selectOneMenu id="newSelectTareaSi"
+								converter="cronogramaDetalleConverter"
 								disabled="#{!cronogramaListMB.checkPregunta}"
 								value="#{cronogramaListMB.detalleNuevo.respuestaSi}">
 								<f:selectItem itemLabel="Seleccione TareaSi" itemValue="" />
-								<f:selectItems value="#{cronogramaListMB.tareasSgtes}" var="tareaSi"
-									itemLabel="#{tareaSi.tarea}"
+								<f:selectItems value="#{cronogramaListMB.tareasSgtes}"
+									var="tareaSi" itemLabel="#{tareaSi.tarea}"
 									itemValue="#{tareaSi}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="TareaNo: " />
-							<h:selectOneMenu id="newSelectTareaNo" converter="cronogramaDetalleConverter"
+							<h:selectOneMenu id="newSelectTareaNo"
+								converter="cronogramaDetalleConverter"
 								disabled="#{!cronogramaListMB.checkPregunta}"
 								value="#{cronogramaListMB.detalleNuevo.respuestaNo}">
 								<f:selectItem itemLabel="Seleccione TareaNo" itemValue="" />
-								<f:selectItems value="#{cronogramaListMB.tareasSgtes}" var="tareaNo"
-									itemLabel="#{tareaNo.tarea}"
+								<f:selectItems value="#{cronogramaListMB.tareasSgtes}"
+									var="tareaNo" itemLabel="#{tareaNo.tarea}"
 									itemValue="#{tareaNo}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="Checklist: " />
-							<h:selectOneMenu id="newSelectChecklist" converter="checklistConverter"
+							<h:selectOneMenu id="newSelectChecklist"
+								converter="checklistConverter"
 								value="#{cronogramaListMB.detalleNuevo.checklist}">
 								<f:selectItem itemLabel="Seleccione Checklist" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.checklists}"
@@ -285,10 +295,11 @@
 							</h:selectOneMenu>
 
 							<br></br>
-							<p:commandButton value="Guardar" id="agregar"
+							<p:commandButton value="Guardar" id="agregar" 
 								actionListener="#{cronogramaListMB.registrarCronogramaDetalle}"
-								oncomplete="dlg.hide()" icon="ui-icon-disk"
-								update=":form:message,:form:cronogramas,:form2:detalles" ajax="false"/>
+								oncomplete="if (args &amp;&amp; !args.validationFailed) $('#dlg').dialog('close')" icon="ui-icon-disk"
+								update=":form:message,:form:cronogramas,:form2:detalles"
+								ajax="false" />
 
 						</h:panelGrid>
 					</p:panel>
@@ -296,11 +307,11 @@
 			</p:dialog>
 
 			<br></br> <br></br>
-<!-- Formulario de editar detalle --> 
+			<!-- Formulario de editar detalle -->
 			<p:dialog header="Editar Detalle" widgetVar="dlg2" resizable="false">
 
 				<h:form id="form4">
-					<p:panel style="width:500px" id="panel4" >
+					<p:panel style="width:500px" id="panel4">
 
 						<h:panelGrid columns="2" cellpadding="5">
 
@@ -316,7 +327,8 @@
 
 							<h:outputText value="RolResponsable " />
 							<h:selectOneMenu id="selectRolResp" style="width:100px"
-								value="#{cronogramaListMB.detalleSeleccionado.rolResponsable}" converter="rolConverter">
+								value="#{cronogramaListMB.detalleSeleccionado.rolResponsable}"
+								converter="rolConverter">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.roles}" var="rol"
 									itemLabel="#{rol.descripcion}" itemValue="#{rol}" />
@@ -335,26 +347,27 @@
 								value="#{cronogramaListMB.detalleSeleccionado.duracionTarea}" />
 
 							<h:outputText value="Alarma " />
-							<h:selectOneMenu id="selectAlarma" style="width:100px" converter="tipoAlarmaConverter"
+							<h:selectOneMenu id="selectAlarma" style="width:100px"
+								converter="tipoAlarmaConverter"
 								value="#{cronogramaListMB.detalleSeleccionado.alarma}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.alarmas}" var="alarma"
-									itemLabel="#{alarma.descripcion}"
-									itemValue="#{alarma}" />
+									itemLabel="#{alarma.descripcion}" itemValue="#{alarma}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="Alerta " />
-							<h:selectOneMenu id="selectAlerta" style="width:100px" converter="tipoAlarmaConverter"
+							<h:selectOneMenu id="selectAlerta" style="width:100px"
+								converter="tipoAlarmaConverter"
 								value="#{cronogramaListMB.detalleSeleccionado.alerta}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.alertas}" var="alerta"
-									itemLabel="#{alerta.descripcion}"
-									itemValue="#{alerta}" />
+									itemLabel="#{alerta.descripcion}" itemValue="#{alerta}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="TareaSgte " />
 							<h:selectOneMenu id="selectTareaSgte" style="width:100px"
-								disabled="#{cronogramaListMB.checkPregunta}" converter="cronogramaDetalleConverter"
+								disabled="#{cronogramaListMB.checkPregunta}"
+								converter="cronogramaDetalleConverter"
 								value="#{cronogramaListMB.detalleSeleccionado.tareaSiguiente}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.tareasSgtes}"
@@ -367,11 +380,12 @@
 								<p:ajax
 									update="selectPregunta, selectTareaSi, selectTareaNo, selectTareaSgte " />
 							</h:selectBooleanCheckbox>
-					
+
 
 
 							<h:outputText value="Pregunta " />
-							<h:selectOneMenu id="selectPregunta" style="width:100px" converter="preguntaConverter"
+							<h:selectOneMenu id="selectPregunta" style="width:100px"
+								converter="preguntaConverter"
 								disabled="#{!cronogramaListMB.checkPregunta}"
 								value="#{cronogramaListMB.detalleSeleccionado.pregunta}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
@@ -382,32 +396,35 @@
 
 							<h:outputText value="TareaSi " />
 							<h:selectOneMenu id="selectTareaSi" style="width:100px"
-								disabled="#{!cronogramaListMB.checkPregunta}" converter="cronogramaDetalleConverter"
+								disabled="#{!cronogramaListMB.checkPregunta}"
+								converter="cronogramaDetalleConverter"
 								value="#{cronogramaListMB.detalleSeleccionado.respuestaSi}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
-								<f:selectItems value="#{cronogramaListMB.tareasSgtes}" var="tareaSi"
-									itemLabel="#{tareaSi.tarea}"
+								<f:selectItems value="#{cronogramaListMB.tareasSgtes}"
+									var="tareaSi" itemLabel="#{tareaSi.tarea}"
 									itemValue="#{tareaSi}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="TareaNo " />
 							<h:selectOneMenu id="selectTareaNo" style="width:100px"
-								disabled="#{!cronogramaListMB.checkPregunta}" converter="cronogramaDetalleConverter"
+								disabled="#{!cronogramaListMB.checkPregunta}"
+								converter="cronogramaDetalleConverter"
 								value="#{cronogramaListMB.detalleSeleccionado.respuestaNo}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
-								<f:selectItems value="#{cronogramaListMB.tareasSgtes}" var="tareaNo"
-									itemLabel="#{tareaNo.tarea}"
+								<f:selectItems value="#{cronogramaListMB.tareasSgtes}"
+									var="tareaNo" itemLabel="#{tareaNo.tarea}"
 									itemValue="#{tareaNo}" />
 							</h:selectOneMenu>
 
 							<h:outputText value="Checklist " />
-							<h:selectOneMenu id="selectChecklist" style="width:100px" converter="checklistConverter"
+							<h:selectOneMenu id="selectChecklist" style="width:100px"
+								converter="checklistConverter"
 								value="#{cronogramaListMB.detalleSeleccionado.checklist}">
 								<f:selectItem itemLabel="----Ninguno--" itemValue="" />
 								<f:selectItems value="#{cronogramaListMB.checklists}"
 									var="checklist" itemLabel="#{checklist.descripcion}"
 									itemValue="#{checklist}" />
-								
+
 							</h:selectOneMenu>
 							<br></br>
 							<p:commandButton value="Guardar" id="editar"
@@ -419,7 +436,7 @@
 					</p:panel>
 
 				</h:form>
-			</p:dialog>			
+			</p:dialog>
 		</div>
 
 	</ui:define>

@@ -55,10 +55,16 @@ public class PreguntaListMB extends AbstractListPageBean<Pregunta,Long> {
 	}
 	
 	public void eliminar(ActionEvent actionEvent) {
-		preguntaBC.eliminar(preguntaSeleccionado.getPreguntaId());
-		preguntaSeleccionado = new Pregunta();
-        setPreguntas(preguntaBC.listar());
-        agregarMensaje("Pregunta eliminado");
+		try {
+			preguntaBC.eliminar(preguntaSeleccionado.getPreguntaId());
+			preguntaSeleccionado = new Pregunta();
+	        setPreguntas(preguntaBC.listar());
+	        agregarMensaje("Pregunta eliminada");
+		} catch (Exception e) {
+			e.printStackTrace();
+			agregarMensajeError("No se puede eliminar el registro, el mismo está siendo utilizado por otros datos del sistema");
+		}
+		
     }
 	
 	@Override
@@ -69,6 +75,11 @@ public class PreguntaListMB extends AbstractListPageBean<Pregunta,Long> {
 	
 	public void agregarMensaje(String mensaje){
 	    	facesContext.addMessage("suceso", new FacesMessage(mensaje));
+	}
+	public void agregarMensajeError(String mensaje) {
+
+		this.facesContext.addMessage("error", new FacesMessage(
+				FacesMessage.SEVERITY_ERROR, mensaje, null));
 	}
 
 }

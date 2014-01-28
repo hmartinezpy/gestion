@@ -118,7 +118,7 @@
                                 <p:submenu label="PLANTILLAS"  icon="ui-icon-calculator" rendered="#{rolListMB.verMenuAdmin}">
                                 	<p:menuitem value="Cronogramas" icon="ui-icon-calendar" style="FONT-SIZE: 12px;" url="/pg/cronograma_list.jsf" />
                                 </p:submenu>
-                                <p:submenu label="WORKFLOW"  icon="ui-icon-calculator">
+                                <p:submenu label="WORKFLOW"  icon="ui-icon-calculator" rendered="false">
                                 	<p:menuitem value="Procesos" icon="ui-icon-shuffle" style="FONT-SIZE: 12px;" url="/pg/proceso_list.jsf" />                                	
                                 </p:submenu>
                                 <p:submenu label="CONFIGURACION" icon="ui-icon-gear" rendered="#{rolListMB.verMenuAdmin}">
@@ -127,10 +127,9 @@
 									<p:menuitem value="Preguntas" icon="ui-icon-pencil" style="FONT-SIZE: 12px;" url="/pg/pregunta_list.jsf" />
 									<p:menuitem value="Checklist" icon="ui-icon-check" style="FONT-SIZE: 12px;" url="/pg/checklist_list.jsf" />
                                 </p:submenu>
-								<p:submenu label="INFORMES" icon="ui-icon-note" rendered="true" style="width:250px;">
-									<p:menuitem value="Informe de Auditoría" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;"/>
+								<p:submenu label="INFORMES" icon="ui-icon-note" rendered="#{rolListMB.verInformes}" style="width:290px;">
 									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf"  rendered="#{rolListMB.verMenuArchivos}"/>
-									<p:menuitem value="Reportes de procesos" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteProcesosPendientes.jsf"  rendered="true"/>
+									<p:menuitem value="Procesos pendientes" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteProcesosPendientes.jsf"  rendered="true"/>
 									<p:menuitem value="Reportes de facturas" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteFacturas.jsf"  rendered="true"/>
 									<p:menuitem value="Estadística de procesos" icon="ui-icon-document" style="FONT-SIZE: 12px; width:150px;" url="/reportes/reporteProcesos.jsf"  rendered="true"/>		
 									

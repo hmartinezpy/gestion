@@ -46,6 +46,8 @@ public class ReporteFacturasMB {
 		Map<String, Object> param = new HashMap<String, Object>();
 		if (this.estado.compareTo("Pendientes") == 0) {
 			param.put("titulo", "REPORTE DE FACTURAS PENDIENTES");
+			param.put("fecha_desde", null);
+			param.put("fecha_hasta", null);
 
 		} else {
 			if (this.estado.compareTo("Todas") == 0) {
@@ -61,6 +63,7 @@ public class ReporteFacturasMB {
 		List<ReporteFacturasBean> list = reporteDAO.getDatosReporteFacturas(
 				this.desde, this.hasta, this.estado);
 		logger.info("Query: " + reporteDAO.getSqlQuery());
+		this.logger.info(">>>>TAMANIO DE RESULTADO: "+list.size());
 		byte[] buffer = this.reporteFacturas.export(list, param, Type.PDF);
 		this.renderer.render(buffer, FileRenderer.ContentType.PDF,
 				"reporteFacturas.pdf");

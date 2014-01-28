@@ -92,7 +92,7 @@
 
 						<p:toolbar id="centerToolbar">
 							<p:toolbarGroup align="left">
-								<p:commandButton value="Nuevo " rendered="mainViewMB.canCreateProcess" icon="ui-icon-document"
+								<p:commandButton value="Nuevo " rendered="#{mainViewMB.canCreateProcess}" icon="ui-icon-document"
 												action="/pg/proceso_edit.xhtml" ajax="false"/>
 							</p:toolbarGroup>
 
@@ -406,16 +406,20 @@
 			<p:panel style="width:600px"  >
 				<h:panelGrid columns="2" id="sigteActividadPanel" cellpadding="5" >
 					<h:outputText value="Responsable " />
-					<p:selectOneMenu id="selectSigteActividadResponsable" value="#{mainViewMB.sigteUsuario}" converter="usuarioConverter"  >
+					<p:selectOneMenu id="selectSigteActividadResponsable" value="#{mainViewMB.sigteUsuario}" converter="usuarioConverter" required="true" 
+					requiredMessage="Se debe seleccionar un responsable" >
 						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
+						<f:ajax render=":sigteActividadForm:sigteActividadPanel" />
+						<f:validateRequired />
 					</p:selectOneMenu>
 					<h:outputText value="Comentario " />
 					<p:inputTextarea rows="3" cols="50" maxlength="250" value="#{mainViewMB.descripcionObservacion}" />
 
 					<p:commandButton onclick="sigteActividadDialog.hide(), editarActividadDialog.hide()" value="Confirmar" ajax="false"
 						icon="ui-icon-circle-check" actionListener="#{mainViewMB.resolverActividad}"
-						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList">
+						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList"
+						disabled="#{facesContext.validationFailed || mainViewMB.sigteUsuario== null}">
 						<f:setPropertyActionListener value="#{responsable}" target="#{mainViewMB.actividadSeleccionada.responsable}" />
 					</p:commandButton>
 				</h:panelGrid>

@@ -55,10 +55,16 @@ public class TipoAlarmaListMB extends AbstractListPageBean<TipoAlarma,Long> {
 	}
 	
 	public void eliminar(ActionEvent actionEvent) {
-		tipoAlarmaBC.eliminar(tipoAlarmaSeleccionado.getTipoAlarmaId());
-		tipoAlarmaSeleccionado = new TipoAlarma();
-        setTipoAlarmas(tipoAlarmaBC.listar());
-        agregarMensaje("TipoAlarma eliminado");
+		try {
+			tipoAlarmaBC.eliminar(tipoAlarmaSeleccionado.getTipoAlarmaId());
+			tipoAlarmaSeleccionado = new TipoAlarma();
+	        setTipoAlarmas(tipoAlarmaBC.listar());
+	        agregarMensaje("TipoAlarma eliminado");
+		} catch (Exception e) {
+			e.printStackTrace();
+			agregarMensajeError("No se puede eliminar el registro, el mismo está siendo utilizado por otros datos del sistema");
+		}
+		
     }
 	
 	@Override
@@ -69,6 +75,12 @@ public class TipoAlarmaListMB extends AbstractListPageBean<TipoAlarma,Long> {
 	
 	public void agregarMensaje(String mensaje){
 	    	facesContext.addMessage("suceso", new FacesMessage(mensaje));
+	}
+	
+	public void agregarMensajeError(String mensaje) {
+
+		this.facesContext.addMessage("error", new FacesMessage(
+				FacesMessage.SEVERITY_ERROR, mensaje, null));
 	}
 
 }

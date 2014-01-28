@@ -8,7 +8,7 @@
 	<ui:define name="content">
 	
 	    <h1 class="title ui-widget-header ui-corner-all" align="center">Listado de Usuarios del Sistema</h1>
-        <div class="entry" style="line-height:200%;width:925px;">
+        <div class="entry" style="line-height:200%; width:890px; margin-left: 110px;">
             <p:ajaxStatus style="width:16px;height:16px;">
                 <f:facet name="start">
                     <h:graphicImage value="../design/ajaxloading.gif" />
@@ -57,12 +57,8 @@
 				</p:column>
 			</p:dataTable>
 			<br></br>
-			<p:toolbar>
-				<p:toolbarGroup align="left">
 					<p:commandButton title="#{messages['boton.nuevo']}" value ="#{messages['boton.agregar']} " action="#{usuarioListMB.getNextView}"
 						actionListener="#{usuarioListMB.clear}" ajax="false" rendered="#{usuarioListMB.crear}" image="ui-icon-document" />
- 				</p:toolbarGroup>
-			</p:toolbar>
 		</h:form>
 		<h:form rendered="#{!usuarioListMB.ver}">
 			<h1 align="center">Acceso Denegado</h1>

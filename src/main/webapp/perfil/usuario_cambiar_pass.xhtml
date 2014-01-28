@@ -6,22 +6,31 @@
 	            template="../template/plantilla.xhtml">
     <ui:define name="head">:: Gestión de Documentos ::</ui:define>
 	<ui:define name="content">
+	<div class="entry" style="line-height:200%;width:550px; margin-left: 280px;">
 		<h:form id="form">  
+		<p:messages id="messages" showDetail="false" autoUpdate="true"/>  
 		    <p:panel header="Cambiar password de Usuario">
-		    <p:messages id="messages" showDetail="true" autoUpdate="true"/>     
+		       
 		        <h:panelGrid columns="2" id="matchGrid"> 
 		            <h:outputLabel  value="Contraseña Actual: *" />  
-		            <p:password id="passOld" value="#{usuarioPasswordMB.oldPassword}" required="true"/>  
+		            <p:password id="passOld" value="#{usuarioPasswordMB.oldPassword}" required="true" requiredMessage="La contraseña actual es necesaria">
+		            <f:validateRequired></f:validateRequired>
+		            </p:password>  
 		                            
 		            <h:outputLabel value="Contraseña nueva: *" />  
-		            <p:password id="pwd1" value="#{usuarioPasswordMB.passwordNew}" match="pwd2" required="true"/>  
+		            <p:password id="pwd1" value="#{usuarioPasswordMB.passwordNew}" requiredMessage="La contraseña nueva es necesaria" match="pwd2" required="true" feedback="true" >
+		            <f:validateRequired></f:validateRequired>
+		            </p:password>  
 		  
 		            <h:outputLabel value="Confirmar contraseña: *" />  
-		            <p:password id="pwd2" value="#{usuarioPasswordMB.passwordNew2}" required="true"/>  
+		            <p:password id="pwd2" value="#{usuarioPasswordMB.passwordNew2}" requiredMessage="Es necesario confirmar la contraseña" required="true">
+		            <f:validateRequired></f:validateRequired>
+		            </p:password>  
 		        </h:panelGrid>  
 		  
 		        <p:commandButton value="Guardar" update="matchGrid" action="#{usuarioPasswordMB.update}" ajax="false"/>  
 		    </p:panel>
 		</h:form>  
+		</div>
 	</ui:define>
 </ui:composition>

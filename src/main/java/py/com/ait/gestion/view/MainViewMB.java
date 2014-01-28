@@ -1124,10 +1124,8 @@ public class MainViewMB {
 			this.agregarMensaje("ERROR: Proceso NO seleccionado");
 			this.setDescripcionObservacion("");
 		} else {
-			if (getDescripcionObservacion() ==null || "".equals(getDescripcionObservacion().trim())){
-				agregarMensajeError("Debe especificar una descripción");
-				return;
-			}
+			if (this.descripcionObservacion != null
+					&& this.descripcionObservacion.trim().length() != 0) {
 			Proceso procesoSelec = this.procesoSeleccionado;
 
 			Observacion obs = new Observacion();
@@ -1150,7 +1148,7 @@ public class MainViewMB {
 			}
 			this.agregarMensaje("Observacion creada");
 			this.setDescripcionObservacion("");
-
+			}
 		}
 	}
 

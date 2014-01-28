@@ -25,7 +25,9 @@
                             <h:panelGrid columns="2" cellpadding="3">
                             		                    
                                 <h:outputText value="Descripcion " />
-                                <p:inputText required="true" value="#{preguntaEditMB.bean.descripcion}" />
+                                <p:inputText required="true" value="#{preguntaEditMB.bean.descripcion}" requiredMessage="La descripción no puede estar vacía">
+                                <f:validateRequired></f:validateRequired>
+                                </p:inputText>
                                 
                             </h:panelGrid>
                         </p:panel> 

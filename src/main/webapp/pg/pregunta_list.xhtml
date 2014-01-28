@@ -7,7 +7,7 @@
 	<ui:define name="head">:: Gestión de documentos ::</ui:define>
 	<ui:define name="content">
 		<h1 class="title ui-widget-header ui-corner-all" align="center" >Preguntas</h1>
-		<div class="entry" style="line-height:200%;margin-left:200px">
+		<div class="entry" style="line-height:200%;margin-left:300px; width:500px;">
 			
 			<p:ajaxStatus style="width:16px;height:16px;">
                 <f:facet name="start">
@@ -49,7 +49,7 @@
             <p:confirmDialog id="confirmDialog" message="¿Desea eliminar la Pregunta?"
                              header="Eliminar?" severity="alert" widgetVar="confirmation">
                 <p:commandButton id="confirm" value="Si" oncomplete="confirmation.hide()" 
-                                 actionListener="#{preguntaListMB.eliminar}" update="preguntas, messages" />
+                                 actionListener="#{preguntaListMB.eliminar}" update="preguntas, messages" ajax="false" />
                 <p:commandButton id="decline" value="No" onclick="confirmation.hide()" type="button" /> 
             </p:confirmDialog>
             

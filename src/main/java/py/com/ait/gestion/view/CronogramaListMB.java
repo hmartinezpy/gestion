@@ -87,22 +87,24 @@ public class CronogramaListMB extends AbstractListPageBean<Cronograma, Long> {
 
 	public void eliminar(ActionEvent actionEvent) {
 
-		String mensaje = "";
-		this.logger.info("dentro de eliminar cronograma");
 		try {
 			cronogramaBC.eliminar(cronogramaSeleccionado.getCronogramaId());
 			cronogramaSeleccionado = new Cronograma();
 			setCronogramas(cronogramaBC.listar());
-			mensaje = "Cronograma eliminado";
+			agregarMensaje("Cronograma eliminado");
 		} catch (Exception e) {
 			this.logger.info("Fallo al tratar de eliminar cronograma");
-			mensaje = "No se puede eliminar el cronograma porque posee procesos asociados";
+			agregarMensajeError("No se puede eliminar el cronograma porque posee procesos asociados");
 
 		}
 
-		agregarMensaje(mensaje);
 	}
 
+	public void agregarMensajeError(String mensaje) {
+
+		this.facesContext.addMessage("error", new FacesMessage(
+				FacesMessage.SEVERITY_ERROR, mensaje, null));
+	}
 	public void elegirCronograma() {
 
 		// setDetalles(cronogramaSeleccionado.getCronogramaDetalles());
@@ -179,6 +181,7 @@ public class CronogramaListMB extends AbstractListPageBean<Cronograma, Long> {
 	public void setCheckPregunta(boolean check) {
 
 		this.checkPregunta = check;
+		this.detalleSeleccionado.setTareaSiguiente(null);
 	}
 
 
@@ -316,7 +319,7 @@ public class CronogramaListMB extends AbstractListPageBean<Cronograma, Long> {
 			detalles.remove(index);
 			agregarMensaje("Detalle eliminado");
 		} catch (Exception e) {
-			agregarMensaje("No se puede eliminar el detalle porque posee Actividades asociadas");
+			agregarMensajeError("No se puede eliminar el detalle porque posee Actividades asociadas");
 		}
 
 		// detalleSeleccionado = new CronogramaDetalle();

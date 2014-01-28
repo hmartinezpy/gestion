@@ -158,5 +158,24 @@ public class RolListMB extends AbstractListPageBean<Rol, Long>{
 		Permiso permiso =permisoBC.getPermiso("ver menu archivos");
 		return 	usuarioRolPermisoBC.tiene(permiso, us);
 	}
+	public boolean isVerInformes(){
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		String usuario = facesContext.getExternalContext().getUserPrincipal().getName();
+		if(usuarioBC.isAdminUser(usuario)){
+			return true;
+		}else{
+			Usuario us = usuarioBC.findSpecificUser(usuario);
+			Permiso permisoProcesos = permisoBC.getPermiso("crear procesos");
+			Permiso permisoFacturas = permisoBC.getPermiso("controlar facturas");
+			boolean tienePer1 = usuarioRolPermisoBC.tiene(permisoProcesos, us);
+			boolean tienePer2 = usuarioRolPermisoBC.tiene(permisoFacturas, us);
+			if( tienePer1 || tienePer2){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+	}
 
 }

@@ -26,15 +26,20 @@
 							<f:selectItem itemLabel="Cerrado" itemValue="Cerrado" />
 						</h:selectOneMenu>
 						<h:outputText value="Desde: " />
-						<p:calendar value="#{reporteProcesosMB.desde}" 
-							pattern="dd/MM/yyyy" />
+						<p:calendar value="#{reporteProcesosMB.desde}" id="desde"
+							pattern="dd/MM/yyyy" required="true"  requiredMessage="La fecha Desde no puede ser vacia" >
+							<f:validateRequired />
+						</p:calendar>
+						
 						<h:outputText value="Hasta: " />
-						<p:calendar value="#{reporteProcesosMB.hasta}"
-							pattern="dd/MM/yyyy"/>
+						<p:calendar value="#{reporteProcesosMB.hasta}" id="hasta"
+							pattern="dd/MM/yyyy" required="true" requiredMessage="La fecha Hasta no puede ser vacia">
+							<f:validateRequired />
+						</p:calendar>
 					</h:panelGrid>
 				</p:panel>
 				<br></br>
-				<p:commandButton value="Crear Reporte" image="ui-icon-document" 
+				<p:commandButton id="button" value="Crear Reporte" image="ui-icon-document"
 					update="messages" action="#{reporteProcesosMB.printPdfProcesos}"
 					ajax="false" />
 			</h:form>
