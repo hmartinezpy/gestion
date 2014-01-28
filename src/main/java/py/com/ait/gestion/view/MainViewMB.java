@@ -221,6 +221,7 @@ public class MainViewMB {
 		this.cronogramaSeleccionado = nodo;
 		this.clienteSeleccionado = null;
 		procesos = procesoBC.getProcesosByCronogramaForUser(filtroEstadoProceso, nodo.getCronogramaId(), currentUser);
+		actividades = null;
 
 		agregarMensaje(nodo.getNombre());
 	}

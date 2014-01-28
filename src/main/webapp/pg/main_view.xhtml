@@ -48,33 +48,32 @@
 			<h:form id="treeForm">
 				<p:toolbar>
 					<p:toolbarGroup align="right">
-
-						<p:commandButton value="Abiertos"
-							update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
-							action="#{mainViewMB.updateFiltroEstadoProceso}">
+						<p:splitButton value="Abiertos"
+										update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
+										action="#{mainViewMB.updateFiltroEstadoProceso}">
 							<f:setPropertyActionListener value="A"
 								target="#{mainViewMB.filtroEstadoProceso}" />
-						</p:commandButton>
 
-						<p:commandButton value="Cerrados"
-							update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
-							action="#{mainViewMB.updateFiltroEstadoProceso}">
-							<f:setPropertyActionListener value="C"
-								target="#{mainViewMB.filtroEstadoProceso}" />
-						</p:commandButton>
+							<p:menuitem value="Cerrados"
+										update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
+										action="#{mainViewMB.updateFiltroEstadoProceso}">
+								<f:setPropertyActionListener value="C"
+									target="#{mainViewMB.filtroEstadoProceso}" />
+							</p:menuitem>
 
-						<p:commandButton value="Todos"
-							update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
-							action="#{mainViewMB.updateFiltroEstadoProceso}">
-							<f:setPropertyActionListener value="T"
-								target="#{mainViewMB.filtroEstadoProceso}" />
-						</p:commandButton>
-
+							<p:menuitem value="Todos"
+										update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
+										action="#{mainViewMB.updateFiltroEstadoProceso}">
+								<f:setPropertyActionListener value="T"
+									target="#{mainViewMB.filtroEstadoProceso}" />
+							</p:menuitem>
+						</p:splitButton>
 					</p:toolbarGroup>
 				</p:toolbar>
 
 				<p:tree value="#{mainViewMB.items}" var="box" id="treeList" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
-					<p:ajax event="select" update=":procesosForm:procesosList,:messages,:procesosForm:centerToolbar" listener="#{mainViewMB.onNodeSelect}" />
+					<p:ajax event="select" listener="#{mainViewMB.onNodeSelect}" 
+							update=":messages,:procesosForm:procesosList,:procesosForm:centerToolbar,:actividadesForm:actividadesList"/>
 
 					<p:treeNode icon="ui-icon ui-icon-note">
 						<h:outputText value="#{box}"/>
@@ -112,7 +111,7 @@
 								</p:menuButton>
 
 								<p:menuButton value="Opciones">
-									<p:menuitem value="Inicio"  url="/pg/home.jsf" />
+									<p:menuitem value="Ir a Pantalla de Administración"  url="/pg/home.jsf" />
 									<p:menuitem value="Cerrar Sesión"  url="/index.jsp" />
 								</p:menuButton>
 								<span align="right" style="padding-right: 10px;FONT-SIZE: 12px;font-family: Arial, Helvetica, sans-serif;">Usuario Actual: #{usuarioEditMB.usuarioActual}</span>

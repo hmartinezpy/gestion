@@ -1,4 +1,1 @@
-<% 
-
-response.sendRedirect("pg/home.jsf"); 
-%>
+<% response.sendRedirect("pg/main_view.jsf"); %>
