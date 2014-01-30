@@ -44,34 +44,38 @@
 
 		<p:growl id="messages" showDetail="true" />
 
-		<p:layoutUnit position="west" size="200" resizable="true" collapsible="true" header="Procesos por Cronogramas" id="leftPane">
+		<p:layoutUnit position="west" size="250" resizable="true" collapsible="true" header="Procesos por Cronogramas" id="leftPane">
 			<h:form id="treeForm">
 				<p:toolbar>
 					<p:toolbarGroup align="right">
-						<p:splitButton value="Abiertos"
+						<p:commandButton value="A"
 										update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
-										action="#{mainViewMB.updateFiltroEstadoProceso}">
+										action="#{mainViewMB.updateFiltroEstadoProceso}"
+										icon="ui-icon ui-icon-mail-open">
 							<f:setPropertyActionListener value="A"
-								target="#{mainViewMB.filtroEstadoProceso}" />
+										target="#{mainViewMB.filtroEstadoProceso}" />
+						</p:commandButton>
 
-							<p:menuitem value="Cerrados"
+						<p:commandButton value="C"
 										update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
-										action="#{mainViewMB.updateFiltroEstadoProceso}">
-								<f:setPropertyActionListener value="C"
-									target="#{mainViewMB.filtroEstadoProceso}" />
-							</p:menuitem>
+										action="#{mainViewMB.updateFiltroEstadoProceso}"
+										icon="ui-icon ui-icon-mail-closed">
+							<f:setPropertyActionListener value="C"
+										target="#{mainViewMB.filtroEstadoProceso}" />
+						</p:commandButton>
 
-							<p:menuitem value="Todos"
+						<p:commandButton value="T"
 										update=":treeForm:treeList,:procesosForm:procesosList,:actividadesForm:actividadesList"
-										action="#{mainViewMB.updateFiltroEstadoProceso}">
-								<f:setPropertyActionListener value="T"
-									target="#{mainViewMB.filtroEstadoProceso}" />
-							</p:menuitem>
-						</p:splitButton>
+										action="#{mainViewMB.updateFiltroEstadoProceso}"
+										icon="ui-icon ui-icon-suitcase">
+							<f:setPropertyActionListener value="T"
+										target="#{mainViewMB.filtroEstadoProceso}" />
+						</p:commandButton>
+
 					</p:toolbarGroup>
 				</p:toolbar>
 
-				<p:tree value="#{mainViewMB.items}" var="box" id="treeList" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:170px">
+				<p:tree value="#{mainViewMB.items}" var="box" id="treeList" selectionMode="single" selection="#{mainViewMB.selectedItem}" style="width:250px">
 					<p:ajax event="select" listener="#{mainViewMB.onNodeSelect}" 
 							update=":messages,:procesosForm:procesosList,:procesosForm:centerToolbar,:actividadesForm:actividadesList"/>
 
@@ -175,6 +179,14 @@
 									<f:setPropertyActionListener value="#{proceso}" target="#{mainViewMB.procesoSeleccionado}" />
 								</p:commandLink>
 							</p:column> 
+
+							<p:column style="width:30px;">
+								<p:commandLink action="/pg/proceso_edit.xhtml"
+												rendered="#{mainViewMB.usuarioId eq proceso.responsable.usuarioId or mainViewMB.isAdminUser}">
+									<span class="ui-icon ui-icon-pencil" title="Editar" />
+									<f:param name="id" value="#{proceso.procesoId}" />
+								</p:commandLink>
+							</p:column>
 
 						</p:dataTable>
 
