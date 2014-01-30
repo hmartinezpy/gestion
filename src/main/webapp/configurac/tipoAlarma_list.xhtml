@@ -141,10 +141,10 @@
                                 autoResize="false" />
                                 <br></br>
                                 <h:outputText value="Tipo: " /> 
-			                    <p:selectOneMenu id="selectTipo" value="#{tipoAlarmaMB.tipo}" >
+			                    <h:selectOneMenu id="selectTipo" value="#{tipoAlarmaMB.tipo}" >
 			                    	<f:selectItem itemLabel="Alarma" itemValue="Alarma" />
 	                            	<f:selectItem itemLabel="Alerta" itemValue="Alerta" />	                            
-			                    </p:selectOneMenu>
+			                    </h:selectOneMenu>
 			                    <br></br>
                                 
                                 
@@ -158,16 +158,16 @@
                                 
                                 <br></br>
 								<h:outputText value="Responsable1: " /> 
-			                    <p:selectOneMenu id="selectResponsable1" value="#{tipoAlarmaMB.idResponsable1}" required="true" >  
+			                    <h:selectOneMenu id="selectResponsable1" value="#{tipoAlarmaMB.idResponsable1}" required="true" >  
 			                        <f:selectItem itemLabel="Seleccione Responsable1" itemValue="" />  
 			                        <f:selectItems value="#{tipoAlarmaMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
-			                    </p:selectOneMenu>
+			                    </h:selectOneMenu>
 			                    <br></br>
 			                    <h:outputText value="Responsable2: " /> 
-			                    <p:selectOneMenu id="selectResponsable2" value="#{tipoAlarmaMB.idResponsable2}" required="true" >  
+			                    <h:selectOneMenu id="selectResponsable2" value="#{tipoAlarmaMB.idResponsable2}" required="true" >  
 			                        <f:selectItem itemLabel="Seleccione Responsable2" itemValue="" />  
 			                        <f:selectItems value="#{tipoAlarmaMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
-			                    </p:selectOneMenu>
+			                    </h:selectOneMenu>
 			                    <br></br>
 			                    <br></br>
                                 <p:commandButton value="Agregar" id="agregar" actionListener="#{tipoAlarmaMB.registrarTipoAlarma}"

@@ -127,14 +127,8 @@
 									<p:menuitem value="Preguntas" icon="ui-icon-pencil" style="FONT-SIZE: 12px;" url="/pg/pregunta_list.jsf" />
 									<p:menuitem value="Checklist" icon="ui-icon-check" style="FONT-SIZE: 12px;" url="/pg/checklist_list.jsf" />
                                 </p:submenu>
-								<p:submenu label="INFORMES" icon="ui-icon-note" rendered="#{rolListMB.verInformes}" style="width:290px;">
-									<p:menuitem value="Archivos" icon="ui-icon-folder-open" style="FONT-SIZE: 12px;" url="/pg/archivos_tree.jsf"  rendered="#{rolListMB.verMenuArchivos}"/>
-									<p:menuitem value="Procesos pendientes" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteProcesosPendientes.jsf"  rendered="true"/>
-									<p:menuitem value="Reportes de facturas" icon="ui-icon-document" style="FONT-SIZE: 12px;" url="/reportes/reporteFacturas.jsf"  rendered="true"/>
-									<p:menuitem value="Estadística de procesos" icon="ui-icon-document" style="FONT-SIZE: 12px; width:150px;" url="/reportes/reporteProcesos.jsf"  rendered="true"/>		
-									
-								</p:submenu>
-								<p:submenu label="ADMINISTRACION" rendered="#{rolListMB.verMenuAdmin}" icon="ui-icon-locked">
+								
+								<p:submenu label="ADMINISTRACION USUARIOS" rendered="#{rolListMB.verMenuAdmin}" icon="ui-icon-locked">
 									<p:submenu label = "Auditoria" icon="ui-icon-note" style="FONT-SIZE: 12px;">
 										<p:menuitem value="Control de Sesiones" style="FONT-SIZE: 12px;" icon="ui-icon-folder-open" url="/admin/sesion_log_list.jsf" rendered="#{rolListMB.verMenuAdmin}"/>
 										<p:menuitem value="#{messages['menu.log']}" style="FONT-SIZE: 12px;" url="/admin/log_list.jsf" rendered="#{audLogMB.ver}"/>

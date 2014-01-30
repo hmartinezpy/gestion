@@ -28,10 +28,10 @@
                                 <p:inputText required="true" value="#{actividadEditMB.bean.nroActividad}" />                                
 			                    
 			                    <h:outputText value="CronogramaDetalle " />
-                                <p:selectOneMenu id="selectCronogramaDetalle" value="#{actividadEditMB.idCronogramaDetalle}"  > 
+                                <h:selectOneMenu id="selectCronogramaDetalle" value="#{actividadEditMB.idCronogramaDetalle}"  > 
                                  	<f:selectItem itemLabel="#{actividadEditMB.bean.cronogramaDetalle.tarea}" itemValue="#{actividadEditMB.bean.cronogramaDetalle.cronogramaDetalleId}" /> 
 			                        <f:selectItems value="#{actividadEditMB.cronogramaDetalles}" var="cronogramaDetalle" itemLabel="#{cronogramaDetalle.tarea}" itemValue="#{cronogramaDetalle.cronogramaDetalleId}" />                                  
-			                    </p:selectOneMenu>
+			                    </h:selectOneMenu>
 			                    
 			                    <h:outputText value="Estado " />
                                 <p:inputText value="#{actividadEditMB.bean.estado}" />
@@ -40,10 +40,10 @@
                                 <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.descripcion}" />   
                                 	
                                 <h:outputText value="Responsable " />
-                                <p:selectOneMenu id="selectResponsable" value="#{actividadEditMB.idResponsable}"  > 
+                                <h:selectOneMenu id="selectResponsable" value="#{actividadEditMB.idResponsable}"  > 
                                  	<f:selectItem itemLabel="#{actividadEditMB.bean.responsable.usuario}" itemValue="#{actividadEditMB.bean.responsable.usuarioId}" /> 
 			                        <f:selectItems value="#{actividadEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
-			                    </p:selectOneMenu>		
+			                    </h:selectOneMenu>		
 			                                      
                                 <h:outputText value="fechaCreacion " />
                                 <p:calendar value="#{actividadEditMB.bean.fechaCreacion}" pattern="dd/MM/yyyy HH:mm" /> 
@@ -55,16 +55,16 @@
                                 <p:inputTextarea rows="3" cols="20" value="#{actividadEditMB.bean.pregunta}" /> 
 
 			                    <h:outputText value="alerta " />
-                                <p:selectOneMenu id="selectAlerta" value="#{actividadEditMB.idAlerta}"  > 
+                                <h:selectOneMenu id="selectAlerta" value="#{actividadEditMB.idAlerta}"  > 
                                  	<f:selectItem itemLabel="#{actividadEditMB.bean.alerta.descripcion}" itemValue="#{actividadEditMB.bean.alerta.tipoAlarmaId}" /> 
 			                        <f:selectItems value="#{actividadEditMB.alertas}" var="alerta" itemLabel="#{alerta.descripcion}" itemValue="#{alerta.tipoAlarmaId}" />                                  
-			                    </p:selectOneMenu>	
+			                    </h:selectOneMenu>	
 			                    
 			                    <h:outputText value="alarma " />
-                                <p:selectOneMenu id="selectAlarma" value="#{actividadEditMB.idAlarma}"  > 
+                                <h:selectOneMenu id="selectAlarma" value="#{actividadEditMB.idAlarma}"  > 
                                  	<f:selectItem itemLabel="#{actividadEditMB.bean.alarma.descripcion}" itemValue="#{actividadEditMB.bean.alarma.tipoAlarmaId}" /> 
 			                        <f:selectItems value="#{actividadEditMB.alarmas}" var="alarma" itemLabel="#{alarma.descripcion}" itemValue="#{alarma.tipoAlarmaId}" />                                  
-			                    </p:selectOneMenu>	
+			                    </h:selectOneMenu>	
                                                           
                             </h:panelGrid>
                         </p:panel> 

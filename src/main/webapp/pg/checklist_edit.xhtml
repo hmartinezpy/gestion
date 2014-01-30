@@ -25,8 +25,9 @@
                             <h:panelGrid columns="2" cellpadding="3">
                             		                    
                                 <h:outputText value="Descripcion " />
-                                <p:inputText required="true" value="#{checklistEditMB.bean.descripcion}" />
-                                
+                                <p:inputText required="true" value="#{checklistEditMB.bean.descripcion}" style="width:380px;" >
+                                	<f:validateRequired></f:validateRequired>
+                                </p:inputText>
                             </h:panelGrid>
                         </p:panel> 
                         <br></br>

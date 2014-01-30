@@ -22,7 +22,7 @@ import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
-@PreviousView("/pg/proceso_list.xhtml")
+@PreviousView("/pg/main_view.xhtml")
 public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 
 	private static final long serialVersionUID = 1L;

@@ -28,10 +28,10 @@
                                 <p:inputText value="#{tipoAlarmaEditMB.bean.descripcion}" />
                                 
                                 <h:outputText value="Tipo " />
-                                  <p:selectOneMenu id="selecTipo" value="#{tipoAlarmaEditMB.bean.tipo}" >
+                                  <h:selectOneMenu id="selecTipo" value="#{tipoAlarmaEditMB.bean.tipo}" >
 			                    	<f:selectItem itemLabel="Alarma" itemValue="Ala" />
 	                            	<f:selectItem itemLabel="Alerta" itemValue="Ale" />	 
-			                    </p:selectOneMenu>
+			                    </h:selectOneMenu>
 
                                 <h:outputText value="Dias " />
                                 <p:inputText value="#{tipoAlarmaEditMB.bean.dias}" />
@@ -40,16 +40,16 @@
                                 <p:inputText value="#{tipoAlarmaEditMB.bean.horas}" />                                                                   
                                 
                                 <h:outputText value="Responsable1 " />
-                                <p:selectOneMenu id="selectResponsable1" value="#{tipoAlarmaEditMB.idResponsable1}"  > 
+                                <h:selectOneMenu id="selectResponsable1" value="#{tipoAlarmaEditMB.idResponsable1}"  > 
                                  	<f:selectItem itemLabel="#{tipoAlarmaEditMB.bean.responsable1.usuario}" itemValue="#{tipoAlarmaEditMB.bean.responsable1.usuarioId}" /> 
 			                        <f:selectItems value="#{tipoAlarmaEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
-			                    </p:selectOneMenu>		
+			                    </h:selectOneMenu>		
 			                    
 			                    <h:outputText value="Responsable2 " />
-                                <p:selectOneMenu id="selectResponsable2" value="#{tipoAlarmaEditMB.idResponsable2}"  > 
+                                <h:selectOneMenu id="selectResponsable2" value="#{tipoAlarmaEditMB.idResponsable2}"  > 
                                  	<f:selectItem itemLabel="#{tipoAlarmaEditMB.bean.responsable2.usuario}" itemValue="#{tipoAlarmaEditMB.bean.responsable2.usuarioId}" /> 
 			                        <f:selectItems value="#{tipoAlarmaEditMB.usuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />                                  
-			                    </p:selectOneMenu>
+			                    </h:selectOneMenu>
                                                             
                             </h:panelGrid>
                         </p:panel> 

@@ -705,6 +705,40 @@ public class MainViewMB {
 		}
 		return aret;
 	}
+	
+	private String subActividadDescripcion;
+	private long subActividadResponsable;
+	
+	
+	
+	public String getSubActividadDescripcion() {
+	
+		return subActividadDescripcion;
+	}
+
+	
+	public void setSubActividadDescripcion(String subActividadDescripcion) {
+	
+		this.subActividadDescripcion = subActividadDescripcion;
+	}
+
+	
+	public long getSubActividadResponsable() {
+	
+		return subActividadResponsable;
+	}
+
+	
+	public void setSubActividadResponsable(long subActividadResponsable) {
+	
+		this.subActividadResponsable = subActividadResponsable;
+	}
+
+	public void nuevaSubActividad(){
+		this.subActividadResponsable=0;
+		this.subActividadDescripcion=null;
+		
+	}
 
 	public void crearSubActividad() {
 
@@ -713,15 +747,19 @@ public class MainViewMB {
 		} else {
 			try {
 				Actividad actividad = this.actividadSeleccionada;
-				if (actividad.getResponsable() != null) {
-					actividad.setResponsable(this.usuarioBC.load(actividad
-							.getResponsable().getUsuarioId()));
+				if (this.subActividadResponsable!=0) {
+					actividad.setResponsable(this.usuarioBC.load(subActividadResponsable));
 				}
 				this.actividadBC
+				.crearSubActividad(actividad,
+						this.subActividadDescripcion,
+						actividad.getResponsable(),
+						null, null);
+				/*this.actividadBC
 						.crearSubActividad(actividad,
 								this.actividadSeleccionada.getDescripcion(),
 								this.actividadSeleccionada.getResponsable(),
-								null, null);
+								null, null);*/
 				//XXX: ?!?!
 				this.elegirProceso(procesoSeleccionado);
 				this.agregarMensaje("SubActividad creada");

@@ -349,22 +349,22 @@
 								readonly="true" />
 
 							<h:outputText value="Estado " />
-							<p:selectOneMenu id="selectEstado"
+							<h:selectOneMenu id="selectEstado"
 								value="#{procesoListMB.actividadSeleccionada.estado}"
 								rendered="#{!procesoListMB.subActividad}">
 								<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.estadosActividad}"
 									var="estado" itemLabel="#{estado.descripcion}"
 									itemValue="#{estado.codigo}" />
-							</p:selectOneMenu>
-							<p:selectOneMenu id="selectEstadoSubActividad"
+							</h:selectOneMenu>
+							<h:selectOneMenu id="selectEstadoSubActividad"
 								value="#{procesoListMB.actividadSeleccionada.estado}"
 								rendered="#{procesoListMB.subActividad}">
 								<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.estadosSubActividad}"
 									var="estado" itemLabel="#{estado.descripcion}"
 									itemValue="#{estado.codigo}" />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<h:outputText value="Descripcion " />
 							<p:inputTextarea rows="2" cols="50"
@@ -372,14 +372,14 @@
 								maxlength="50" />
 
 							<h:outputText value="Responsable " />
-							<p:selectOneMenu id="selectResponsable"
+							<h:selectOneMenu id="selectResponsable"
 								value="#{procesoListMB.actividadSeleccionada.responsable}"
 								converter="usuarioConverter">
 								<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.usuariosPorRol}"
 									var="usuario" itemLabel="#{usuario.usuario}"
 									itemValue="#{usuario}" />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<h:outputText value="fechaCreacion " />
 							<p:calendar
@@ -409,13 +409,13 @@
 
 							<h:outputText value="Respuesta "
 								rendered="#{procesoListMB.mostrarCampoRespuesta}" />
-							<p:selectOneMenu id="SelectRespuesta"
+							<h:selectOneMenu id="SelectRespuesta"
 								value="#{procesoListMB.actividadSeleccionada.respuesta}"
 								rendered="#{procesoListMB.mostrarCampoRespuesta}">
 								<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.siNoList}" var="estado"
 									itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<h:outputText value="fechaCobro "
 								rendered="#{procesoListMB.canControlFactura}" />
@@ -477,7 +477,7 @@
 					<p:panel style="width:400px">
 						<h:panelGrid columns="2" id="panelSubActividad" cellpadding="5">
 							<h:outputText value="Responsable " />
-							<p:selectOneMenu required="true" requiredMessage="Se debe seleccionar un responsable"
+							<h:selectOneMenu required="true" requiredMessage="Se debe seleccionar un responsable"
 								id="selectSigteActividadResponsable"
 								value="#{procesoListMB.sigteUsuario}"
 								converter="usuarioConverter">
@@ -487,7 +487,7 @@
 									itemValue="#{usuario}" />
 								<f:ajax render=":formSigteActividad:panelSubActividad" />
 								<f:validateRequired />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<h:outputText value="Comentario " />
 							<p:inputTextarea rows="3" cols="40" maxlength="250"
@@ -517,14 +517,14 @@
 								id="descripcionSubActividad" />
 
 							<h:outputText value="Responsable " />
-							<p:selectOneMenu id="selectResponsable"
+							<h:selectOneMenu id="selectResponsable"
 								value="#{procesoListMB.actividadSeleccionada.responsable}"
 								converter="usuarioConverter">
 								<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.allUsuarios}"
 									var="usuario" itemLabel="#{usuario.usuario}"
 									itemValue="#{usuario}" />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<p:commandButton onclick="dlgSubActividad.hide(), dlg2.hide()"
 								value="Confirmar" ajax="false" icon="ui-icon-circle-check"
@@ -623,14 +623,14 @@
 
 
 							<h:outputText value="Respuesta " />
-							<p:selectOneMenu id="SelectRespuesta"
+							<h:selectOneMenu id="SelectRespuesta"
 								value="#{procesoListMB.checklistDetalle.respuesta}">
 								<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 								<f:selectItems value="#{procesoListMB.siNoList}"
 									var="respuestaChecklist"
 									itemLabel="#{respuestaChecklist.descripcion}"
 									itemValue="#{respuestaChecklist.codigo}" />
-							</p:selectOneMenu>
+							</h:selectOneMenu>
 
 							<p:commandButton value="Guardar"
 								actionListener="#{procesoListMB.editarChecklistDetalle()}"
@@ -982,12 +982,12 @@
 					</p:toolbarGroup>
 					<div style="margin-top: 10px;">
 						<h:outputText value="Carpeta: " style="vertical-align:top;" />
-						<p:selectOneMenu value="#{procesoListMB.carpetaFileUpload}"
+						<h:selectOneMenu value="#{procesoListMB.carpetaFileUpload}"
 							effect="fold" editable="true" id="selectCarpeta">
 							<f:selectItem itemLabel="---Sin carpeta---" itemValue="" />
 							<f:selectItems value="#{procesoListMB.carpetas}" />
 							<f:ajax event="valueChange" />
-						</p:selectOneMenu>
+						</h:selectOneMenu>
 					</div>
 
 				</h:form>

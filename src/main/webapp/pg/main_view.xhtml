@@ -35,6 +35,47 @@
         .ui-tabs {
             border:0px none;
         }
+         select {
+					cursor: pointer;
+					white-space: pre;
+					-webkit-rtl-ordering: logical;
+					-webkit-appearance: menulist;
+					box-sizing: border-box;
+					align-items: center;
+					-webkit-border-radius: 4px;
+					-webkit-box-shadow: 0px 0px 5px #acbece, inset 0 2px 2px #8f8f8f;
+					box-shadow: 0px 0px 5px #acbece, inset 0 2px 2px #8f8f8f;
+					
+				   	list-style: decimal-leading-zero; /* better look for others, override cascade from OL */
+					list-style-position: outside !important;
+					background-color: #FFFFFF;
+					color: #5C5C5C;
+					line-height: 10px;
+					
+				  	height: 24px;
+				  	font-family: Verdana,Arial,sans-serif;
+                	font-size: 100% !important;
+                	border-radius: 4px;
+                	
+					border-top-color: rgb(172, 190, 206);
+					border-top-style: solid;
+					border-top-width: 1px;
+					border-right-color: rgb(172, 190, 206);
+					border-right-style: solid;
+					border-right-width: 1px;
+					border-bottom-color: rgb(172, 190, 206);
+					border-bottom-style: solid;
+					border-bottom-width: 1px;
+					border-left-color: rgb(172, 190, 206);
+					border-left-style: solid;
+					border-left-width: 1px;
+					border-collapse: separate;
+					border-spacing: 2px;
+					border-color: #acbece;
+				}
+			select[disabled] { 
+				  	background-color: #E4E4E4; 
+				}
 	</style>
 </h:head>
 
@@ -100,10 +141,10 @@
 							</p:toolbarGroup>
 
 							<p:toolbarGroup align="right">
-								<p:selectOneMenu id="selectClienteFilter" value="#{mainViewMB.clienteSeleccionado}"  converter="clienteConverter" style="display: inline-block; vertical-align: top;">
+								<h:selectOneMenu id="selectClienteFilter" value="#{mainViewMB.clienteSeleccionado}"  converter="clienteConverter" style="display: inline-block; vertical-align: top;">
 									<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 									<f:selectItems value="#{mainViewMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente}" />
-								</p:selectOneMenu>
+								</h:selectOneMenu>
 								<p:commandButton id="filtroClientes" action="#{mainViewMB.filtrarProcesos}" value="Filtrar"
 												update=":procesosForm:procesosList,:actividadesForm:actividadesList" />
 
@@ -336,24 +377,24 @@
 					<p:inputText value="#{mainViewMB.actividadSeleccionada.cronogramaDetalle.tarea}" readonly="true" />
 
 					<h:outputText value="Estado " />
-					<p:selectOneMenu id="selectEstado" value="#{mainViewMB.actividadSeleccionada.estado}"  rendered="#{!mainViewMB.subActividad}">
+					<h:selectOneMenu id="selectEstado" value="#{mainViewMB.actividadSeleccionada.estado}"  rendered="#{!mainViewMB.subActividad}">
 						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.estadosActividad}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
-					</p:selectOneMenu>
+					</h:selectOneMenu>
 
-					<p:selectOneMenu id="selectEstadoSubActividad" value="#{mainViewMB.actividadSeleccionada.estado}"  rendered="#{mainViewMB.subActividad}">
+					<h:selectOneMenu id="selectEstadoSubActividad" value="#{mainViewMB.actividadSeleccionada.estado}"  rendered="#{mainViewMB.subActividad}">
 						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.estadosSubActividad}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
-					</p:selectOneMenu>
+					</h:selectOneMenu>
 
 					<h:outputText value="Descripcion " />
-					<p:inputTextarea rows="2" cols="50" value="#{mainViewMB.actividadSeleccionada.descripcion}" maxlength="50"/>
+					<p:inputTextarea rows="2" cols="40" value="#{mainViewMB.actividadSeleccionada.descripcion}" maxlength="50"/>
 
 					<h:outputText value="Responsable " />
-					<p:selectOneMenu id="selectResponsable" value="#{mainViewMB.actividadSeleccionada.responsable}" converter="usuarioConverter"  >
+					<h:selectOneMenu id="selectResponsable" value="#{mainViewMB.actividadSeleccionada.responsable}" converter="usuarioConverter"  >
 						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.usuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
-					</p:selectOneMenu>
+					</h:selectOneMenu>
 
 					<h:outputText value="fechaCreacion " />
 					<p:calendar value="#{mainViewMB.actividadSeleccionada.fechaCreacion}" pattern="dd/MM/yyyy HH:mm" disabled="true"/>
@@ -367,13 +408,13 @@
 					<p:calendar id="cal_fechaFinPrevista" value="#{mainViewMB.actividadSeleccionada.fechaFinPrevista}" pattern="dd/MM/yyyy HH:mm" />
 
 					<h:outputText value="Pregunta " rendered="#{mainViewMB.mostrarCampoRespuesta}"/>
-					<p:inputTextarea rows="2" cols="50" value="#{mainViewMB.actividadSeleccionada.pregunta}" readonly="true" rendered="#{mainViewMB.mostrarCampoRespuesta}" />
+					<p:inputTextarea rows="2" cols="30" value="#{mainViewMB.actividadSeleccionada.pregunta}" readonly="true" rendered="#{mainViewMB.mostrarCampoRespuesta}" />
 
 					<h:outputText value="Respuesta " rendered="#{mainViewMB.mostrarCampoRespuesta}"/>
-					<p:selectOneMenu id="SelectRespuesta" value="#{mainViewMB.actividadSeleccionada.respuesta}" rendered="#{mainViewMB.mostrarCampoRespuesta}"  >
+					<h:selectOneMenu id="SelectRespuesta" value="#{mainViewMB.actividadSeleccionada.respuesta}" rendered="#{mainViewMB.mostrarCampoRespuesta}"  >
 						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.siNoList}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
-					</p:selectOneMenu>
+					</h:selectOneMenu>
 
 					<h:outputText value="fechaCobro " rendered="#{mainViewMB.canControlFactura}"/>
 					<p:calendar id="cal_fechaCobro" value="#{mainViewMB.actividadSeleccionada.fechaCobro}" pattern="dd/MM/yyyy HH:mm"  rendered="#{mainViewMB.canControlFactura}"/>
@@ -401,7 +442,7 @@
 
 					<p:commandButton value="Crear Sub Actividad" id="subActividad" oncomplete="subActividadDialog.show()"
 								icon="ui-icon-newwin" update=":messages,:subActividadForm:subActividadPanel"
-								rendered="#{!mainViewMB.subActividad}"/>
+								rendered="#{!mainViewMB.subActividad}" action="#{mainViewMB.nuevaSubActividad}"/>
 
 					<p:commandButton value="Devolver Actividad" id="devolverActividad" onclick="devolverActividadDialog.show()"
 								icon="ui-icon-seek-prev" update=":messages,:devolverActividadForm:devolverActividadPanel"
@@ -417,13 +458,13 @@
 			<p:panel style="width:600px"  >
 				<h:panelGrid columns="2" id="sigteActividadPanel" cellpadding="5" >
 					<h:outputText value="Responsable " />
-					<p:selectOneMenu id="selectSigteActividadResponsable" value="#{mainViewMB.sigteUsuario}" converter="usuarioConverter" required="true" 
+					<h:selectOneMenu id="selectSigteActividadResponsable" value="#{mainViewMB.sigteUsuario}" converter="usuarioConverter" required="true" 
 					requiredMessage="Se debe seleccionar un responsable" >
 						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.sigteUsuariosPorRol}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
 						<f:ajax render=":sigteActividadForm:sigteActividadPanel" />
 						<f:validateRequired />
-					</p:selectOneMenu>
+					</h:selectOneMenu>
 					<h:outputText value="Comentario " />
 					<p:inputTextarea rows="3" cols="50" maxlength="250" value="#{mainViewMB.descripcionObservacion}" />
 
@@ -456,16 +497,21 @@
 			<p:panel style="width:600px">
 				<h:panelGrid columns="2" id="subActividadPanel" cellpadding="5" >
 					<h:outputText value="Descripcion " />
-					<p:inputTextarea rows="1" cols="50" maxlength="50" value="#{mainViewMB.actividadSeleccionada.descripcion}" id="descripcionSubActividad"/>
-
+					<p:inputTextarea rows="1" cols="30" maxlength="50" value="#{mainViewMB.subActividadDescripcion}" id="descripcionSubActividad" required="true">
+					<f:validateRequired></f:validateRequired>
+					<f:ajax render=":subActividadForm:subActividadPanel" />
+					</p:inputTextarea>
 					<h:outputText value="Responsable " />
-					<p:selectOneMenu id="selectResponsable" value="#{mainViewMB.actividadSeleccionada.responsable}" converter="usuarioConverter"  >
-						<f:selectItem itemLabel="---Seleccione---" itemValue="" />
-						<f:selectItems value="#{mainViewMB.allUsuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario}" />
-					</p:selectOneMenu>
+					<h:selectOneMenu id="selectResponsable" value="#{mainViewMB.subActividadResponsable}"  required="true" >
+						<f:selectItem itemLabel="---Seleccione---" itemValue="0" />
+						<f:selectItems value="#{mainViewMB.allUsuarios}" var="usuario" itemLabel="#{usuario.usuario}" itemValue="#{usuario.usuarioId}" />
+						<f:validateRequired></f:validateRequired>
+						<f:ajax render=":subActividadForm:subActividadPanel" />
+					</h:selectOneMenu>
 
 					<p:commandButton onclick="subActividadDialog.hide(), editarActividadDialog.hide()" value="Confirmar" ajax="false"
-						icon="ui-icon-circle-check" actionListener="#{mainViewMB.crearSubActividad}"
+						icon="ui-icon-circle-check" actionListener="#{mainViewMB.crearSubActividad}" 
+						disabled="#{facesContext.validationFailed || mainViewMB.subActividadDescripcion==null || mainViewMB.subActividadResponsable==0 }"
 						update=":messages,:procesosForm:procesosList,:actividadesForm:ActividadesList" >
 						<f:setPropertyActionListener value="#{responsable}" target="#{mainViewMB.actividadSeleccionada.responsable}" />
 						<f:setPropertyActionListener value="#{descripcion}" target="#{mainViewMB.actividadSeleccionada.descripcion}" />
@@ -528,10 +574,10 @@
 
 
 					<h:outputText value="Respuesta " />
-					<p:selectOneMenu id="SelectRespuesta" value="#{mainViewMB.checklistDetalle.respuesta}">
+					<h:selectOneMenu id="SelectRespuesta" value="#{mainViewMB.checklistDetalle.respuesta}">
 						<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 						<f:selectItems value="#{mainViewMB.siNoList}" var="respuestaChecklist" itemLabel="#{respuestaChecklist.descripcion}" itemValue="#{respuestaChecklist.codigo}" />
-					</p:selectOneMenu>
+					</h:selectOneMenu>
 
 					<p:commandButton value="Guardar" actionListener="#{mainViewMB.editarChecklistDetalle()}"
                                            oncomplete="editarChecklistDialog.hide()" icon="ui-icon-disk" update=":messages,:checklistForm:checklistList"/>
@@ -640,11 +686,11 @@
 			<div style="margin-top:10px;">
 				<h:outputText value="Carpeta: " style="vertical-align:top;" />
 
-				<p:selectOneMenu value="#{mainViewMB.carpetaFileUpload}" effect="fold" editable="true" id="selectCarpeta" >
+				<h:selectOneMenu value="#{mainViewMB.carpetaFileUpload}" effect="fold" editable="true" id="selectCarpeta" >
 					<f:selectItem itemLabel="---Sin carpeta---" itemValue="" />
 					<f:selectItems value="#{mainViewMB.carpetas}" />
 					<f:ajax event="valueChange" />
-				</p:selectOneMenu>
+				</h:selectOneMenu>
 			</div>
 
 		</h:form>
