@@ -14,6 +14,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -31,6 +32,7 @@ import org.primefaces.model.TreeNode;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
+import org.ticpy.tekoporu.template.AbstractListPageBean;
 
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
@@ -60,7 +62,11 @@ import py.com.ait.gestion.domain.Usuario;
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
 @PreviousView("/pg/main_view.xhtml")
-public class MainViewMB {
+public class MainViewMB extends AbstractListPageBean<Proceso, Long> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/* Variables para el árbol de la izquierda */
 	private TreeNode items;
 	private TreeNode selectedItem;
@@ -1206,5 +1212,11 @@ public class MainViewMB {
 			this.agregarMensaje("Observacion eliminada");
 
 		}
+	}
+
+	@Override
+	protected List<Proceso> handleResultList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

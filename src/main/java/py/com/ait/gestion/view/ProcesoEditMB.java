@@ -21,7 +21,7 @@ import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
 
 @ViewController
-@NextView("/pg/proceso_edit.xhtml")
+@NextView("/pg/main_view.xhtml")
 @PreviousView("/pg/main_view.xhtml")
 public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 

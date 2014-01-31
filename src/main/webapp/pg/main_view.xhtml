@@ -222,7 +222,7 @@
 							</p:column> 
 
 							<p:column style="width:30px;">
-								<p:commandLink action="/pg/proceso_edit.xhtml"
+								<p:commandLink action="#{mainViewMB.getNextView}" ajax="false"
 												rendered="#{mainViewMB.usuarioId eq proceso.responsable.usuarioId or mainViewMB.isAdminUser}">
 									<span class="ui-icon ui-icon-pencil" title="Editar" />
 									<f:param name="id" value="#{proceso.procesoId}" />
