@@ -77,7 +77,9 @@
 								<p:commandButton value="Crear" image="ui-icon-disk" update="messages" action="#{procesoEditMB.insert}"
 									rendered="#{!procesoEditMB.updateMode}" ajax="true" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);" />
 								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{procesoEditMB.update}"
-									rendered="#{procesoEditMB.updateMode}" ajax="true" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);"/>
+									rendered="#{procesoEditMB.updateMode}" ajax="true" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);">
+										<f:param name="id" value="#{procesoEditMB.bean.procesoId}"/>
+								</p:commandButton>
 								<p:button value="Volver" image="ui-icon-arrowreturnthick-1-w" 
 									outcome="#{procesoEditMB.previousView}" />
 								<p:commandButton value="Empezar Actividades" id="resolver" onclick="dlgSigteActividad.show()"
@@ -100,6 +102,7 @@
 							<p:commandButton onclick="dlgSigteActividad.hide(), dlg2.hide()" value="Confirmar" ajax="false"
 								icon="ui-icon-circle-check" action="#{procesoEditMB.empezarActividades()}">
 								<f:setPropertyActionListener value="#{responsable}" target="#{procesoEditMB.bean.responsable}" />
+								<f:param name="id" value="#{procesoEditMB.bean.procesoId}"/>
 							</p:commandButton>
 						</h:panelGrid>
 					</p:panel>

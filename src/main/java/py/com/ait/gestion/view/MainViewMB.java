@@ -14,7 +14,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -32,7 +31,7 @@ import org.primefaces.model.TreeNode;
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
-import org.ticpy.tekoporu.template.AbstractListPageBean;
+import org.ticpy.tekoporu.template.AbstractEditPageBean;
 
 import py.com.ait.gestion.business.ActividadBC;
 import py.com.ait.gestion.business.ActividadChecklistDetalleBC;
@@ -62,10 +61,8 @@ import py.com.ait.gestion.domain.Usuario;
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
 @PreviousView("/pg/main_view.xhtml")
-public class MainViewMB extends AbstractListPageBean<Proceso, Long> {
-	/**
-	 * 
-	 */
+public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
+
 	private static final long serialVersionUID = 1L;
 	/* Variables para el árbol de la izquierda */
 	private TreeNode items;
@@ -145,6 +142,9 @@ public class MainViewMB extends AbstractListPageBean<Proceso, Long> {
 		getCurrentUserData();
 		createTree();
 		setClientes(clienteBC.listar());
+		if(this.getBean().getProcesoId() != null){
+			setProcesoId(this.getBean().getProcesoId());
+		}
 	}
 
 	private void createTree() {
@@ -714,36 +714,33 @@ public class MainViewMB extends AbstractListPageBean<Proceso, Long> {
 	
 	private String subActividadDescripcion;
 	private long subActividadResponsable;
-	
-	
-	
+
 	public String getSubActividadDescripcion() {
-	
+
 		return subActividadDescripcion;
 	}
 
 	
 	public void setSubActividadDescripcion(String subActividadDescripcion) {
-	
+
 		this.subActividadDescripcion = subActividadDescripcion;
 	}
 
 	
 	public long getSubActividadResponsable() {
-	
+
 		return subActividadResponsable;
 	}
 
 	
 	public void setSubActividadResponsable(long subActividadResponsable) {
-	
+
 		this.subActividadResponsable = subActividadResponsable;
 	}
 
 	public void nuevaSubActividad(){
 		this.subActividadResponsable=0;
 		this.subActividadDescripcion=null;
-		
 	}
 
 	public void crearSubActividad() {
@@ -1214,9 +1211,52 @@ public class MainViewMB extends AbstractListPageBean<Proceso, Long> {
 		}
 	}
 
+	public void setProcesoId(Long procesoId){
+		//Obtener el proceso a partir del id
+		Proceso proceso = procesoBC.load(procesoId);
+		//Marcar en el árbol el cronograma del proceso recibido como parámetro
+		this.cronogramaSeleccionado=proceso.getCronograma();
+		setSelectedTreeNode(proceso.getCronograma().toString());
+
+		//Establecer la lista de procesos a los procesos de ese cronograma
+		procesos = procesoBC.getProcesosByCronogramaForUser(filtroEstadoProceso, proceso.getCronograma().getCronogramaId(), currentUser);
+
+		//Marcar como seleccionado el proceso con id recibido como parámetro en el datatable
+		procesoSeleccionado = proceso;
+
+	}
+
+	public void setSelectedTreeNode(String name) {
+		List<TreeNode> tree = items.getChildren();
+		for(TreeNode node:tree) {
+			if(node.getData().toString().contains(name)) {
+				System.out.println("found the node to select");
+				node.setSelected(true);
+				break;
+			}
+		}
+	}
+
 	@Override
-	protected List<Proceso> handleResultList() {
+	public String delete() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String insert() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String update() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void handleLoad() {
+		this.setBean(this.procesoBC.load(this.getId()));
 	}
 }
