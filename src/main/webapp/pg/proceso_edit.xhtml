@@ -81,7 +81,9 @@
 										<f:param name="id" value="#{procesoEditMB.bean.procesoId}"/>
 								</p:commandButton>
 								<p:button value="Volver" image="ui-icon-arrowreturnthick-1-w" 
-									outcome="#{procesoEditMB.previousView}" />
+									outcome="#{procesoEditMB.previousView}">
+									<f:param name="id" value="#{procesoEditMB.bean.procesoId}"/>
+								</p:button>
 								<p:commandButton value="Empezar Actividades" id="resolver" onclick="dlgSigteActividad.show()"
 											icon="ui-icon-play" update=":formSigteActividad:selectSigteActividadResponsable" 
 											action="#{procesoEditMB.nextActividadUsuariosPorRol}" 

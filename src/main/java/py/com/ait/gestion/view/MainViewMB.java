@@ -701,6 +701,12 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 
 		Actividad actividad = this.actividadSeleccionada;
 		boolean aret = true;
+		if(actividad.getActividadAnterior() == null) {
+			String mensaje = "No puede devolver la primera actividad, ya que no existe actividad previa";
+			System.out.println("validarSiPuedeResolverActividad() " + mensaje);
+			this.agregarMensajeError(mensaje);
+			aret = false;
+		}
 		if (this.procesoBC.existenSubTareas(actividad)) {
 
 			String mensaje = "No puede devolver la actividad si cuenta con subtareas!";
@@ -1221,9 +1227,9 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 		//Establecer la lista de procesos a los procesos de ese cronograma
 		procesos = procesoBC.getProcesosByCronogramaForUser(filtroEstadoProceso, proceso.getCronograma().getCronogramaId(), currentUser);
 
-		//Marcar como seleccionado el proceso con id recibido como parámetro en el datatable
-		procesoSeleccionado = proceso;
-
+		//Elegir el proceso con id recibido como parámetro en el datatable
+		elegirProceso(proceso);
+		
 	}
 
 	public void setSelectedTreeNode(String name) {
