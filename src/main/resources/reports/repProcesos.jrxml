@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.6105100000000014"/>
-	<property name="ireport.x" value="48"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="46"/>
 	<style name="Crosstab Data Text" hAlign="Center"/>
 	<style name="table">
@@ -34,7 +34,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select c.nombre as cliente, p.fecha_inicio_real as fecha_inicio,
+		<![CDATA[select p.nro_proceso, c.nombre as cliente, p.fecha_inicio_real as fecha_inicio,
 coalesce(p.fecha_fin_reprogramada, p.fecha_fin_prevista) as fecha_fin,
 cr.nombre as tipo_proceso, p.estado, now()
 from  cronograma cr, proceso p
@@ -45,6 +45,7 @@ cr.id = p.cronograma and
 p.estado in ('NUE','PRO')
 order by cr.nombre;]]>
 	</queryString>
+	<field name="nro_proceso" class="java.lang.String"/>
 	<field name="cliente" class="java.lang.String"/>
 	<field name="fecha_inicio" class="java.sql.Timestamp"/>
 	<field name="fecha_fin" class="java.sql.Timestamp"/>
@@ -62,7 +63,7 @@ order by cr.nombre;]]>
 		<groupHeader>
 			<band height="29">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement x="81" y="8" width="353" height="20"/>
+					<reportElement x="58" y="8" width="444" height="20"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{tipo_proceso}]]></textFieldExpression>
 				</textField>
@@ -199,7 +200,7 @@ order by cr.nombre;]]>
 	<columnHeader>
 		<band height="33">
 			<staticText>
-				<reportElement x="281" y="11" width="93" height="20"/>
+				<reportElement x="349" y="11" width="93" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -212,7 +213,7 @@ order by cr.nombre;]]>
 				<text><![CDATA[FECHA FIN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="181" y="11" width="100" height="20"/>
+				<reportElement x="249" y="11" width="100" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -225,7 +226,7 @@ order by cr.nombre;]]>
 				<text><![CDATA[FECHA INICIO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="374" y="11" width="60" height="20"/>
+				<reportElement x="442" y="11" width="60" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -238,7 +239,7 @@ order by cr.nombre;]]>
 				<text><![CDATA[ESTADO]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="81" y="11" width="100" height="20"/>
+				<reportElement x="149" y="11" width="100" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -250,19 +251,32 @@ order by cr.nombre;]]>
 				</textElement>
 				<text><![CDATA[CLIENTE]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="58" y="11" width="91" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[NRO PROC]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="81" y="0" width="354" height="20" forecolor="#9BE0FF" backcolor="#9BE0FF">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="58" y="0" width="445" height="20" forecolor="#9BE0FF" backcolor="#9BE0FF">
 					<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue() % 2 == 0)]]></printWhenExpression>
 				</reportElement>
 				<textElement/>
 				<text><![CDATA[Static text]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="81" y="0" width="100" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="149" y="0" width="100" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -273,7 +287,7 @@ order by cr.nombre;]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{cliente}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="181" y="0" width="100" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="249" y="0" width="100" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -284,7 +298,7 @@ order by cr.nombre;]]>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{fecha_inicio}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="281" y="0" width="100" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="349" y="0" width="100" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -295,7 +309,7 @@ order by cr.nombre;]]>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{fecha_fin}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="381" y="0" width="53" height="20"/>
+				<reportElement stretchType="RelativeToBandHeight" x="449" y="0" width="53" height="20"/>
 				<box>
 					<topPen lineWidth="0.75"/>
 					<leftPen lineWidth="0.75"/>
@@ -304,6 +318,17 @@ order by cr.nombre;]]>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="58" y="0" width="91" height="20"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nro_proceso}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

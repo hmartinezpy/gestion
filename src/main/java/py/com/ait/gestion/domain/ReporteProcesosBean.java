@@ -8,7 +8,7 @@ import java.util.Date;
 public class ReporteProcesosBean implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-
+	private String nro_proceso;
 	private String tipo_proceso;
 	private String cliente;
 	private String estado;
@@ -78,5 +78,18 @@ public class ReporteProcesosBean implements Serializable {
 		this.now = now;
 	}
 
+	
+	public String getNro_proceso() {
+	
+		return nro_proceso;
+	}
+
+	
+	public void setNro_proceso(String nro_proceso) {
+	
+		this.nro_proceso = nro_proceso;
+	}
+
+	
 	
 }

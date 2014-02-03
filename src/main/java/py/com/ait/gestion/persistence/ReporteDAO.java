@@ -86,7 +86,7 @@ public class ReporteDAO {
 		SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd");
 		this.sqlQuery = "select c.nombre as cliente, p.fecha_inicio_real as fecha_inicio, "
 				+ "coalesce(p.fecha_fin_reprogramada, p.fecha_fin_prevista) as fecha_fin, "
-				+ "cr.nombre as tipo_proceso, p.estado, now() "
+				+ "cr.nombre as tipo_proceso, p.estado, p.nro_proceso "
 				+ "from  cronograma cr, proceso p "
 				+ "left join cliente c on c.id = p.cliente "
 				+ "where to_char(p.fecha_inicio_real,'YYYY-MM-DD') >= '"
@@ -122,7 +122,7 @@ public class ReporteDAO {
 			bean.setFecha_fin((Date) row[2]);
 			bean.setTipo_proceso(row[3].toString());
 			bean.setEstado(row[4].toString());
-			bean.setNow((Timestamp) row[5]);
+			bean.setNro_proceso(row[5].toString());
 			result.add(bean);
 		}
 		return result;
