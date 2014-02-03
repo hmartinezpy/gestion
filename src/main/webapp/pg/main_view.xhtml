@@ -793,7 +793,7 @@
 			<p:panel style="width:400px" id="nuevaObservacionPanel" >
 				<h:panelGrid columns="2" cellpadding="5" >
 					<h:outputText value="Descripcion " />
-					<p:inputTextarea rows="3" cols="40" maxlength="250" value="#{mainViewMB.descripcionObservacion}" required="true" />
+					<p:inputTextarea rows="3" cols="35" maxlength="250" value="#{mainViewMB.descripcionObservacion}" required="true" />
 					<p:commandButton value="Agregar"  actionListener="#{mainViewMB.registrarObservacion}"
 									oncomplete="nuevaObservacionDialog.hide()" icon="ui-icon-disk" 
 									update=":messages,:observacionesForm:observacionesList,nuevaObservacionPanel"/>

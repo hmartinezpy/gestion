@@ -6,6 +6,8 @@
 	            template="../template/plantilla.xhtml">
     <ui:define name="head">:: Gestión de Documentos ::</ui:define>
     <ui:define name="content">
+    	<h1 class="title ui-widget-header ui-corner-all" align="center">Rol</h1>
+        <div class="entry" style="line-height:200%;width:550px; margin-left: 300px;">
 		<h:form prependId="false" rendered="#{rolListMB.editar}">
 			<p:fieldset legend="#{messages['rol.label']}" toggleable="true" toggleSpeed="500">
 				<h:panelGrid id="fields" columns="3">
@@ -45,5 +47,6 @@
 		<h:form rendered="#{!rolListMB.editar}">
 			<h1 align="center">Acceso Denegado</h1>
 		</h:form>
+		</div>
 	</ui:define>
 </ui:composition>
