@@ -134,7 +134,6 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 
 		List<Long> result = null;
 		String filtro = "where p.procesoId = a.master.procesoId";
-		String filtroUsuario = "";
 		if (filtroEstado.equals("C")) {
 
 			filtro += " and p.estado in ("
@@ -156,7 +155,7 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 
 		Query q = this.em
 				.createQuery("select distinct p.procesoId from Proceso p, Actividad a "
-						+ filtro + filtroUsuario + " order by p.procesoId");
+						+ filtro + " order by p.procesoId");
 
 		result = q.getResultList();
 
@@ -164,7 +163,7 @@ public class ProcesoDAO extends JPACrud<Proceso, Long> {
 			Query q2 = this.em
 					.createQuery("select distinct p.procesoId from Proceso p" +
 							" where p.id not in (select a.master.procesoId from Actividad a)" +
-							filtroUsuario + " order by p.procesoId");
+							" and p.responsable.usuarioId = " + usuarioId+ " order by p.procesoId");
 
 			result.addAll(q2.getResultList());
 		}
