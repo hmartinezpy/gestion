@@ -790,6 +790,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 					actividad.setResponsable(this.usuarioBC.load(actividad
 							.getResponsable().getUsuarioId()));
 				}
+				this.actividadBC.editar(actividad);
 				this.actividadBC.resolveActividad(actividad,
 						this.getSigteUsuario());
 				//XXX: ?!?!
