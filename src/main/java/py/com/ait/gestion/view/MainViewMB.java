@@ -229,7 +229,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 		procesos = procesoBC.getProcesosByCronogramaForUser(filtroEstadoProceso, nodo.getCronogramaId(), currentUser);
 		actividades = null;
 
-		agregarMensaje(nodo.getNombre());
+//		agregarMensaje(nodo.getNombre());
 	}
 
 	public void onProcesoRowSelect(SelectEvent event) {
@@ -256,7 +256,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 		String titulo = "Actividad "+actividadSeleccionada.getNroActividad()+" Seleccionada";
 		String mensaje = actividadSeleccionada.getDescripcion();
 
-		agregarMensaje(titulo, mensaje);
+//		agregarMensaje(titulo, mensaje);
 	}
 
 	public void updateFiltroEstadoProceso() {
@@ -284,7 +284,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 
 		this.setActividades(this.procesoBC.getActividadesByProceso(procesoSeleccionado, currentUser));
 
-		agregarMensaje(procesoSeleccionado.getDescripcion());
+//		agregarMensaje(procesoSeleccionado.getDescripcion());
 	}
 	
 	public void elegirActividad() {
@@ -301,8 +301,8 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 			this.setSubActividad(true);
 		}
 
-		this.agregarMensaje("Actividad seleccionada: "
-				+ actividad.getNroActividad());
+//		this.agregarMensaje("Actividad seleccionada: "
+//				+ actividad.getNroActividad());
 
 	}
 
@@ -576,7 +576,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 			}
 			try {
 				this.actividadBC.editar(actividad);
-				this.agregarMensaje("Actividad editada");
+//				this.agregarMensaje("Actividad editada");
 			} catch (Exception ex) {
 				this.agregarMensajeError(ex.getMessage());
 			}
@@ -603,7 +603,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 				this.registrarObservacion();
 				Proceso elProceso = procesoBC.load(actividad.getMaster().getProcesoId());
 				this.elegirProceso(elProceso);
-				this.agregarMensaje("Ha pasado a la siguiente Actividad");
+//				this.agregarMensaje("Ha pasado a la siguiente Actividad");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
 				this.agregarMensajeError(ex.getMessage());
@@ -686,7 +686,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 				this.actividadBC.devolverActividad(actividad);
 				//XXX: ?!?!
 				this.elegirProceso(procesoSeleccionado);
-				this.agregarMensaje("Actividad devuelta");
+//				this.agregarMensaje("Actividad devuelta");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
 				this.agregarMensajeError(ex.getMessage());
@@ -771,7 +771,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 								null, null);*/
 				//XXX: ?!?!
 				this.elegirProceso(procesoSeleccionado);
-				this.agregarMensaje("SubActividad creada");
+//				this.agregarMensaje("SubActividad creada");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
 				this.agregarMensajeError(ex.getMessage());
@@ -794,7 +794,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 						this.getSigteUsuario());
 				//XXX: ?!?!
 				this.elegirProceso(procesoSeleccionado);
-				this.agregarMensaje("Ha finalizado el Proceso");
+//				this.agregarMensaje("Ha finalizado el Proceso");
 			} catch (RuntimeException ex) {
 				ex.printStackTrace();
 				this.agregarMensajeError(ex.getMessage());
@@ -811,7 +811,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 
 	public void mostrarFileProceso() {
 		System.out.println("mostrarFileProceso de proceso "+this.procesoSeleccionado);
-		agregarMensaje("Documentos", "Mostrar documentos de proceso: " + procesoSeleccionado.getDescripcion());
+//		agregarMensaje("Documentos", "Mostrar documentos de proceso: " + procesoSeleccionado.getDescripcion());
 		this.setDocumentos(this.documentoBC.getFileProceso(
 				this.procesoSeleccionado.getProcesoId(), currentUser));
 
@@ -846,8 +846,8 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 					"application/octet-stream", downloadName + "."
 							+ downloadExt);
 			this.setFile(archivo);
-			this.agregarMensaje("Archivo seleccionado :" + downloadName + "."
-					+ downloadExt);
+//			this.agregarMensaje("Archivo seleccionado :" + downloadName + "."
+//					+ downloadExt);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -863,16 +863,16 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 		this.setChecklist(this.actividadChecklistDetalleBC
 				.getChecklistByActividad(this.actividadSeleccionada));
 
-		this.agregarMensaje("Actividad seleccionada: "
-				+ this.actividadSeleccionada.getNroActividad());
+//		this.agregarMensaje("Actividad seleccionada: "
+//				+ this.actividadSeleccionada.getNroActividad());
 	}
 
 	public void elegirChecklistDetalle() {
 
 		ActividadChecklistDetalle actividadCheklistDetalle = this.getChecklistDetalle();
 
-		this.agregarMensaje("Item de Checklist seleccionado: "
-				+ actividadCheklistDetalle.getDescripcion());
+//		this.agregarMensaje("Item de Checklist seleccionado: "
+//				+ actividadCheklistDetalle.getDescripcion());
 
 	}
 
@@ -883,7 +883,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 		} else {
 			ActividadChecklistDetalle edited = this.checklistDetalle;
 			this.actividadChecklistDetalleBC.editar(edited);
-			this.agregarMensaje("Item de Checklist editado");
+//			this.agregarMensaje("Item de Checklist editado");
 		}
 	}
 
@@ -935,7 +935,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 			if (this.documentoSeleccionado != null) {
 				List<String> roles = this.listaDual.getTarget();
 				this.procesoBC.guardarRoles(this.documentoSeleccionado, roles);
-				this.agregarMensaje("Cambios guardados correctamente");
+//				this.agregarMensaje("Cambios guardados correctamente");
 			}
 		} catch (RuntimeException ex) {
 
@@ -949,9 +949,9 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 
 			this.documentoBC.updateBloqueoDocumento(this.documentoSeleccionado,
 					true);
-			this.agregarMensaje("Documento: "
-					+ this.documentoSeleccionado.getFilename()
-					+ " bloqueado correctamente");
+//			this.agregarMensaje("Documento: "
+//					+ this.documentoSeleccionado.getFilename()
+//					+ " bloqueado correctamente");
 		}
 	}
 
@@ -962,9 +962,9 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 			this.documentoBC.updateBloqueoDocumento(this.documentoSeleccionado,
 					false);
 
-			this.agregarMensaje("Documento: "
-					+ this.documentoSeleccionado.getFilename()
-					+ " desbloqueado correctamente");
+//			this.agregarMensaje("Documento: "
+//					+ this.documentoSeleccionado.getFilename()
+//					+ " desbloqueado correctamente");
 		}
 	}
 
@@ -1157,7 +1157,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 				int index = this.documentos.indexOf(this.documentoSeleccionado);
 				this.documentos.remove(index);
 
-				this.agregarMensaje("Documento eliminado");
+//				this.agregarMensaje("Documento eliminado");
 
 			}
 		} catch (RuntimeException ex) {
@@ -1194,7 +1194,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 				nuevasObservaciones.addAll(this.observaciones);
 				this.observaciones = nuevasObservaciones;
 			}
-			this.agregarMensaje("Observacion creada");
+//			this.agregarMensaje("Observacion creada");
 			this.setDescripcionObservacion("");
 			}
 		}
@@ -1212,7 +1212,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 					.indexOf(this.observacionSeleccionada);
 			this.observaciones.remove(index);
 
-			this.agregarMensaje("Observacion eliminada");
+//			this.agregarMensaje("Observacion eliminada");
 
 		}
 	}
