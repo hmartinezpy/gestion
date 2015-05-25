@@ -181,7 +181,13 @@ public class CronogramaListMB extends AbstractListPageBean<Cronograma, Long> {
 	public void setCheckPregunta(boolean check) {
 
 		this.checkPregunta = check;
-		this.detalleSeleccionado.setTareaSiguiente(null);
+		if (check == true){
+			this.detalleSeleccionado.setTareaSiguiente(null);
+		} else {
+			this.detalleSeleccionado.setPregunta(null);
+			this.detalleSeleccionado.setRespuestaNo(null);
+			this.detalleSeleccionado.setRespuestaSi(null);
+		}
 	}
 
 
@@ -342,7 +348,7 @@ public class CronogramaListMB extends AbstractListPageBean<Cronograma, Long> {
 								.getTarea());
 			if (this.detalleSeleccionado.getRespuestaSi() != null)
 				this.logger.info("---Respuesta si: "
-						+ this.detalleSeleccionado.getTareaSiguiente()
+						+ this.detalleSeleccionado
 								.getRespuestaSi().getTarea());
 	
 			cronogramaDetalleBC.editar(detalleSeleccionado);
