@@ -34,6 +34,10 @@ public class ClienteBC extends DelegateCrud<Cliente, Long, ClienteDAO>{
 		return clienteDAO.findAll();	
 	}
 	
+	public List<Cliente> listarOrdenado() {
+		return clienteDAO.getSortedClientes();	
+	}
+	
 	public Cliente recuperar(Long id) {
 		return clienteDAO.load(id);	
 	}

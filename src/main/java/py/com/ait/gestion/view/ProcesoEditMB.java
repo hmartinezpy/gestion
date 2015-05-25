@@ -95,7 +95,7 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 
 	public List<Cliente> getClientes() {
 
-		this.clientes = this.clienteBC.listar();
+		this.clientes = this.clienteBC.listarOrdenado();
 		return this.clientes;
 	}
 
