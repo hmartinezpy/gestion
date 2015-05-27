@@ -126,7 +126,7 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 
 		Proceso proceso = new Proceso();
 		proceso.setNroProceso(this.getBean().getNroProceso());
-		proceso.setEstado(this.getBean().getEstado());
+		proceso.setEstado(Definiciones.EstadoProceso.EnProceso);
 		proceso.setDescripcion(this.getBean().getDescripcion());
 		proceso.setFechaInicioContratual(this.getBean()
 				.getFechaInicioContratual());

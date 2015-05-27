@@ -42,8 +42,8 @@
                                 	<f:selectItems value="#{procesoEditMB.clientes}" var="cliente" itemLabel="#{cliente.nombre}" itemValue="#{cliente}" />                                  
 			                    </h:selectOneMenu>                                                                
                                 
-                                <h:outputText value="Estado " />
-                                <h:selectOneMenu required="true" id="selectEstado" value="#{procesoEditMB.bean.estado}" >
+                                <h:outputText value="Estado " rendered="#{procesoEditMB.updateMode}"/>
+                                <h:selectOneMenu required="true" id="selectEstado" value="#{procesoEditMB.bean.estado}" rendered="#{procesoEditMB.updateMode}">
 			                    	<f:selectItem itemLabel="---Seleccionar---" itemValue="" />
 									<f:selectItems value="#{procesoEditMB.estadosProceso}" var="estado" itemLabel="#{estado.descripcion}" itemValue="#{estado.codigo}" />
 			                    </h:selectOneMenu>
