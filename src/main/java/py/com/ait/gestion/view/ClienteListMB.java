@@ -46,7 +46,7 @@ public class ClienteListMB extends AbstractListPageBean<Cliente,Long> {
 
 
 	public List<Cliente> getClientes() {
-		clientes = clienteBC.listar();
+		clientes = clienteBC.listarOrdenado();
 		return clientes;
 	}
 
