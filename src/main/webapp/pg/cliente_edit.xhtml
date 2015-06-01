@@ -20,13 +20,14 @@
             </p:ajaxStatus>
   
   					<h:form prependId="false">
+						<h:inputHidden value="#{clienteEditMB.bean.nombre}" />
                         <p:growl id="messages"/>
                         <p:panel header="Cliente" id="panel" style="width:800px;">
                             <h:panelGrid columns="2" cellpadding="3">
-                            		                    
+
                                 <h:outputText value="Nombre " />
-                                <p:inputText required="true" value="#{clienteEditMB.bean.nombre}" />
-                                                            
+                                <p:inputText required="true" value="#{clienteEditMB.bean.nombre}" requiredMessage="El nombre no puede estar vacío"/>
+
                                 <h:outputText value="Direccion " />
                                 <p:inputText value="#{clienteEditMB.bean.direccion}" />
                                 

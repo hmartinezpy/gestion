@@ -20,12 +20,13 @@
             </p:ajaxStatus>
   
   					<h:form prependId="false">
+						<h:inputHidden value="#{checklistEditMB.bean.descripcion}" />
                         <p:growl id="messages"/>
                         <p:panel header="Checklist" id="panel" style="width:800px;">
                             <h:panelGrid columns="2" cellpadding="3">
                             		                    
                                 <h:outputText value="Descripcion " />
-                                <p:inputText required="true" value="#{checklistEditMB.bean.descripcion}" style="width:380px;" >
+                                <p:inputText required="true" value="#{checklistEditMB.bean.descripcion}" style="width:380px;" requiredMessage="La descripción no puede estar vacía">
                                 	<f:validateRequired></f:validateRequired>
                                 </p:inputText>
                             </h:panelGrid>
