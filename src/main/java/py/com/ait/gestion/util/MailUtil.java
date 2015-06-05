@@ -40,7 +40,7 @@ public class MailUtil
 	public void sendMail(String to, String subject, String body) {
 		
 		logger.info(">>>>>Send Mail: " + to + ", Subject: " + subject);
-		if (appProperties.getMailActive()){
+		if (appProperties.getMailActive() == true){
 			ArrayList<String> toList = new ArrayList<String>();
 			toList.add(to);
 			if(isGmail)
