@@ -1,12 +1,15 @@
 package py.com.ait.gestion.view;
 
 import java.util.List;
+
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
+
 import org.ticpy.tekoporu.annotation.NextView;
 import org.ticpy.tekoporu.annotation.PreviousView;
 import org.ticpy.tekoporu.stereotype.ViewController;
 import org.ticpy.tekoporu.template.AbstractEditPageBean;
+
 import py.com.ait.gestion.business.ClienteBC;
 import py.com.ait.gestion.business.CronogramaBC;
 import py.com.ait.gestion.business.ProcesoBC;
@@ -19,6 +22,7 @@ import py.com.ait.gestion.domain.CronogramaDetalle;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Usuario;
 import py.com.ait.gestion.persistence.CronogramaDetalleDAO;
+import py.com.ait.gestion.util.SessionBean;
 
 @ViewController
 @NextView("/pg/main_view.xhtml")
@@ -42,6 +46,9 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 	@Inject
 	private CronogramaDetalleDAO cronogramaDetalleDAO;
 
+	@Inject
+	private SessionBean sessionBean;
+	
 	private Long idResponsable;
 	private Long idCliente = null;
 	private Long idCronograma;
@@ -178,7 +185,10 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 			proceso.setCliente(null);
 		}
 		this.procesoBC.editar(proceso);
-
+		
+//		mainViewMB.setProcesoId(proceso.getProcesoId());
+		sessionBean.setProcesoId(proceso.getProcesoId());
+		
 		return this.getPreviousView();
 	}
 

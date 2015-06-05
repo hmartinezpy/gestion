@@ -57,6 +57,7 @@ import py.com.ait.gestion.domain.Notificacion;
 import py.com.ait.gestion.domain.Observacion;
 import py.com.ait.gestion.domain.Proceso;
 import py.com.ait.gestion.domain.Usuario;
+import py.com.ait.gestion.util.SessionBean;
 
 @ViewController
 @NextView("/pg/proceso_edit.xhtml")
@@ -137,11 +138,18 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 	@Inject
 	private ClienteBC clienteBC;
 
+	@Inject
+	private SessionBean sessionBean;
+	
 	@PostConstruct
 	public void init() {
 		getCurrentUserData();
 		createTree();
-		setClientes(clienteBC.listar());
+		setClientes(clienteBC.listarOrdenado());
+
+		if (sessionBean.getProcesoId() != null){
+			setProcesoId(sessionBean.getProcesoId());
+		}
 		if(this.getBean().getProcesoId() != null){
 			setProcesoId(this.getBean().getProcesoId());
 		}
@@ -235,26 +243,31 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 	public void onProcesoRowSelect(SelectEvent event) {
 
 		Proceso procesoSeleccionado = (Proceso) event.getObject();
-		
-		elegirProceso(procesoSeleccionado);
+		if (procesoSeleccionado != null){
+			elegirProceso(procesoSeleccionado);
+		} else{
+			updateFiltroEstadoProceso();
+		}
 	}
 
 	public void onActividadRowSelect(SelectEvent event) {
 
 		Actividad actividadSeleccionada = (Actividad) event.getObject();
 
-		if (actividadSeleccionada.getCronogramaDetalle() != null) {
-			this.setSigteCronogramaDetalle(this.cronogramaDetalleBC
-					.getNextCronogramaDetalle(
-							actividadSeleccionada.getCronogramaDetalle(),
-							actividadSeleccionada.getRespuesta()));
-			this.setSubActividad(false);
-		} else {
-			this.setSubActividad(true);
+		if (actividadSeleccionada != null){
+			if (actividadSeleccionada.getCronogramaDetalle() != null) {
+				this.setSigteCronogramaDetalle(this.cronogramaDetalleBC
+						.getNextCronogramaDetalle(
+								actividadSeleccionada.getCronogramaDetalle(),
+								actividadSeleccionada.getRespuesta()));
+				this.setSubActividad(false);
+			} else {
+				this.setSubActividad(true);
+			}
 		}
 
-		String titulo = "Actividad "+actividadSeleccionada.getNroActividad()+" Seleccionada";
-		String mensaje = actividadSeleccionada.getDescripcion();
+//		String titulo = "Actividad "+actividadSeleccionada.getNroActividad()+" Seleccionada";
+//		String mensaje = actividadSeleccionada.getDescripcion();
 
 //		agregarMensaje(titulo, mensaje);
 	}
@@ -289,7 +302,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 	
 	public void elegirActividad() {
 
-		Actividad actividad = this.actividadSeleccionada;
+//		Actividad actividad = this.actividadSeleccionada;
 
 		if (this.actividadSeleccionada.getCronogramaDetalle() != null) {
 			this.setSigteCronogramaDetalle(this.cronogramaDetalleBC
@@ -870,7 +883,7 @@ public class MainViewMB extends AbstractEditPageBean<Proceso, Long>{
 
 	public void elegirChecklistDetalle() {
 
-		ActividadChecklistDetalle actividadCheklistDetalle = this.getChecklistDetalle();
+//		ActividadChecklistDetalle actividadCheklistDetalle = this.getChecklistDetalle();
 
 //		this.agregarMensaje("Item de Checklist seleccionado: "
 //				+ actividadCheklistDetalle.getDescripcion());
