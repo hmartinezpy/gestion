@@ -27,7 +27,10 @@ public class AppProperties {
 	
 	@Name("mail.pwd")
 	private String mailPwd;
-	
+
+	@Name("mail.active")
+	private Boolean mailActive;
+
 	@Name("notificacion.intervalo.min")
 	private int notificacionIntervaloMin;
 	
@@ -60,6 +63,10 @@ public class AppProperties {
 
 	public String getMailPwd() {
 		return mailPwd;
+	}
+
+	public Boolean getMailActive() {
+		return mailActive;
 	}
 
 	public int getNotificacionIntervaloMin() {

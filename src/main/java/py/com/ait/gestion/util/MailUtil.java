@@ -40,12 +40,14 @@ public class MailUtil
 	public void sendMail(String to, String subject, String body) {
 		
 		logger.info(">>>>>Send Mail: " + to + ", Subject: " + subject);
-		ArrayList<String> toList = new ArrayList<String>();
-		toList.add(to);
-		if(isGmail)
-			sendMailGmail(toList, subject, body);
-		else
-			sendMail(toList, subject, body);
+		if (appProperties.getMailActive()){
+			ArrayList<String> toList = new ArrayList<String>();
+			toList.add(to);
+			if(isGmail)
+				sendMailGmail(toList, subject, body);
+			else
+				sendMail(toList, subject, body);
+		}
 	}
 	
     public void sendMail(ArrayList<String> toList, String subject, String body)
