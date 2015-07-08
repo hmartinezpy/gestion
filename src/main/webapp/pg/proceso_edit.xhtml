@@ -76,7 +76,7 @@
                         <br></br>
 							<p:toolbarGroup align="left">
 								<p:commandButton value="Crear" image="ui-icon-disk" update="messages" action="#{procesoEditMB.insert}"
-									rendered="#{!procesoEditMB.updateMode}" ajax="true" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);" />
+									rendered="#{!procesoEditMB.updateMode}" ajax="false" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);" />
 								<p:commandButton value="Guardar" image="ui-icon-disk" update="messages" action="#{procesoEditMB.update}"
 									rendered="#{procesoEditMB.updateMode}" ajax="true" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 10);">
 										<f:param name="id" value="#{procesoEditMB.bean.procesoId}"/>

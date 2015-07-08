@@ -229,7 +229,7 @@ public class Usuario extends Base implements Serializable {
 		boolean comparacion = false;
 		if (other != null && other instanceof Usuario) {
 
-			if (this.usuarioId == ((Usuario) other).getUsuarioId()) {
+			if (this.usuarioId.equals(((Usuario) other).getUsuarioId())) {
 				comparacion = true;
 			}
 		}

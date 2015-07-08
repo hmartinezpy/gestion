@@ -94,7 +94,7 @@ public class Cliente  extends Base implements Serializable {
 		boolean comparacion = false;
 		if(other != null && other instanceof Cliente) {
 			
-			if(this.clienteId == ((Cliente) other).getClienteId())
+			if(this.clienteId.equals(((Cliente) other).getClienteId()))
 				comparacion = true;
 		}
 		return comparacion;

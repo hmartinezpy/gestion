@@ -244,7 +244,7 @@ public class CronogramaDetalle  extends Base  implements Serializable {
 		boolean comparacion = false;
 		if (other != null && other instanceof CronogramaDetalle) {
 
-			if (this.cronogramaDetalleId == ((CronogramaDetalle) other).getCronogramaDetalleId()) {
+			if (this.cronogramaDetalleId.equals(((CronogramaDetalle) other).getCronogramaDetalleId())) {
 				comparacion = true;
 			}
 		}

@@ -83,7 +83,7 @@ public class Checklist extends Base implements Serializable  {
 		boolean comparacion = false;
 		if (other != null && other instanceof Checklist) {
 
-			if (this.checklistId == ((Checklist) other).getChecklistId()) {
+			if (this.checklistId.equals(((Checklist) other).getChecklistId())) {
 				comparacion = true;
 			}
 		}

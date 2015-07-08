@@ -2,6 +2,7 @@ package py.com.ait.gestion.view;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 
@@ -100,6 +101,7 @@ public class ProcesoEditMB extends AbstractEditPageBean<Proceso, Long> {
 		this.usuarios = usuarios;
 	}
 
+	@PostConstruct
 	public List<Cliente> getClientes() {
 
 		this.clientes = this.clienteBC.listarOrdenado();

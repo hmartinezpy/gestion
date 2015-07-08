@@ -151,7 +151,7 @@ public class TipoAlarma  extends Base implements Serializable {
 		boolean comparacion = false;
 		if (other != null && other instanceof TipoAlarma) {
 
-			if (this.tipoAlarmaId == ((TipoAlarma) other).getTipoAlarmaId()) {
+			if (this.tipoAlarmaId.equals(((TipoAlarma) other).getTipoAlarmaId())) {
 				comparacion = true;
 			}
 		}

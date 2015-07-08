@@ -87,7 +87,7 @@ public class Rol extends Base implements Serializable  {
 		boolean comparacion = false;
 		if (other != null && other instanceof Rol) {
 
-			if (this.rolId == ((Rol) other).getRolId()) {
+			if (this.rolId.equals(((Rol) other).getRolId())) {
 				comparacion = true;
 			}
 		}

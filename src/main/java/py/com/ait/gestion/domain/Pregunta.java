@@ -77,7 +77,7 @@ public class Pregunta  extends Base implements Serializable {
 		boolean comparacion = false;
 		if (other != null && other instanceof Pregunta) {
 
-			if (this.preguntaId == ((Pregunta) other).getPreguntaId()) {
+			if (this.preguntaId.equals(((Pregunta) other).getPreguntaId())) {
 				comparacion = true;
 			}
 		}
